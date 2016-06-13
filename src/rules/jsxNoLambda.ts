@@ -5,12 +5,12 @@ export class Rule extends Lint.Rules.AbstractRule {
     public static FAILURE_STRING = "Lambdas are forbidden in JSX due to their rendering performance impact.";
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
-        const noLambdaInJsxWalker = new NoLambdaInJsxWalker(sourceFile, this.getOptions());
-        return this.applyWithWalker(noLambdaInJsxWalker);
+        const jsxNoLambdaWalker = new JsxNoLambdaWalker(sourceFile, this.getOptions());
+        return this.applyWithWalker(jsxNoLambdaWalker);
     }
 }
 
-class NoLambdaInJsxWalker extends Lint.RuleWalker {
+class JsxNoLambdaWalker extends Lint.RuleWalker {
     private isInJsxExpression = false;
 
     public visitJsxExpression(node: ts.JsxExpression) {

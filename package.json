@@ -9,8 +9,11 @@
   "license": "Apache-2.0",
   "scripts": {
     "build": "npm-run-all -p compile lint",
+    "clean": "rm -rf build/",
     "compile": "tsc -p ./",
+    "copy": "cp -f package.json build/src/rules/",
     "lint": "tslint 'src/**/*.ts'",
+    "prepublish": "npm-run-all clean test copy",
     "test": "npm-run-all build test-rules",
     "test-rules": "node ./build/test/ruleTestRunner.js"
   },
