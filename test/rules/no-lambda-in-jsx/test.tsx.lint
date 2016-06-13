@@ -1,0 +1,18 @@
+export const myButton = (
+    <button onClick={() => console.log("clicked")}>
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~   [0]
+        Log something
+    </button>
+);
+
+const handleClick = () => {
+    // this one is kosher
+};
+
+export const myAnchorButton = (
+    <a href="#" onClick={handleClick}>
+        Go nowhere, just log something
+    </a>
+);
+
+[0]: Lambdas are forbidden in JSX due to their rendering performance impact.
