@@ -1,5 +1,5 @@
 {
     "rules": {
-        "no-lambda-in-jsx": true
+        "jsx-no-lambda": true
     }
 }
