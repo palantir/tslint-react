@@ -1,0 +1,16 @@
+{
+    "version": "1.8.10",
+    "compilerOptions": {
+        "module": "commonjs",
+        "noImplicitAny": true,
+        "declaration": true,
+        "sourceMap": false,
+        "target": "es5",
+        "outDir": "build/"
+    },
+    "exclude": [
+        "build",
+        "node_modules",
+        "test/rules"
+    ]
+}

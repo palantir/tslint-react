@@ -1,0 +1,11 @@
+{
+  "name": "tslint-react",
+  "dependencies": {},
+  "devDependencies": {
+    "glob": "registry:npm/glob#6.0.0+20160211003958"
+  },
+  "globalDevDependencies": {
+    "colors": "registry:dt/colors#0.6.0-1+20160501135139",
+    "node": "registry:env/node#6.0.0+20160610031852"
+  }
+}
