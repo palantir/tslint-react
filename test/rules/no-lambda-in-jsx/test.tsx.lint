@@ -5,6 +5,15 @@ export const myButton = (
     </button>
 );
 
+const myButton2 = (
+    <button onClick={function () {
+                     ~~~~~~~~~~~~~
+        // another bad one
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+    }} />
+~~~~~     [0]
+)
+
 const handleClick = () => {
     // this one is kosher
 };
@@ -14,5 +23,32 @@ export const myAnchorButton = (
         Go nowhere, just log something
     </a>
 );
+
+
+function randomOkFunction() {
+    // I ain't doing no harm
+}
+
+const anotherOkFunction = () {
+    // neither am I
+};
+
+class TypicalRefHandler extends React.Component<{}, {}> {
+    private element: HTMLElement;
+    public render() {
+        return <div ref={(ref) => this.element = ref} />
+                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~     [0]
+    }
+}
+
+const StatelessComponent: React.SFC<{}> = () => {
+    // component children can be optimized too
+    return (
+        <div>
+            {() => console.log("foo")}
+             ~~~~~~~~~~~~~~~~~~~~~~~~  [0]
+        </div>
+    );
+};
 
 [0]: Lambdas are forbidden in JSX due to their rendering performance impact.
