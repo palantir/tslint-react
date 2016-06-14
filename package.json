@@ -13,13 +13,14 @@
     "compile": "tsc -p ./",
     "copy": "cp -f package.json build/src/rules/",
     "lint": "tslint 'src/**/*.ts'",
-    "prepublish": "npm-run-all clean test copy",
+    "preversion": "npm-run-all clean test copy",
     "test": "npm-run-all build test-rules",
     "test-rules": "node ./build/test/ruleTestRunner.js"
   },
   "devDependencies": {
     "colors": "^1.1.2",
     "glob": "^7.0.3",
+    "npm-run-all": "^2.1.2",
     "path": "^0.12.7",
     "tslint": "^3.11.0",
     "typescript": "^1.8.10"
