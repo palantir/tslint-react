@@ -1,0 +1,22 @@
+let a = <div prop="foo" ref="foo"/>
+                            ~~~~~   [0]
+a = <div prop="foo" ref="foo"></div>
+                        ~~~~~        [0]
+a = <div prop={"foo"} ref={"foo"}/>
+                          ~~~~~~~   [0]
+a = <div prop={`prefix-${variable}`} ref={`prefix-${variable}`}/>
+                                         ~~~~~~~~~~~~~~~~~~~~~~   [0]
+
+a = <Comp prop="foo" ref="foo"/>
+                         ~~~~~   [0]
+a = <Comp prop={"foo"} ref={"foo"}/>
+                           ~~~~~~~   [0]
+a = <Comp prop={`prefix-${variable}`} ref={`prefix-${variable}`}/>
+                                          ~~~~~~~~~~~~~~~~~~~~~~   [0]
+
+
+a = <div ref={() => foo}/>;
+a = <div ref={this.handleBar}/>
+a = <div ref={myRefHandlers["foo"]}></div>
+
+[0]: Pass a callback to ref prop instead of a string literal
