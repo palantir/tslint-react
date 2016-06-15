@@ -11,11 +11,11 @@
     "build": "npm-run-all -p compile lint",
     "clean": "rm -rf build/",
     "compile": "tsc -p ./",
-    "copy": "cp -f package.json build/src/rules/",
+    "copy": "cp -f package.json build/",
     "lint": "tslint 'src/**/*.ts'",
     "preversion": "npm-run-all clean test copy",
     "test": "npm-run-all build test-rules",
-    "test-rules": "node ./build/test/ruleTestRunner.js"
+    "test-rules": "for path in ./test/rules/*; do tslint -r ./build/ --test $path; done"
   },
   "devDependencies": {
     "colors": "^1.1.2",

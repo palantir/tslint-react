@@ -6,6 +6,7 @@
         "declaration": true,
         "sourceMap": false,
         "target": "es5",
+        "rootDir": "src/rules/",
         "outDir": "build/"
     },
     "exclude": [

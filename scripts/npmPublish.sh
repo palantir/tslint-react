@@ -6,7 +6,7 @@ set -e
 echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
 chmod 0600 .npmrc
 
-npm run prepublish
+npm run preversion
 
 echo "Publishing..."
-npm publish build/src/rules
+npm publish build/
