@@ -15,7 +15,7 @@
     "lint": "tslint 'src/**/*.ts'",
     "preversion": "npm-run-all clean test copy",
     "test": "npm-run-all build test-rules",
-    "test-rules": "for path in ./test/rules/*; do tslint -r ./build/ --test $path; done"
+    "test-rules": "for path in ./test/rules/*; do tslint -r ./build/rules/ --test $path; done"
   },
   "devDependencies": {
     "colors": "^1.1.2",
