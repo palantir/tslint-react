@@ -5,7 +5,7 @@
 tslint-react
 ------------
 
-React-specific rules for TSLint.
+Lint rules related to React & JSX for [TSLint](https://github.com/palantir/tslint/).
 
 ### Rules
 
