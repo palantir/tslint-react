@@ -7,6 +7,23 @@ tslint-react
 
 Lint rules related to React & JSX for [TSLint](https://github.com/palantir/tslint/).
 
+### Usage
+
+Sample configuration where `tslint.json` lives adjacent to your `node_modules` folder:
+
+```js
+{
+  "extends": "tslint:latest",
+  "rulesDirectory": [
+    "./node_modules/tslint-react/rules"
+  ],
+  "rules": {
+    // enable tslint-react rules here
+    "jsx-no-lambda": true
+  }
+}
+```
+
 ### Rules
 
 - `jsx-no-lambda`
