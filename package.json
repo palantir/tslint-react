@@ -4,14 +4,14 @@
   "description": "React-specific rules for TSLint",
   "repository": {
     "type": "git",
-    "url": "https://github.com/adidahiya/tslint-react.git"
+    "url": "https://github.com/palantir/tslint-react.git"
   },
   "license": "Apache-2.0",
   "scripts": {
     "build": "npm-run-all -p compile lint",
     "clean": "rm -rf build/",
     "compile": "tsc -p ./",
-    "copy": "cp -f package.json build/",
+    "copy": "cp -f package.json README.md build/",
     "lint": "tslint 'src/**/*.ts'",
     "preversion": "npm-run-all clean test copy",
     "test": "npm-run-all build test-rules",
