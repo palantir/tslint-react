@@ -1,4 +1,4 @@
-[![NPM version](https://img.shields.io/npm/v/tslint-react.svg?maxAge=2592000)]()
+[![NPM version](https://badge.fury.io/js/tslint-react.svg)](https://www.npmjs.com/package/tslint-react)
 [![Downloads](http://img.shields.io/npm/dm/tslint-react.svg)](https://npmjs.org/package/tslint-react)
 [![Circle CI](https://circleci.com/gh/palantir/tslint-react.svg?style=svg)](https://circleci.com/gh/palantir/tslint-react)
 
