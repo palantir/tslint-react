@@ -1,0 +1,5 @@
+{
+    "rules": {
+        "jsx-no-string-ref": true
+    }
+}

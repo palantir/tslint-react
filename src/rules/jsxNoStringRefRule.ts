@@ -23,22 +23,22 @@ export class Rule extends Lint.Rules.AbstractRule {
     public static FAILURE_STRING = "Pass a callback to ref prop instead of a string literal";
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
-        const noStringRefWalker = new NoStringRefWalker(sourceFile, this.getOptions());
-        return this.applyWithWalker(noStringRefWalker);
+        const walker = new JsxNoStringRefWalker(sourceFile, this.getOptions());
+        return this.applyWithWalker(walker);
     }
 }
 
-class NoStringRefWalker extends Lint.RuleWalker {
+class JsxNoStringRefWalker extends Lint.RuleWalker {
     protected visitNode(node: ts.Node) {
         if (nodeIsKind<ts.JsxAttribute>(node, ts.SyntaxKind.JsxAttribute)) {
-            const {name, initializer} = node;
+            const { name, initializer } = node;
             const isRefAttribute = name != null && name.text === "ref";
             if (isRefAttribute && initializer != null) {
                 const hasStringInitializer = initializer.kind === ts.SyntaxKind.StringLiteral;
                 const hasStringExpressionInitializer =
                     nodeIsKind<ts.JsxExpression>(initializer, ts.SyntaxKind.JsxExpression)
                     && (initializer.expression.kind === ts.SyntaxKind.StringLiteral
-                    || initializer.expression.kind === ts.SyntaxKind.TemplateExpression);
+                        || initializer.expression.kind === ts.SyntaxKind.TemplateExpression);
 
                 if (hasStringInitializer || hasStringExpressionInitializer) {
                     this.addFailure(this.createFailure(
