@@ -23,8 +23,8 @@ export class Rule extends Lint.Rules.AbstractRule {
     public static FAILURE_STRING = "Pass a callback to ref prop instead of a string literal";
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
-        const jsxJsxNoStringRefWalker = new JsxNoStringRefWalker(sourceFile, this.getOptions());
-        return this.applyWithWalker(jsxJsxNoStringRefWalker);
+        const walker = new JsxNoStringRefWalker(sourceFile, this.getOptions());
+        return this.applyWithWalker(walker);
     }
 }
 
