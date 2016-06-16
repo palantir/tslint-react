@@ -1,4 +1,9 @@
-# tslint-react
+[![NPM version](https://img.shields.io/npm/v/tslint-react.svg?maxAge=2592000)]()
+[![Downloads](http://img.shields.io/npm/dm/tslint-react.svg)](https://npmjs.org/package/tslint-react)
+[![Circle CI](https://circleci.com/gh/palantir/tslint-react.svg?style=svg)](https://circleci.com/gh/palantir/tslint-react)
+
+tslint-react
+------------
 
 React-specific rules for TSLint.
 
