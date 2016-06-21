@@ -24,7 +24,6 @@ export const myAnchorButton = (
     </a>
 );
 
-
 function randomOkFunction() {
     // I ain't doing no harm
 }
@@ -45,10 +44,9 @@ const StatelessComponent: React.SFC<{}> = () => {
     // component children can be optimized too
     return (
         <div>
-            {() => console.log("foo")}
-             ~~~~~~~~~~~~~~~~~~~~~~~~  [0]
+            {myElements.map((e) => <span>{e}</span>)}
         </div>
     );
 };
 
-[0]: Lambdas are forbidden in JSX due to their rendering performance impact.
+[0]: Lambdas are forbidden in JSX due to their rendering performance impact
