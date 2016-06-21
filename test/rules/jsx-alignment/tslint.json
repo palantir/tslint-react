@@ -1,0 +1,5 @@
+{
+    "rules": {
+        "jsx-alignment": true
+    }
+}
