@@ -29,7 +29,7 @@ Sample configuration where `tslint.json` lives adjacent to your `node_modules` f
 - `jsx-alignment`
   - Enforces a consistent style for multiline JSX elements which promotes ease of editing via line-wise manipulations
   as well as maintainabilty via small diffs when changes are made.
-  ```
+  ```ts
   // Good:
   const element = <div
       className="foo"

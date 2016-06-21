@@ -31,7 +31,7 @@ export class Rule extends Lint.Rules.AbstractRule {
     }
 }
 
-const leadingWhitespace = /[ \t]/;
+const leadingWhitespaceRegex = /[ \t]/;
 
 class JsxAlignmentWalker extends Lint.RuleWalker {
     protected visitJsxElement(node: ts.JsxElement) {
@@ -71,7 +71,7 @@ class JsxAlignmentWalker extends Lint.RuleWalker {
 
         // ensure that first attribute is not on the same line as the start of the tag
         if (this.getLine(firstAttr) === elementOpen.line) {
-            this.nodeFailure(firstAttr, Rule.ATTR_LINE_FAILURE);
+            this.reportFailure(firstAttr, Rule.ATTR_LINE_FAILURE);
         }
 
         let lastSeenLine = -1;
@@ -80,12 +80,12 @@ class JsxAlignmentWalker extends Lint.RuleWalker {
 
             // ensure each attribute is indented further than the start of the tag
             if (character <= initialIndent) {
-                this.nodeFailure(attr, Rule.ATTR_INDENT_FAILURE);
+                this.reportFailure(attr, Rule.ATTR_INDENT_FAILURE);
             }
 
             // ensure each attribute is indented equally
             if (attr !== firstAttr && character !== firstAttrCharacter) {
-                this.nodeFailure(attr, Rule.ATTR_ALIGN_FAILURE);
+                this.reportFailure(attr, Rule.ATTR_ALIGN_FAILURE);
             }
 
             lastSeenLine = this.getLine(attr);
@@ -105,7 +105,7 @@ class JsxAlignmentWalker extends Lint.RuleWalker {
         if (closingTag != null) {
             const closingTagLocation = this.getLineAndCharacter(closingTag);
             if (closingTagLocation.line <= elementClose.line || closingTagLocation.character !== initialIndent) {
-                this.nodeFailure(closingTag, Rule.CLOSING_TAG_FAILURE);
+                this.reportFailure(closingTag, Rule.CLOSING_TAG_FAILURE);
             }
         }
     }
@@ -115,7 +115,7 @@ class JsxAlignmentWalker extends Lint.RuleWalker {
         const source = this.getSourceFile().getFullText();
 
         let width = 0;
-        while (lineStart + width < source.length && leadingWhitespace.test(source.charAt(lineStart + width))) {
+        while (lineStart + width < source.length && leadingWhitespaceRegex.test(source.charAt(lineStart + width))) {
             width++;
         }
         return width;
@@ -135,7 +135,7 @@ class JsxAlignmentWalker extends Lint.RuleWalker {
     private getCharacter = (node: ts.Node) => this.getLineAndCharacter(node).character;
     private getLine = (node: ts.Node) => this.getLineAndCharacter(node).line;
 
-    private nodeFailure(node: ts.Node, message: string) {
+    private reportFailure(node: ts.Node, message: string) {
         this.addFailure(this.createFailure(node.getStart(), node.getWidth(), message));
     }
 }
