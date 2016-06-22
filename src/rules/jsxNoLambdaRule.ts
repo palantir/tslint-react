@@ -19,7 +19,7 @@ import * as ts from "typescript";
 import * as Lint from "tslint/lib/lint";
 
 export class Rule extends Lint.Rules.AbstractRule {
-    public static FAILURE_STRING = "Lambdas are forbidden in JSX due to their rendering performance impact.";
+    public static FAILURE_STRING = "Lambdas are forbidden in JSX attributes due to their rendering performance impact";
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
         const jsxNoLambdaWalker = new JsxNoLambdaWalker(sourceFile, this.getOptions());
@@ -28,23 +28,27 @@ export class Rule extends Lint.Rules.AbstractRule {
 }
 
 class JsxNoLambdaWalker extends Lint.RuleWalker {
-    private isInJsxExpression = false;
+    private isInJsxAttribute = false;
 
-    public visitJsxExpression(node: ts.JsxExpression) {
-        this.isInJsxExpression = true;
-        super.visitJsxExpression(node);
-        this.isInJsxExpression = false;
+    protected visitNode(node: ts.Node) {
+        if (node.kind === ts.SyntaxKind.JsxAttribute) {
+            this.isInJsxAttribute = true;
+            super.visitNode(node);
+            this.isInJsxAttribute = false;
+        } else {
+            super.visitNode(node);
+        }
     }
 
-    public visitFunctionExpression(node: ts.FunctionExpression) {
-        if (this.isInJsxExpression) {
+    protected visitFunctionExpression(node: ts.FunctionExpression) {
+        if (this.isInJsxAttribute) {
             this.reportFailure(node);
         }
         super.visitFunctionExpression(node);
     }
 
-    public visitArrowFunction(node: ts.ArrowFunction) {
-        if (this.isInJsxExpression) {
+    protected visitArrowFunction(node: ts.ArrowFunction) {
+        if (this.isInJsxAttribute) {
             this.reportFailure(node);
         }
         super.visitArrowFunction(node);
