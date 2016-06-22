@@ -1,6 +1,6 @@
 {
   "name": "tslint-react",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "React-specific rules for TSLint",
   "main": "tslint-react.json",
   "repository": {
