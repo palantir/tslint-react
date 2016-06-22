@@ -11,7 +11,7 @@ if (process.argv.length !== 3) {
 
 const ruleKebabName = process.argv[2];
 const rulePascalName = ruleKebabName.split("-").map((s) => s.charAt(0).toUpperCase() + s.substr(1)).join("");
-const ruleCamelName = rulePascalName.charAt(0) + rulePascalName.substr(1);
+const ruleCamelName = rulePascalName.charAt(0).toLowerCase() + rulePascalName.substr(1);
 const walkerClassName = `${rulePascalName}Walker`;
 
 const ruleTemplate = 
