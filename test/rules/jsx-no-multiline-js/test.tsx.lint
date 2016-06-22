@@ -1,0 +1,36 @@
+const htmlStr = <div
+    className="my-class"
+    tabIndex={-1}
+>
+    {children}
+</div>;
+
+const htmlBadStr = <div
+    className="my-class"
+>
+    {test ?
+    ~~~~~~~
+        children
+~~~~~~~~~~~~~~~~
+    }
+~~~~~ [JSX expressions should not be multiline]
+</div>;
+
+const printStr = <div>
+    {test ? "a" : "b"}
+    !=
+    {test ? "b" : "a"}
+</div;
+
+const printBadStr = <div>
+    {test ?
+    ~~~~~~~
+        "a!=b"
+~~~~~~~~~~~~~~
+    :
+~~~~~
+        "b!=a"
+~~~~~~~~~~~~~~
+    }
+~~~~~ [JSX expressions should not be multiline]
+</div;
