@@ -46,7 +46,8 @@ export class Rule extends Lint.Rules.AbstractRule {
 
 class ${walkerClassName} extends Lint.RuleWalker {
     // ** RULE IMPLEMENTATION HERE **
-}`;
+}
+`;
 
 const testConfigTemplate =
 `{
@@ -61,10 +62,18 @@ const testTemplate =
 
 const projectDir = path.dirname(__dirname);
 
-const rulePath = path.join(projectDir, `./src/rules/${ruleCamelName}Rule.ts`);
-fs.writeFileSync(rulePath, ruleTemplate)
+const newRulePath = `./src/rules/${ruleCamelName}Rule.ts`;
+fs.access(newRulePath, fs.F_OK, (err) => {
+    if (!err) {
+        // File already exists.
+        process.exit(1);
+    }
 
-const testDir = path.join(projectDir, `test/rules/${ruleKebabName}`);
-fs.mkdir(testDir);
-fs.writeFileSync(path.join(testDir, "tslint.json"), testConfigTemplate);
-fs.writeFileSync(path.join(testDir, "test.tsx.lint"), testTemplate);
+    const rulePath = path.join(projectDir, newRulePath);
+    fs.writeFileSync(rulePath, ruleTemplate);
+
+    const testDir = path.join(projectDir, `test/rules/${ruleKebabName}`);
+    fs.mkdirSync(testDir);
+    fs.writeFileSync(path.join(testDir, "tslint.json"), testConfigTemplate);
+    fs.writeFileSync(path.join(testDir, "test.tsx.lint"), testTemplate);
+});
