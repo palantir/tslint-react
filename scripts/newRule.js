@@ -64,18 +64,10 @@ const testTemplate =
 
 const projectDir = path.dirname(__dirname);
 
-const newRulePath = `./src/rules/${ruleCamelName}Rule.ts`;
-fs.access(newRulePath, fs.F_OK, (err) => {
-    if (!err) {
-        // File already exists.
-        process.exit(1);
-    }
+const rulePath = path.join(projectDir, `./src/rules/${ruleCamelName}Rule.ts`);
+fs.writeFileSync(rulePath, ruleTemplate, {flag: 'wx'});
 
-    const rulePath = path.join(projectDir, newRulePath);
-    fs.writeFileSync(rulePath, ruleTemplate);
-
-    const testDir = path.join(projectDir, `test/rules/${ruleKebabName}`);
-    fs.mkdirSync(testDir);
-    fs.writeFileSync(path.join(testDir, "tslint.json"), testConfigTemplate);
-    fs.writeFileSync(path.join(testDir, "test.tsx.lint"), testTemplate);
-});
+const testDir = path.join(projectDir, `test/rules/${ruleKebabName}`);
+fs.mkdirSync(testDir);
+fs.writeFileSync(path.join(testDir, "tslint.json"), testConfigTemplate, {flag: 'wx'});
+fs.writeFileSync(path.join(testDir, "test.tsx.lint"), testTemplate, {flag: 'wx'});
