@@ -46,25 +46,28 @@ export class Rule extends Lint.Rules.AbstractRule {
 
 class ${walkerClassName} extends Lint.RuleWalker {
     // ** RULE IMPLEMENTATION HERE **
-}`;
+}
+`;
 
 const testConfigTemplate =
 `{
     "rules": {
         "${ruleKebabName}": true
     }
-}`;
+}
+`;
 
 const testTemplate =
 `** TEST CODE AND MARKUP HERE **
-   ~~~~ [example error so this test fails until you change it]`;
+   ~~~~ [example error so this test fails until you change it]
+`;
 
 const projectDir = path.dirname(__dirname);
 
 const rulePath = path.join(projectDir, `./src/rules/${ruleCamelName}Rule.ts`);
-fs.writeFileSync(rulePath, ruleTemplate)
+fs.writeFileSync(rulePath, ruleTemplate, {flag: 'wx'});
 
 const testDir = path.join(projectDir, `test/rules/${ruleKebabName}`);
-fs.mkdir(testDir);
-fs.writeFileSync(path.join(testDir, "tslint.json"), testConfigTemplate);
-fs.writeFileSync(path.join(testDir, "test.tsx.lint"), testTemplate);
+fs.mkdirSync(testDir);
+fs.writeFileSync(path.join(testDir, "tslint.json"), testConfigTemplate, {flag: 'wx'});
+fs.writeFileSync(path.join(testDir, "test.tsx.lint"), testTemplate, {flag: 'wx'});
