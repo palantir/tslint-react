@@ -54,11 +54,13 @@ const testConfigTemplate =
     "rules": {
         "${ruleKebabName}": true
     }
-}`;
+}
+`;
 
 const testTemplate =
 `** TEST CODE AND MARKUP HERE **
-   ~~~~ [example error so this test fails until you change it]`;
+   ~~~~ [example error so this test fails until you change it]
+`;
 
 const projectDir = path.dirname(__dirname);
 
