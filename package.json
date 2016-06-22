@@ -12,7 +12,7 @@
     "build": "npm-run-all -p compile lint",
     "clean": "rm -rf build/",
     "compile": "tsc -p ./",
-    "copy": "cp -f package.json README.md build/",
+    "copy": "cp -f package.json README.md tslint-react.json build/",
     "lint": "tslint 'src/**/*.ts'",
     "preversion": "npm-run-all clean test copy",
     "test": "npm-run-all build test-rules",
