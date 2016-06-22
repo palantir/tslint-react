@@ -13,10 +13,7 @@ Sample configuration where `tslint.json` lives adjacent to your `node_modules` f
 
 ```js
 {
-  "extends": "tslint:latest",
-  "rulesDirectory": [
-    "./node_modules/tslint-react/rules"
-  ],
+  "extends": ["tslint:latest", "tslint-react"],
   "rules": {
     // enable tslint-react rules here
     "jsx-no-lambda": true
