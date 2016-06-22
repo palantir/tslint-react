@@ -35,7 +35,7 @@ const leadingWhitespaceRegex = /[ \t]/;
 
 class JsxAlignmentWalker extends Lint.RuleWalker {
     protected visitJsxElement(node: ts.JsxElement) {
-        if (this.isMultiline(node)) {
+        if (this.isMultiline(node.openingElement)) {
             const startLocation = this.getLineAndCharacter(node);
             const closeLocation = this.getSourceFile().getLineAndCharacterOfPosition(
                 node.openingElement.getEnd() - ">".length
