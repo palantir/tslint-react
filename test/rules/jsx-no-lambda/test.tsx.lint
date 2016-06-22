@@ -49,4 +49,4 @@ const StatelessComponent: React.SFC<{}> = () => {
     );
 };
 
-[0]: Lambdas are forbidden in JSX due to their rendering performance impact
+[0]: Lambdas are forbidden in JSX attributes due to their rendering performance impact
