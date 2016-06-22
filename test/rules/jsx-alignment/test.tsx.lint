@@ -18,7 +18,7 @@ const good = <Foo
 
 function goodRender() {
     return (
-        <div>
+        <div className="red">
             <img src="myImage.jpg"/>
             <Element
                 alpha={1}
