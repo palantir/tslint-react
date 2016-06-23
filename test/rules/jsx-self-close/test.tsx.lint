@@ -1,0 +1,23 @@
+<div>
+    Contents
+</div>
+
+<span></span>
+~~~~~~~~~~~~~ [Elements with no children must be self-closing]
+
+<button />
+
+<h2 class="colouring" contents="B"></h2>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ [Elements with no children must be self-closing]
+
+<button onClick="run()" />
+
+<button>
+    <div>
+    ~~~~~
+    </div>
+~~~~~~~~~~ [Elements with no children must be self-closing]
+</button>
+
+<div> </div>
+~~~~~~~~~~~~ [Elements with no children must be self-closing]
