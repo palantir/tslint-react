@@ -13,14 +13,14 @@ const htmlBadStr = <div
         children
 ~~~~~~~~~~~~~~~~
     }
-~~~~~ [JSX expressions should not be multiline]
+~~~~~ [Multiline JS expressions inside JSX are forbidden]
 </div>;
 
 const printStr = <div>
     {test ? "a" : "b"}
     !=
     {test ? "b" : "a"}
-</div;
+</div>;
 
 const printBadStr = <div>
     {test ?
@@ -32,5 +32,33 @@ const printBadStr = <div>
         "b!=a"
 ~~~~~~~~~~~~~~
     }
-~~~~~ [JSX expressions should not be multiline]
-</div;
+~~~~~ [Multiline JS expressions inside JSX are forbidden]
+</div>;
+
+const str = <div attr="{value}">
+    Contents
+</div>;
+
+const obj = <div attr={useValue ?
+                      ~~~~~~~~~~~
+    value :
+~~~~~~~~~~~
+    ""
+~~~~~~
+}>
+~ [Multiline JS expressions inside JSX are forbidden]
+    Contents
+</div>;
+
+const ele = <button className={{
+                              ~~
+    "classA" : true,
+~~~~~~~~~~~~~~~~~~~~
+    "classB" : renderClassB,
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    "classC" : renderClassC,
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    "classD" : !renderClassB && !renderClassC,
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+}} />;
+~~ [Multiline JS expressions inside JSX are forbidden]

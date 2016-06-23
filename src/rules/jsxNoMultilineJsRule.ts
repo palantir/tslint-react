@@ -19,7 +19,7 @@ import * as ts from "typescript";
 import * as Lint from "tslint/lib/lint";
 
 export class Rule extends Lint.Rules.AbstractRule {
-    public static FAILURE_STRING = "JSX expressions should not be multiline";
+    public static FAILURE_STRING = "Multiline JS expressions inside JSX are forbidden";
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
         const walker = new JsxNoMultilineJsWalker(sourceFile, this.getOptions());
