@@ -1,0 +1,64 @@
+const htmlStr = <div
+    className="my-class"
+    tabIndex={-1}
+>
+    {children}
+</div>;
+
+const htmlBadStr = <div
+    className="my-class"
+>
+    {test ?
+    ~~~~~~~
+        children
+~~~~~~~~~~~~~~~~
+    }
+~~~~~ [Multiline JS expressions inside JSX are forbidden]
+</div>;
+
+const printStr = <div>
+    {test ? "a" : "b"}
+    !=
+    {test ? "b" : "a"}
+</div>;
+
+const printBadStr = <div>
+    {test ?
+    ~~~~~~~
+        "a!=b"
+~~~~~~~~~~~~~~
+    :
+~~~~~
+        "b!=a"
+~~~~~~~~~~~~~~
+    }
+~~~~~ [Multiline JS expressions inside JSX are forbidden]
+</div>;
+
+const str = <div attr="{value}">
+    Contents
+</div>;
+
+const obj = <div attr={useValue ?
+                      ~~~~~~~~~~~
+    value :
+~~~~~~~~~~~
+    ""
+~~~~~~
+}>
+~ [Multiline JS expressions inside JSX are forbidden]
+    Contents
+</div>;
+
+const ele = <button className={{
+                              ~~
+    "classA" : true,
+~~~~~~~~~~~~~~~~~~~~
+    "classB" : renderClassB,
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    "classC" : renderClassC,
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    "classD" : !renderClassB && !renderClassC,
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+}} />;
+~~ [Multiline JS expressions inside JSX are forbidden]
