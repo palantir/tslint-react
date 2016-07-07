@@ -19,7 +19,7 @@ import * as ts from "typescript";
 import * as Lint from "tslint/lib/lint";
 
 export class Rule extends Lint.Rules.AbstractRule {
-    public static FAILURE_STRING = "Elements with no children must be self-closing";
+    public static FAILURE_STRING = "JSX elements with no children must be self-closing";
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
         const walker = new JsxSelfCloseWalker(sourceFile, this.getOptions());
@@ -29,7 +29,9 @@ export class Rule extends Lint.Rules.AbstractRule {
 
 class JsxSelfCloseWalker extends Lint.RuleWalker {
     protected visitJsxElement(node: ts.JsxElement) {
-        const missingOpeningOrClosingTag = !node.openingElement || !node.closingElement;
+        const missingOpeningOrClosingTag = node.openingElement == null || node.closingElement == null;
+        // The last part of the textIsEmpty assignment is to check whether the tag is completely empty or
+        // only consists of spaces/new lines.
         const textIsEmpty = node.children.length === 1
             && node.children[0].kind === ts.SyntaxKind.JsxText
             && node.children[0].getText() === "";
