@@ -50,6 +50,15 @@ Sample configuration where `tslint.json` lives adjacent to your `node_modules` f
   - Passing strings to the `ref` prop of React elements is considered a legacy feature and will soon be deprecated.
     Instead, [use a callback](https://facebook.github.io/react/docs/more-about-refs.html#the-ref-callback-attribute).
   - Rule options: _none_
+- `jsx-self-close` (since v0.4.0)
+  - Enforces that JSX elements with no children are self-closing.
+  ```ts
+  // bad
+  <div className="foo"></div>
+  // good
+  <div className="foo" />
+  ```
+  - Rule options: _none_
 
 ### Development
 
