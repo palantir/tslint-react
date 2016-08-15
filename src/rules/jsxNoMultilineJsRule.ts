@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-import * as ts from "typescript";
 import * as Lint from "tslint/lib/lint";
+import * as ts from "typescript";
 
 export class Rule extends Lint.Rules.AbstractRule {
     public static FAILURE_STRING = "Multiline JS expressions inside JSX are forbidden";

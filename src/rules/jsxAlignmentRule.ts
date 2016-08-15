@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-import * as ts from "typescript";
 import * as Lint from "tslint/lib/lint";
+import * as ts from "typescript";
 
 export class Rule extends Lint.Rules.AbstractRule {
     public static ATTR_LINE_FAILURE = "JSX attributes must be on a line below the opening tag";
@@ -139,4 +139,3 @@ class JsxAlignmentWalker extends Lint.RuleWalker {
         this.addFailure(this.createFailure(node.getStart(), node.getWidth(), message));
     }
 }
-
