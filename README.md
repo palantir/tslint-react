@@ -68,3 +68,8 @@ Sample configuration where `tslint.json` lives adjacent to your `node_modules` f
 We track rule suggestions on Github issues -- [here's a useful link](https://github.com/palantir/tslint-react/issues?q=is%3Aissue+is%3Aopen+label%3A%22Type%3A+Rule+Suggestion%22) to view all the current suggestions. Tickets are roughly triaged by priority (P1, P2, P3).
 
 We're happy to accept PRs for new rules, especially those marked as [Status: Accepting PRs](https://github.com/palantir/tslint-react/issues?q=is%3Aissue+is%3Aopen+label%3A%22Status%3A+Accepting+PRs%22). If submitting a PR, try to follow the same style conventions as the [core TSLint project](https://github.com/palantir/tslint).
+
+### Changelog
+
+See the Github [release history](https://github.com/palantir/tslint-react/releases).
+
