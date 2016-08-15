@@ -1,3 +1,9 @@
 {
-    "rulesDirectory": "./rules"
+    "rulesDirectory": "./rules",
+    "rules": {
+        "jsx-alignment": true,
+        "jsx-no-lambda": true,
+        "jsx-no-string-ref": true,
+        "jsx-self-close": true
+    }
 }
