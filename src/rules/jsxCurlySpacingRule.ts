@@ -75,6 +75,8 @@ export class Rule extends Lint.Rules.AbstractRule {
 }
 
 class JsxCurlySpacingWalker extends Lint.RuleWalker {
+    private always = this.hasOption(OPTION_ALWAYS) || false;
+
     protected visitJsxExpression(node: ts.JsxExpression) {
         this.validateBraceSpacing(node);
 
@@ -88,8 +90,6 @@ class JsxCurlySpacingWalker extends Lint.RuleWalker {
 
         super.visitNode(node);
     }
-
-    private always = this.hasOption(OPTION_ALWAYS) || false;
 
     private validateBraceSpacing(node: ts.Node) {
         const firstToken = node.getFirstToken();
