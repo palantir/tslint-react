@@ -21,10 +21,12 @@ import * as ts from "typescript";
 const OPTION_ALWAYS = "always";
 const OPTION_NEVER = "never";
 const SPACING_VALUES = [OPTION_ALWAYS, OPTION_NEVER];
+/* tslint:disable:object-literal-sort-keys */
 const SPACING_OBJECT = {
     type: "string",
     enum: SPACING_VALUES,
 };
+/* tslint:enable:object-literal-sort-keys */
 
 export class Rule extends Lint.Rules.AbstractRule {
     /* tslint:disable:object-literal-sort-keys */
@@ -73,6 +75,20 @@ export class Rule extends Lint.Rules.AbstractRule {
 }
 
 class JsxCurlySpacingWalker extends Lint.RuleWalker {
+    protected visitJsxExpression(node: ts.JsxExpression) {
+        this.validateBraceSpacing(node);
+
+        super.visitJsxExpression(node);
+    }
+
+    protected visitNode(node: ts.Node) {
+        if (node.kind === ts.SyntaxKind.JsxSpreadAttribute) {
+            this.validateBraceSpacing(node);
+        }
+
+        super.visitNode(node);
+    }
+
     private always = this.hasOption(OPTION_ALWAYS) || false;
 
     private validateBraceSpacing(node: ts.Node) {
@@ -83,8 +99,8 @@ class JsxCurlySpacingWalker extends Lint.RuleWalker {
         const nodeStart = node.getStart();
         const nodeWidth = node.getWidth();
 
-        function isExpressionMultiline(node: ts.Node) {
-            return /\n/.test(node.getText().replace(/\/\*.*?\*\//g, ""));
+        function isExpressionMultiline(text: string) {
+            return /\n/.test(text.replace(/\/\*.*?\*\//g, ""));
         }
 
         function isSpaceBetweenTokens(first: ts.Node, second: ts.Node) {
@@ -94,15 +110,6 @@ class JsxCurlySpacingWalker extends Lint.RuleWalker {
 
             return /\s/.test(text.replace(/\/\*.*?\*\//g, ""));
         }
-
-        // const isSpaceBetweenTokens = (first: ts.Node, second:: ts.Node) => {
-        //     const text = this.sourceFile.text.slice(first.end, second.getStart());
-        //     console.log(first.end, first.getText());
-        //     console.log(second.getStart(), second.getText());
-        //     console.log('text between tokens length:', text.length);
-        //     console.log('Text found:', encodeURI(text));
-        //     return /\s/.test(text.replace(/\/\*.*?\*\//g, ""));
-        // }
 
         if (this.always) {
             if (!isSpaceBetweenTokens(firstToken, secondToken)) {
@@ -117,7 +124,7 @@ class JsxCurlySpacingWalker extends Lint.RuleWalker {
                 this.addFailure(this.createFailure(nodeStart +  nodeWidth - 1, 1, failureString));
             }
         } else if (this.hasOption(OPTION_NEVER)) {
-            if (!isExpressionMultiline(node)) {
+            if (!isExpressionMultiline(node.getText())) {
                 if (isSpaceBetweenTokens(firstToken, secondToken)) {
                     let failureString = Rule.FAILURE_FORBIDDEN_SPACES_BEGINNING(firstToken.getText());
 
@@ -131,19 +138,5 @@ class JsxCurlySpacingWalker extends Lint.RuleWalker {
                 }
             }
         }
-    }
-
-    protected visitJsxExpression(node: ts.JsxExpression) {
-        this.validateBraceSpacing(node);
-
-        super.visitJsxExpression(node);
-    }
-
-    protected visitNode(node: ts.Node) {
-        if (node.kind === ts.SyntaxKind.JsxSpreadAttribute) {
-            this.validateBraceSpacing(node);
-        }
-
-        super.visitNode(node);
     }
 }
