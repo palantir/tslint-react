@@ -38,12 +38,19 @@ const passC = <App foo={
                         bar
                         } {...bar} />;
 
-const passC2 = <App foo={
-                            bar
+
+const failC = <App foo={ bar
+                       ~ [There should be no space after {]
                         }
-                        {
-                            ...bar
+                        {...bar
                         } />;
+
+const failC2 = <App foo={
+                          bar }
+                              ~ [There should be no space before }]
+                        {
+                          ...bar } />;
+                                 ~ [There should be no space before }]
 
 const passD = <App foo={bar/* comment */} {...baz/* comment */} />;
 

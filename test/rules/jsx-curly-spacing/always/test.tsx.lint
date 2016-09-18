@@ -43,6 +43,12 @@ const failC = <App foo={
                           ~ [A space is required after {]
                                  ~ [A space is required before }]
 
+const failC2 = <App foo={bar
+                        ~ [A space is required after {]
+                        } {
+                        ...bar} />;
+                              ~ [A space is required before }]
+
 const passD = <App foo={ bar /* comment */} { ...baz /* comment */} />;
 
 const failD = <App foo={bar/* comment */} {...baz/* comment */} />;
