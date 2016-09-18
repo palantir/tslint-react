@@ -103,6 +103,19 @@ class JsxCurlySpacingWalker extends Lint.RuleWalker {
             return /\n/.test(text.replace(/\/\*.*?\*\//g, ""));
         }
 
+        function getTokensCombinedText(firstToken: ts.Node, nextToken: ts.Node) {
+            const parentNodeText = nextToken.parent.getText();
+            const firstTokenText = firstToken.getText();
+            const secondTokenText = nextToken.getText();
+            const secondTokenTextLocation = parentNodeText.indexOf(secondTokenText);
+            const firstTokenTextLocation = parentNodeText.indexOf(firstTokenText);
+            const combinedTokeText = parentNodeText.slice(
+                firstTokenTextLocation,
+                secondTokenTextLocation + secondTokenText.length);
+
+            return combinedTokeText;
+        }
+
         function isSpaceBetweenTokens(first: ts.Node, second: ts.Node) {
             const text = node.getText().slice(
                 first.end - first.parent.getStart(),
@@ -124,13 +137,18 @@ class JsxCurlySpacingWalker extends Lint.RuleWalker {
                 this.addFailure(this.createFailure(nodeStart +  nodeWidth - 1, 1, failureString));
             }
         } else if (this.hasOption(OPTION_NEVER)) {
-            if (!isExpressionMultiline(node.getText())) {
+            const firstAndSecondTokensCombinedText = getTokensCombinedText(firstToken, secondToken);
+            const lastAndSecondToLastCombinedText = getTokensCombinedText(secondToLastToken, lastToken);
+
+            if (!isExpressionMultiline(firstAndSecondTokensCombinedText)) {
                 if (isSpaceBetweenTokens(firstToken, secondToken)) {
                     let failureString = Rule.FAILURE_FORBIDDEN_SPACES_BEGINNING(firstToken.getText());
 
                     this.addFailure(this.createFailure(nodeStart, 1, failureString));
                 }
+            }
 
+            if (!isExpressionMultiline(lastAndSecondToLastCombinedText)) {
                 if (isSpaceBetweenTokens(secondToLastToken, lastToken)) {
                     let failureString = Rule.FAILURE_FORBIDDEN_SPACES_END(lastToken.getText());
 
