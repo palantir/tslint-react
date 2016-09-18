@@ -75,8 +75,6 @@ export class Rule extends Lint.Rules.AbstractRule {
 }
 
 class JsxCurlySpacingWalker extends Lint.RuleWalker {
-    private always = this.hasOption(OPTION_ALWAYS) || false;
-
     protected visitJsxExpression(node: ts.JsxExpression) {
         this.validateBraceSpacing(node);
 
@@ -124,7 +122,7 @@ class JsxCurlySpacingWalker extends Lint.RuleWalker {
             return /\s/.test(text.replace(/\/\*.*?\*\//g, ""));
         }
 
-        if (this.always) {
+        if (this.hasOption(OPTION_ALWAYS)) {
             if (!isSpaceBetweenTokens(firstToken, secondToken)) {
                 let failureString = Rule.FAILURE_NO_BEGINNING_SPACE(firstToken.getText());
 
