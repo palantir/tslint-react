@@ -28,6 +28,31 @@ const SPACING_OBJECT = {
 };
 /* tslint:enable:object-literal-sort-keys */
 
+function isExpressionMultiline(text: string) {
+            return /\n/.test(text.replace(/\/\*.*?\*\//g, ""));
+        }
+
+function getTokensCombinedText(firstToken: ts.Node, nextToken: ts.Node) {
+    const parentNodeText = nextToken.parent.getText();
+    const firstTokenText = firstToken.getText();
+    const secondTokenText = nextToken.getText();
+    const secondTokenTextLocation = parentNodeText.indexOf(secondTokenText);
+    const firstTokenTextLocation = parentNodeText.indexOf(firstTokenText);
+    const combinedTokeText = parentNodeText.slice(
+        firstTokenTextLocation,
+        secondTokenTextLocation + secondTokenText.length);
+
+    return combinedTokeText;
+}
+
+function isSpaceBetweenTokens(first: ts.Node, second: ts.Node) {
+    const text = first.parent.getText().slice(
+        first.end - first.parent.getStart(),
+        second.getStart() - second.parent.getStart());
+
+    return /\s/.test(text.replace(/\/\*.*?\*\//g, ""));
+}
+
 export class Rule extends Lint.Rules.AbstractRule {
     /* tslint:disable:object-literal-sort-keys */
     public static metadata: Lint.IRuleMetadata = {
@@ -96,31 +121,6 @@ class JsxCurlySpacingWalker extends Lint.RuleWalker {
         const secondToLastToken = node.getChildAt(node.getChildCount() - 2);
         const nodeStart = node.getStart();
         const nodeWidth = node.getWidth();
-
-        function isExpressionMultiline(text: string) {
-            return /\n/.test(text.replace(/\/\*.*?\*\//g, ""));
-        }
-
-        function getTokensCombinedText(firstToken: ts.Node, nextToken: ts.Node) {
-            const parentNodeText = nextToken.parent.getText();
-            const firstTokenText = firstToken.getText();
-            const secondTokenText = nextToken.getText();
-            const secondTokenTextLocation = parentNodeText.indexOf(secondTokenText);
-            const firstTokenTextLocation = parentNodeText.indexOf(firstTokenText);
-            const combinedTokeText = parentNodeText.slice(
-                firstTokenTextLocation,
-                secondTokenTextLocation + secondTokenText.length);
-
-            return combinedTokeText;
-        }
-
-        function isSpaceBetweenTokens(first: ts.Node, second: ts.Node) {
-            const text = node.getText().slice(
-                first.end - first.parent.getStart(),
-                second.getStart() - second.parent.getStart());
-
-            return /\s/.test(text.replace(/\/\*.*?\*\//g, ""));
-        }
 
         if (this.hasOption(OPTION_ALWAYS)) {
             if (!isSpaceBetweenTokens(firstToken, secondToken)) {
