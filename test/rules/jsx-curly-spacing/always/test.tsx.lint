@@ -79,3 +79,13 @@ const failF = <App foo={{ bar:baz }} {...baz} />;
 
 const passG = <App foo={   { bar:baz }   } {   ...baz   } />;
 
+const passH = <App foo={ { bar:baz } } { ...baz }>
+                <div>{  }</div>
+              </App>;
+
+const failH = <App foo={ { bar:baz } } { ...baz }>
+                <div>{}</div>
+                     ~ [A space is required after {]
+                      ~ [A space is required before }]
+              </App>;
+
