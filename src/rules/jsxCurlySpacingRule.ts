@@ -27,10 +27,11 @@ const SPACING_OBJECT = {
     enum: SPACING_VALUES,
 };
 /* tslint:enable:object-literal-sort-keys */
+const newLineRegexp = /\n/;
 
 function isExpressionMultiline(text: string) {
-            return /\n/.test(text.replace(/\/\*.*?\*\//g, ""));
-        }
+    return newLineRegexp.test(text);
+}
 
 function getTokensCombinedText(firstToken: ts.Node, nextToken: ts.Node) {
     const parentNodeText = nextToken.parent.getText();
