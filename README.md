@@ -43,7 +43,7 @@ Sample configuration where `tslint.json` lives adjacent to your `node_modules` f
       size={size}
   />
   ```
-- `jsx-curly-spacing`
+- `jsx-curly-spacing` (since v1.1.0)
   - Requires _or_ bans spaces between curly brace characters in JSX.
   - Rule options: `["always", "never"]`
 - `jsx-no-lambda`
