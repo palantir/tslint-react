@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import * as Lint from "tslint/lib/lint";
+import * as Lint from "tslint";
 import * as ts from "typescript";
 
 const OPTION_ALWAYS = "always";
@@ -75,24 +75,25 @@ export class Rule extends Lint.Rules.AbstractRule {
             `[true, "${OPTION_NEVER}"]`,
         ],
         type: "style",
+        typescriptOnly: true,
     };
     /* tslint:enable:object-literal-sort-keys */
 
     public static FAILURE_NO_ENDING_SPACE = (tokenStr: string) => {
         return `A space is required before ${tokenStr}`;
-    };
+    }
 
     public static FAILURE_NO_BEGINNING_SPACE = (tokenStr: string) => {
         return `A space is required after ${tokenStr}`;
-    };
+    }
 
     public static FAILURE_FORBIDDEN_SPACES_BEGINNING = (tokenStr: string) => {
         return `There should be no space after ${tokenStr}`;
-    };
+    }
 
     public static FAILURE_FORBIDDEN_SPACES_END = (tokenStr: string) => {
         return `There should be no space before ${tokenStr}`;
-    };
+    }
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
         const walker = new JsxCurlySpacingWalker(sourceFile, this.getOptions());

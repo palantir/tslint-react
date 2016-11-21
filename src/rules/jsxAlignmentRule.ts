@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import * as Lint from "tslint/lib/lint";
+import * as Lint from "tslint";
 import * as ts from "typescript";
 
 export class Rule extends Lint.Rules.AbstractRule {
@@ -38,7 +38,7 @@ class JsxAlignmentWalker extends Lint.RuleWalker {
         if (this.isMultiline(node.openingElement)) {
             const startLocation = this.getLineAndCharacter(node);
             const closeLocation = this.getSourceFile().getLineAndCharacterOfPosition(
-                node.openingElement.getEnd() - ">".length
+                node.openingElement.getEnd() - ">".length,
             );
             this.checkElement(startLocation, node.openingElement.attributes, closeLocation, node.closingElement);
         }
@@ -56,9 +56,9 @@ class JsxAlignmentWalker extends Lint.RuleWalker {
 
     private checkElement(
         elementOpen: ts.LineAndCharacter,
-        attributes: (ts.JsxAttribute | ts.JsxSpreadAttribute)[],
+        attributes: Array<ts.JsxAttribute | ts.JsxSpreadAttribute>,
         elementClose: ts.LineAndCharacter,
-        closingTag?: ts.JsxClosingElement
+        closingTag?: ts.JsxClosingElement,
     ) {
         if (attributes == null || attributes.length === 0) { return; }
 
@@ -97,7 +97,7 @@ class JsxAlignmentWalker extends Lint.RuleWalker {
             this.addFailure(this.createFailure(
                 this.getSourceFile().getPositionOfLineAndCharacter(elementClose.line, elementClose.character),
                 1,
-                Rule.TAG_CLOSE_FAILURE
+                Rule.TAG_CLOSE_FAILURE,
             ));
         }
 

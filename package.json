@@ -23,7 +23,7 @@
     "glob": "^7.0.3",
     "npm-run-all": "^2.1.2",
     "path": "^0.12.7",
-    "tslint": "^3.11.0",
-    "typescript": "^1.8.10"
+    "tslint": "^4.0.1",
+    "typescript": "^2.0.10"
   }
 }

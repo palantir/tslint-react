@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import * as Lint from "tslint/lib/lint";
+import * as Lint from "tslint";
 import * as ts from "typescript";
 
 import { nodeIsKind } from "../guards";
@@ -45,7 +45,7 @@ class JsxNoStringRefWalker extends Lint.RuleWalker {
                     this.addFailure(this.createFailure(
                         initializer.getStart(),
                         initializer.getWidth(),
-                        Rule.FAILURE_STRING
+                        Rule.FAILURE_STRING,
                     ));
                 }
             }
