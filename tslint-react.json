@@ -2,6 +2,7 @@
     "rulesDirectory": "./rules",
     "rules": {
         "jsx-alignment": true,
+        "jsx-curly-spacing": [true, "never"],
         "jsx-no-lambda": true,
         "jsx-no-multiline-js": true,
         "jsx-no-string-ref": true,

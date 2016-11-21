@@ -1,9 +1,6 @@
 {
     "extends": "tslint:latest",
     "rules": {
-        "max-classes-per-file": [
-            true,
-            2
-        ]
+        "max-classes-per-file": [true, 2]
     }
 }
