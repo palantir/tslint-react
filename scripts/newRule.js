@@ -14,7 +14,7 @@ const rulePascalName = ruleKebabName.split("-").map((s) => s.charAt(0).toUpperCa
 const ruleCamelName = rulePascalName.charAt(0).toLowerCase() + rulePascalName.substr(1);
 const walkerClassName = `${rulePascalName}Walker`;
 
-const ruleTemplate = 
+const ruleTemplate =
 `/**
  * @license
  * Copyright 2016 Palantir Technologies, Inc.
@@ -33,7 +33,7 @@ const ruleTemplate =
  */
 
 import * as ts from "typescript";
-import * as Lint from "tslint/lib/lint";
+import * as Lint from "tslint";
 
 export class Rule extends Lint.Rules.AbstractRule {
     public static FAILURE_STRING = "** ERROR MESSAGE HERE **";
