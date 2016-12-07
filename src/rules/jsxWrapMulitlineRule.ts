@@ -19,7 +19,7 @@ import * as Lint from "tslint";
 import * as ts from "typescript";
 
 export class Rule extends Lint.Rules.AbstractRule {
-    public static FAILURE = "Multiline JSX elements must be wrapped in parenthesis";
+    public static FAILURE = "Multiline JSX elements must be wrapped in parentheses";
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
         return this.applyWithWalker(new JsxWrapMultilineWalker(sourceFile, this.getOptions()));

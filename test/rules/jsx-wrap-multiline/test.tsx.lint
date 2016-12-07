@@ -1,6 +1,3 @@
-test/rules/jsx-wrap-multilines/test.tsx.lint: Failed!
-Expected (from .lint file)
-Actual (from TSLint)
 const goodSingleLine = <div className="my-class" tabIndex={-1}>{children}</div>;
 
 const goodMultiline = (
