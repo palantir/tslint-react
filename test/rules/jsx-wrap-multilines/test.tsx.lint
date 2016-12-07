@@ -1,0 +1,42 @@
+test/rules/jsx-wrap-multilines/test.tsx.lint: Failed!
+Expected (from .lint file)
+Actual (from TSLint)
+const goodSingleLine = <div className="my-class" tabIndex={-1}>{children}</div>;
+
+const goodMultiline = (
+    <div
+        className="my-class"
+        tabIndex={-1}
+    >
+        {children}
+    </div>
+);
+
+const badMultiline = <div
+                     ~~~~~
+    className="my-class"
+~~~~~~~~~~~~~~~~~~~~~~~~~
+    tabIndex={-1}
+~~~~~~~~~~~~~~~~~~
+>
+~~
+    {children}
+~~~~~~~~~~~~~~~
+</div>;
+~~~~~~   [Multiline JSX elements must be wrapped in parenthesis]
+
+const goodSelfClosingMultiline = (
+    <div
+        className="my-class"
+        tabIndex={-1}
+    />
+);
+
+const badSelfClosingMultiline = <div
+                                ~~~~~
+    className="my-class"
+~~~~~~~~~~~~~~~~~~~~~~~~~
+    tabIndex={-1}
+~~~~~~~~~~~~~~~~~~
+/>;
+~~   [Multiline JSX elements must be wrapped in parenthesis]
