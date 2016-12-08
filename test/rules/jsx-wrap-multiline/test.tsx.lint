@@ -46,3 +46,5 @@ const badWrappedWithoutNewLines = (<div
     {children}
 </div>);
       ~   [New line requred before close parenthesis when wrapping multiline JSX elements]
+
+const goodSingleLineWrappedWithoutNewLines = (<div className="my-class">{children}</div>);
