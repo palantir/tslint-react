@@ -57,6 +57,10 @@ class JsxWrapMultilineWalker extends Lint.RuleWalker {
             return;
         }
 
+        if (node.parent.kind === ts.SyntaxKind.JsxElement) {
+            return;
+        }
+
         const siblings = node.parent.getChildren(sourceFile);
         const index = siblings.indexOf(node);
 
@@ -83,7 +87,7 @@ class JsxWrapMultilineWalker extends Lint.RuleWalker {
         }
 
         const endParenLine = this.getLine(nextToken.getStart(sourceFile));
-        if (endParenLine !== endLine + 1) {
+        if (endParenLine === endLine) {
             this.addFailureAtPositions(
                 node.getEnd(),
                 nextToken.getStart(sourceFile),
