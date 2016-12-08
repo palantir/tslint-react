@@ -1,3 +1,4 @@
+
 const goodSingleLine = <div className="my-class" tabIndex={-1}>{children}</div>;
 
 const goodMultiline = (
@@ -37,3 +38,11 @@ const badSelfClosingMultiline = <div
 ~~~~~~~~~~~~~~~~~~
 />;
 ~~   [Multiline JSX elements must be wrapped in parenthesis]
+
+const badWrappedWithoutNewLines = (<div
+                                  ~      [New line required after open parenthesis when wrapping multiline JSX elements]
+    className="my-class"
+>
+    {children}
+</div>);
+      ~   [New line requred before close parenthesis when wrapping multiline JSX elements]

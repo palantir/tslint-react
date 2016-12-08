@@ -19,7 +19,12 @@ import * as Lint from "tslint";
 import * as ts from "typescript";
 
 export class Rule extends Lint.Rules.AbstractRule {
-    public static FAILURE = "Multiline JSX elements must be wrapped in parentheses";
+    public static FAILURE_NOT_WRAPPED
+        = "Multiline JSX elements must be wrapped in parentheses";
+    public static FAILURE_MISSING_NEW_LINE_AFTER_OPEN
+        = "New line required after open parenthesis when wrapping multiline JSX elements";
+    public static FAILURE_MISSING_NEW_LINE_BEFORE_CLOSE
+    = "New line requred before close parenthesis when wrapping multiline JSX elements";
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
         return this.applyWithWalker(new JsxWrapMultilineWalker(sourceFile, this.getOptions()));
@@ -38,39 +43,68 @@ class JsxWrapMultilineWalker extends Lint.RuleWalker {
     }
 
     private checkNode(node: ts.JsxElement | ts.JsxSelfClosingElement) {
-        if (!this.isParenthesised(node) && this.isMultiline(node)) {
-            const sourceFile = this.getSourceFile();
-            const failure = this.createFailure(
-                node.getStart(sourceFile),
-                node.getWidth(sourceFile),
-                Rule.FAILURE,
-            );
-            this.addFailure(failure);
-        }
-    }
+        const sourceFile = this.getSourceFile();
 
-    private isParenthesised(node: ts.Node) {
+        const startLine = this.getLine(node.getStart(sourceFile));
+        const endLine = this.getLine(node.getEnd());
+
+        if (startLine === endLine) {
+            return;
+        }
+
         if (node.parent == null) {
-            return false;
+            this.addNotWrappedFailure(node);
+            return;
         }
 
-        const siblings = node.parent.getChildren(this.getSourceFile());
+        const siblings = node.parent.getChildren(sourceFile);
         const index = siblings.indexOf(node);
 
         const previousToken = siblings[index - 1];
         const nextToken = siblings[index + 1];
 
-        return previousToken != null
-            && previousToken.kind === ts.SyntaxKind.OpenParenToken
-            && nextToken != null
-            && nextToken.kind === ts.SyntaxKind.CloseParenToken;
+        if (
+            previousToken == null
+            || previousToken.kind !== ts.SyntaxKind.OpenParenToken
+            || nextToken == null
+            || nextToken.kind !== ts.SyntaxKind.CloseParenToken
+        ) {
+            this.addNotWrappedFailure(node);
+            return;
+        }
+
+        const startParenLine = this.getLine(previousToken.getStart(sourceFile));
+        if (startParenLine === startLine) {
+            this.addFailureAtPositions(
+                previousToken.getStart(sourceFile),
+                node.getStart(sourceFile) - 1,
+                Rule.FAILURE_MISSING_NEW_LINE_AFTER_OPEN,
+            );
+        }
+
+        const endParenLine = this.getLine(nextToken.getStart(sourceFile));
+        if (endParenLine !== endLine + 1) {
+            this.addFailureAtPositions(
+                node.getEnd(),
+                nextToken.getStart(sourceFile),
+                Rule.FAILURE_MISSING_NEW_LINE_BEFORE_CLOSE,
+            );
+        }
     }
 
-    private isMultiline(node: ts.Node) {
-        const startLine = this.getLine(node.getStart(this.getSourceFile()));
-        const endLine = this.getLine(node.getEnd());
+    private addNotWrappedFailure(node: ts.JsxElement | ts.JsxSelfClosingElement) {
+        const sourceFile = this.getSourceFile();
+        const failure = this.createFailure(
+            node.getStart(sourceFile),
+            node.getWidth(sourceFile),
+            Rule.FAILURE_NOT_WRAPPED,
+        );
+        this.addFailure(failure);
+    }
 
-        return startLine !== endLine;
+    private addFailureAtPositions(start: number, end: number, message: string) {
+        const failure = this.createFailure(start, end - start + 1, message);
+        this.addFailure(failure);
     }
 
     private getLine(position: number) {
