@@ -65,6 +65,22 @@ Sample configuration where `tslint.json` lives adjacent to your `node_modules` f
   <div className="foo" />
   ```
   - Rule options: _none_
+- `jsx-wrap-multiline` (since v2.1)
+  - Enforces that multiline JSX expressions are wrapped with parentheses.
+  - Opening parenthesis must be followed by a newline.
+  - Closing parenthesis must be preceded by a newline.
+  ```ts
+  // bad
+  const button = <button type="submit"
+      Submit
+  </button>;
+  // good
+  const button = (
+      <button type="submit">
+          Submit
+      </button>
+  );
+  ```
 
 ### Development
 
