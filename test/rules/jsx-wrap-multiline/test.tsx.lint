@@ -21,7 +21,7 @@ const badMultiline = <div
     {children}
 ~~~~~~~~~~~~~~~
 </div>;
-~~~~~~   [Multiline JSX elements must be wrapped in parenthesis]
+~~~~~~   [Multiline JSX elements must be wrapped in parentheses]
 
 const goodSelfClosingMultiline = (
     <div
@@ -37,7 +37,7 @@ const badSelfClosingMultiline = <div
     tabIndex={-1}
 ~~~~~~~~~~~~~~~~~~
 />;
-~~   [Multiline JSX elements must be wrapped in parenthesis]
+~~   [Multiline JSX elements must be wrapped in parentheses]
 
 const badWrappedWithoutNewLines = (<div
                                   ~      [New line required after open parenthesis when wrapping multiline JSX elements]
