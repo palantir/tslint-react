@@ -71,7 +71,7 @@ Sample configuration where `tslint.json` lives adjacent to your `node_modules` f
   - Closing parenthesis must be preceded by a newline.
   ```ts
   // bad
-  const button = <button type="submit"
+  const button = <button type="submit">
       Submit
   </button>;
   // good
