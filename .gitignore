@@ -3,3 +3,7 @@
 /build/
 node_modules/
 tscommand*.txt
+
+# vim files
+*.swo
+*.swp

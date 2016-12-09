@@ -46,12 +46,34 @@ function getTokensCombinedText(firstToken: ts.Node, nextToken: ts.Node) {
     return combinedTokeText;
 }
 
-function isSpaceBetweenTokens(first: ts.Node, second: ts.Node) {
-    const text = first.parent.getText().slice(
-        first.end - first.parent.getStart(),
-        second.getStart() - second.parent.getStart());
+function isSpaceBetweenTokens(firstNode: ts.Node, secondNode: ts.Node, comments: ts.CommentRange[]) {
+    if (firstNode.parent !== secondNode.parent) {
+        throw Error("Expected identical parents for both nodes");
+    }
+    return (secondNode.getStart() - firstNode.getStart() - firstNode.getWidth()) > getTotalCharCount(comments);
+}
 
-    return /\s/.test(text.replace(/\/\*.*?\*\//g, ""));
+function getCommentsBetweenTokens(firstNode: ts.Node, secondNode: ts.Node) {
+    if (firstNode.parent !== secondNode.parent) {
+        throw Error("Expected identical parents for both nodes");
+    }
+    const parent = firstNode.parent;
+    const parentStart = parent.getStart();
+    const secondNodeStart =  secondNode.getFullStart();
+    const firstNodeEnd = firstNode.getStart() + firstNode.getWidth();
+    const secondNodeRelativeStart = secondNodeStart - parentStart;
+    const firstNodeRelativeEnd = firstNodeEnd - parentStart;
+    const parentText = parent.getText();
+    const trailingComments = ts.getTrailingCommentRanges(parentText, firstNodeRelativeEnd) || [];
+    const leadingComments = ts.getLeadingCommentRanges(parentText, secondNodeRelativeStart) || [];
+
+    return trailingComments.concat(leadingComments);
+}
+
+function getTotalCharCount(comments: ts.CommentRange[]) {
+    return comments
+        .map((comment) => comment.end - comment.pos)
+        .reduce((l, r) => l + r, 0);
 }
 
 export class Rule extends Lint.Rules.AbstractRule {
@@ -112,7 +134,6 @@ class JsxCurlySpacingWalker extends Lint.RuleWalker {
         if (node.kind === ts.SyntaxKind.JsxSpreadAttribute) {
             this.validateBraceSpacing(node);
         }
-
         super.visitNode(node);
     }
 
@@ -125,23 +146,26 @@ class JsxCurlySpacingWalker extends Lint.RuleWalker {
         const nodeWidth = node.getWidth();
 
         if (this.hasOption(OPTION_ALWAYS)) {
-            if (!isSpaceBetweenTokens(firstToken, secondToken)) {
+            let comments = getCommentsBetweenTokens(firstToken, secondToken);
+            if (!isSpaceBetweenTokens(firstToken, secondToken, comments)) {
                 let failureString = Rule.FAILURE_NO_BEGINNING_SPACE(firstToken.getText());
 
                 this.addFailure(this.createFailure(nodeStart, 1, failureString));
             }
 
-            if (!isSpaceBetweenTokens(secondToLastToken, lastToken)) {
+            comments = getCommentsBetweenTokens(secondToLastToken, lastToken);
+            if (!isSpaceBetweenTokens(secondToLastToken, lastToken, comments)) {
                 let failureString = Rule.FAILURE_NO_ENDING_SPACE(lastToken.getText());
 
-                this.addFailure(this.createFailure(nodeStart +  nodeWidth - 1, 1, failureString));
+                this.addFailure(this.createFailure(nodeStart + nodeWidth - 1, 1, failureString));
             }
         } else if (this.hasOption(OPTION_NEVER)) {
             const firstAndSecondTokensCombinedText = getTokensCombinedText(firstToken, secondToken);
             const lastAndSecondToLastCombinedText = getTokensCombinedText(secondToLastToken, lastToken);
 
             if (!isExpressionMultiline(firstAndSecondTokensCombinedText)) {
-                if (isSpaceBetweenTokens(firstToken, secondToken)) {
+                let comments = getCommentsBetweenTokens(firstToken, secondToken);
+                if (isSpaceBetweenTokens(firstToken, secondToken, comments)) {
                     let failureString = Rule.FAILURE_FORBIDDEN_SPACES_BEGINNING(firstToken.getText());
 
                     this.addFailure(this.createFailure(nodeStart, 1, failureString));
@@ -149,10 +173,11 @@ class JsxCurlySpacingWalker extends Lint.RuleWalker {
             }
 
             if (!isExpressionMultiline(lastAndSecondToLastCombinedText)) {
-                if (isSpaceBetweenTokens(secondToLastToken, lastToken)) {
+                let comments = getCommentsBetweenTokens(secondToLastToken, lastToken);
+                if (isSpaceBetweenTokens(secondToLastToken, lastToken, comments)) {
                     let failureString = Rule.FAILURE_FORBIDDEN_SPACES_END(lastToken.getText());
 
-                    this.addFailure(this.createFailure(nodeStart +  nodeWidth - 1, 1, failureString));
+                    this.addFailure(this.createFailure(nodeStart + nodeWidth - 1, 1, failureString));
                 }
             }
         }
