@@ -6,6 +6,7 @@
         "jsx-no-lambda": true,
         "jsx-no-multiline-js": true,
         "jsx-no-string-ref": true,
-        "jsx-self-close": true
+        "jsx-self-close": true,
+        "jsx-wrap-multiline": true
     }
 }
