@@ -46,30 +46,6 @@ function getTokensCombinedText(firstToken: ts.Node, nextToken: ts.Node) {
     return combinedTokeText;
 }
 
-function isSpaceBetweenTokens(firstNode: ts.Node, secondNode: ts.Node, comments: ts.CommentRange[]) {
-    if (firstNode.parent !== secondNode.parent) {
-        throw Error("Expected identical parents for both nodes");
-    }
-    return (secondNode.getStart() - firstNode.getStart() - firstNode.getWidth()) > getTotalCharCount(comments);
-}
-
-function getCommentsBetweenTokens(firstNode: ts.Node, secondNode: ts.Node) {
-    if (firstNode.parent !== secondNode.parent) {
-        throw Error("Expected identical parents for both nodes");
-    }
-    const parent = firstNode.parent;
-    const parentStart = parent.getStart();
-    const secondNodeStart =  secondNode.getFullStart();
-    const firstNodeEnd = firstNode.getStart() + firstNode.getWidth();
-    const secondNodeRelativeStart = secondNodeStart - parentStart;
-    const firstNodeRelativeEnd = firstNodeEnd - parentStart;
-    const parentText = parent.getText();
-    const trailingComments = ts.getTrailingCommentRanges(parentText, firstNodeRelativeEnd) || [];
-    const leadingComments = ts.getLeadingCommentRanges(parentText, secondNodeRelativeStart) || [];
-
-    return trailingComments.concat(leadingComments);
-}
-
 function getTotalCharCount(comments: ts.CommentRange[]) {
     return comments
         .map((comment) => comment.end - comment.pos)
@@ -146,40 +122,70 @@ class JsxCurlySpacingWalker extends Lint.RuleWalker {
         const nodeWidth = node.getWidth();
 
         if (this.hasOption(OPTION_ALWAYS)) {
-            let comments = getCommentsBetweenTokens(firstToken, secondToken);
-            if (!isSpaceBetweenTokens(firstToken, secondToken, comments)) {
+            if (!this.getDeleteFixForSpaceBetweenTokens(firstToken, secondToken)) {
+                const fix = new Lint.Fix(Rule.metadata.ruleName, [
+                    this.appendText(secondToken.getFullStart(), " "),
+                ]);
                 let failureString = Rule.FAILURE_NO_BEGINNING_SPACE(firstToken.getText());
 
-                this.addFailure(this.createFailure(nodeStart, 1, failureString));
+                this.addFailure(this.createFailure(nodeStart, 1, failureString, fix));
             }
 
-            comments = getCommentsBetweenTokens(secondToLastToken, lastToken);
-            if (!isSpaceBetweenTokens(secondToLastToken, lastToken, comments)) {
+            if (!this.getDeleteFixForSpaceBetweenTokens(secondToLastToken, lastToken)) {
+                const fix = new Lint.Fix(Rule.metadata.ruleName, [
+                    this.appendText(lastToken.getStart(), " "),
+                ]);
                 let failureString = Rule.FAILURE_NO_ENDING_SPACE(lastToken.getText());
 
-                this.addFailure(this.createFailure(nodeStart + nodeWidth - 1, 1, failureString));
+                this.addFailure(this.createFailure(nodeStart + nodeWidth - 1, 1, failureString, fix));
             }
         } else if (this.hasOption(OPTION_NEVER)) {
             const firstAndSecondTokensCombinedText = getTokensCombinedText(firstToken, secondToken);
             const lastAndSecondToLastCombinedText = getTokensCombinedText(secondToLastToken, lastToken);
 
             if (!isExpressionMultiline(firstAndSecondTokensCombinedText)) {
-                let comments = getCommentsBetweenTokens(firstToken, secondToken);
-                if (isSpaceBetweenTokens(firstToken, secondToken, comments)) {
+                let fix = this.getDeleteFixForSpaceBetweenTokens(firstToken, secondToken);
+                if (fix) {
                     let failureString = Rule.FAILURE_FORBIDDEN_SPACES_BEGINNING(firstToken.getText());
 
-                    this.addFailure(this.createFailure(nodeStart, 1, failureString));
+                    this.addFailure(this.createFailure(nodeStart, 1, failureString, fix));
                 }
             }
 
             if (!isExpressionMultiline(lastAndSecondToLastCombinedText)) {
-                let comments = getCommentsBetweenTokens(secondToLastToken, lastToken);
-                if (isSpaceBetweenTokens(secondToLastToken, lastToken, comments)) {
+                let fix = this.getDeleteFixForSpaceBetweenTokens(secondToLastToken, lastToken);
+                if (fix) {
                     let failureString = Rule.FAILURE_FORBIDDEN_SPACES_END(lastToken.getText());
 
-                    this.addFailure(this.createFailure(nodeStart + nodeWidth - 1, 1, failureString));
+                    this.addFailure(this.createFailure(nodeStart + nodeWidth - 1, 1, failureString, fix));
                 }
             }
+        }
+    }
+
+    private getDeleteFixForSpaceBetweenTokens(firstNode: ts.Node, secondNode: ts.Node) {
+        if (firstNode.parent !== secondNode.parent) {
+            throw Error("Expected identical parents for both nodes");
+        }
+
+        const parent = firstNode.parent;
+        const parentStart = parent.getStart();
+        const secondNodeStart =  secondNode.getFullStart();
+        const firstNodeEnd = firstNode.getStart() + firstNode.getWidth();
+        const secondNodeRelativeStart = secondNodeStart - parentStart;
+        const firstNodeRelativeEnd = firstNodeEnd - parentStart;
+        const parentText = parent.getText();
+        const trailingComments = ts.getTrailingCommentRanges(parentText, firstNodeRelativeEnd) || [];
+        const leadingComments = ts.getLeadingCommentRanges(parentText, secondNodeRelativeStart) || [];
+        const comments = trailingComments.concat(leadingComments);
+
+        if (secondNode.getStart() - firstNode.getStart() - firstNode.getWidth() > getTotalCharCount(comments)) {
+            const replacements = comments.map((comment) => parentText.slice(comment.pos, comment.end)).join("");
+            return new Lint.Fix(Rule.metadata.ruleName, [
+                this.createReplacement(secondNodeStart, secondNode.getStart() - secondNodeStart, replacements),
+            ]);
+        } else {
+            return null;
         }
     }
 }
