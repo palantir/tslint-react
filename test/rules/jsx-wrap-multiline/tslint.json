@@ -1,5 +1,5 @@
 {
     "rules": {
-        "jsx-wrap-mulitline": true
+        "jsx-wrap-multiline": true
     }
 }
