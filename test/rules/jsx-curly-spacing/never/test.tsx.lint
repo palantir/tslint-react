@@ -86,3 +86,6 @@ const failH = <App foo={{ bar:baz }} {...baz}>
                      ~ [There should be no space after {]
                         ~ [There should be no space before }]
               </App>;
+
+const passI = <App foo={/* comment */
+                   /* comment 2 */ should_not_matter_because_multiline}/>

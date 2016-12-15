@@ -156,8 +156,14 @@ class JsxCurlySpacingWalker extends Lint.RuleWalker {
                 let fix = this.getDeleteFixForSpaceBetweenTokens(secondToLastToken, lastToken);
                 if (fix) {
                     let failureString = Rule.FAILURE_FORBIDDEN_SPACES_END(lastToken.getText());
-
-                    this.addFailure(this.createFailure(nodeStart + nodeWidth - 1, 1, failureString, fix));
+                    let failure: Lint.RuleFailure;
+                    // degenerate case, do not apply fix
+                    if (firstToken === secondToLastToken) {
+                        failure = this.createFailure(nodeStart + nodeWidth - 1, 1, failureString);
+                    } else {
+                        failure = this.createFailure(nodeStart + nodeWidth - 1, 1, failureString, fix);
+                    }
+                    this.addFailure(failure);
                 }
             }
         }
