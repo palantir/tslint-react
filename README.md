@@ -46,6 +46,7 @@ Sample configuration where `tslint.json` lives adjacent to your `node_modules` f
 - `jsx-curly-spacing` (since v1.1.0)
   - Requires _or_ bans spaces between curly brace characters in JSX.
   - Rule options: `["always", "never"]`
+  - _Includes automatic code fix_
 - `jsx-no-lambda`
   - Creating new anonymous functions (with either the `function` syntax or ES2015 arrow syntax) inside the `render` call stack works against _pure component rendering_. When doing an equality check between two lambdas, React will always consider them unequal values and force the component to re-render more often than necessary.
   - Rule options: _none_
