@@ -46,12 +46,10 @@ function getTokensCombinedText(firstToken: ts.Node, nextToken: ts.Node) {
     return combinedTokeText;
 }
 
-function isSpaceBetweenTokens(first: ts.Node, second: ts.Node) {
-    const text = first.parent.getText().slice(
-        first.end - first.parent.getStart(),
-        second.getStart() - second.parent.getStart());
-
-    return /\s/.test(text.replace(/\/\*.*?\*\//g, ""));
+function getTotalCharCount(comments: ts.CommentRange[]) {
+    return comments
+        .map((comment) => comment.end - comment.pos)
+        .reduce((l, r) => l + r, 0);
 }
 
 export class Rule extends Lint.Rules.AbstractRule {
@@ -112,7 +110,6 @@ class JsxCurlySpacingWalker extends Lint.RuleWalker {
         if (node.kind === ts.SyntaxKind.JsxSpreadAttribute) {
             this.validateBraceSpacing(node);
         }
-
         super.visitNode(node);
     }
 
@@ -125,36 +122,76 @@ class JsxCurlySpacingWalker extends Lint.RuleWalker {
         const nodeWidth = node.getWidth();
 
         if (this.hasOption(OPTION_ALWAYS)) {
-            if (!isSpaceBetweenTokens(firstToken, secondToken)) {
+            let deleteFix = this.getDeleteFixForSpaceBetweenTokens(firstToken, secondToken);
+            if (deleteFix === undefined) {
+                const fix = new Lint.Fix(Rule.metadata.ruleName, [
+                    this.appendText(secondToken.getFullStart(), " "),
+                ]);
                 let failureString = Rule.FAILURE_NO_BEGINNING_SPACE(firstToken.getText());
 
-                this.addFailure(this.createFailure(nodeStart, 1, failureString));
+                this.addFailure(this.createFailure(nodeStart, 1, failureString, fix));
             }
 
-            if (!isSpaceBetweenTokens(secondToLastToken, lastToken)) {
+            deleteFix = this.getDeleteFixForSpaceBetweenTokens(secondToLastToken, lastToken);
+            if (deleteFix === undefined) {
+                const fix = new Lint.Fix(Rule.metadata.ruleName, [
+                    this.appendText(lastToken.getStart(), " "),
+                ]);
                 let failureString = Rule.FAILURE_NO_ENDING_SPACE(lastToken.getText());
 
-                this.addFailure(this.createFailure(nodeStart +  nodeWidth - 1, 1, failureString));
+                this.addFailure(this.createFailure(nodeStart + nodeWidth - 1, 1, failureString, fix));
             }
         } else if (this.hasOption(OPTION_NEVER)) {
             const firstAndSecondTokensCombinedText = getTokensCombinedText(firstToken, secondToken);
             const lastAndSecondToLastCombinedText = getTokensCombinedText(secondToLastToken, lastToken);
 
             if (!isExpressionMultiline(firstAndSecondTokensCombinedText)) {
-                if (isSpaceBetweenTokens(firstToken, secondToken)) {
+                const fix = this.getDeleteFixForSpaceBetweenTokens(firstToken, secondToken);
+                if (fix !== undefined) {
                     let failureString = Rule.FAILURE_FORBIDDEN_SPACES_BEGINNING(firstToken.getText());
 
-                    this.addFailure(this.createFailure(nodeStart, 1, failureString));
+                    this.addFailure(this.createFailure(nodeStart, 1, failureString, fix));
                 }
             }
 
             if (!isExpressionMultiline(lastAndSecondToLastCombinedText)) {
-                if (isSpaceBetweenTokens(secondToLastToken, lastToken)) {
+                const fix = this.getDeleteFixForSpaceBetweenTokens(secondToLastToken, lastToken);
+                if (fix !== undefined) {
                     let failureString = Rule.FAILURE_FORBIDDEN_SPACES_END(lastToken.getText());
-
-                    this.addFailure(this.createFailure(nodeStart +  nodeWidth - 1, 1, failureString));
+                    // degenerate case when firstToken is the same as the secondToLastToken as we would
+                    // have already queued up a fix in the previous branch, do not apply fix
+                    const failure = firstToken === secondToLastToken ?
+                        this.createFailure(nodeStart + nodeWidth - 1, 1, failureString) :
+                        this.createFailure(nodeStart + nodeWidth - 1, 1, failureString, fix);
+                    this.addFailure(failure);
                 }
             }
+        }
+    }
+
+    private getDeleteFixForSpaceBetweenTokens(firstNode: ts.Node, secondNode: ts.Node) {
+        if (firstNode.parent !== secondNode.parent) {
+            throw Error("Expected identical parents for both nodes");
+        }
+
+        const parent = firstNode.parent;
+        const parentStart = parent.getStart();
+        const secondNodeStart =  secondNode.getFullStart();
+        const firstNodeEnd = firstNode.getStart() + firstNode.getWidth();
+        const secondNodeRelativeStart = secondNodeStart - parentStart;
+        const firstNodeRelativeEnd = firstNodeEnd - parentStart;
+        const parentText = parent.getText();
+        const trailingComments = ts.getTrailingCommentRanges(parentText, firstNodeRelativeEnd) || [];
+        const leadingComments = ts.getLeadingCommentRanges(parentText, secondNodeRelativeStart) || [];
+        const comments = trailingComments.concat(leadingComments);
+
+        if (secondNode.getStart() - firstNode.getStart() - firstNode.getWidth() > getTotalCharCount(comments)) {
+            const replacements = comments.map((comment) => parentText.slice(comment.pos, comment.end)).join("");
+            return new Lint.Fix(Rule.metadata.ruleName, [
+                this.createReplacement(secondNodeStart, secondNode.getStart() - secondNodeStart, replacements),
+            ]);
+        } else {
+            return undefined;
         }
     }
 }

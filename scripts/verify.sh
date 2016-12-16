@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ret=0;
-for path in ./test/rules/**/tslint.json; do
+for path in `find test -name tslint.json`; do
     tslint -r ./build/rules/ --test $path/..
     val=$?
     if [ "$val" -ne "0" ]; then

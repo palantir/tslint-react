@@ -1,0 +1,60 @@
+const passA = <App foo={ bar } />;
+
+const failA = <App foo={ bar } />;
+
+const failA3 = <App foo={ bar } />;
+
+const passB = <App foo={ bar } { ...bar } />;
+
+const failB = <App foo={ bar }  { ...bar } />;
+
+const failB2 = <App foo={ bar } { ...bar } />;
+
+const failB3 = <App foo={ bar } { ...bar } />;
+
+const failB4 = <App foo={ bar } { ...bar } />;
+
+const failB5 = <App foo={ bar } { ...bar } />;
+
+const passC = <App foo={
+                            bar
+                        }
+                        {
+                            ...bar
+                        } />;
+
+const failC = <App foo={
+                        bar
+                        } { ...bar } />;
+
+const failC2 = <App foo={ bar
+                        } {
+                        ...bar } />;
+
+const passD = <App foo={ bar /* comment */} { ...baz /* comment */} />;
+
+const failD = <App foo={ bar/* comment */ } { ...baz/* comment */ } />;
+
+const failD2 = <App foo={ bar /* comment */} { ...baz/* comment */ } />;
+
+const passE = <App foo={ { bar:baz } } />;
+
+const failE = <App foo={ { bar:baz } } />;
+
+
+const passF = <App foo={ { bar:baz } } { ...baz } />;
+
+const failF = <App foo={ { bar:baz } } { ...baz } />;
+
+const passG = <App foo={   { bar:baz }   } {   ...baz   } />;
+
+const passH = <App foo={ { bar:baz } } { ...baz }>
+                <div>{  }</div>
+              </App>;
+
+const failH = <App foo={ { bar:baz } } { ...baz }>
+                <div>{  }</div>
+              </App>;
+
+const passI = <App foo={/* comment */
+                   /* comment 2 */ should_not_matter_because_multiline }/>
