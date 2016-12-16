@@ -122,7 +122,8 @@ class JsxCurlySpacingWalker extends Lint.RuleWalker {
         const nodeWidth = node.getWidth();
 
         if (this.hasOption(OPTION_ALWAYS)) {
-            if (!this.getDeleteFixForSpaceBetweenTokens(firstToken, secondToken)) {
+            let deleteFix = this.getDeleteFixForSpaceBetweenTokens(firstToken, secondToken);
+            if (deleteFix === undefined) {
                 const fix = new Lint.Fix(Rule.metadata.ruleName, [
                     this.appendText(secondToken.getFullStart(), " "),
                 ]);
@@ -131,7 +132,8 @@ class JsxCurlySpacingWalker extends Lint.RuleWalker {
                 this.addFailure(this.createFailure(nodeStart, 1, failureString, fix));
             }
 
-            if (!this.getDeleteFixForSpaceBetweenTokens(secondToLastToken, lastToken)) {
+            deleteFix = this.getDeleteFixForSpaceBetweenTokens(secondToLastToken, lastToken);
+            if (deleteFix === undefined) {
                 const fix = new Lint.Fix(Rule.metadata.ruleName, [
                     this.appendText(lastToken.getStart(), " "),
                 ]);
@@ -144,8 +146,8 @@ class JsxCurlySpacingWalker extends Lint.RuleWalker {
             const lastAndSecondToLastCombinedText = getTokensCombinedText(secondToLastToken, lastToken);
 
             if (!isExpressionMultiline(firstAndSecondTokensCombinedText)) {
-                let fix = this.getDeleteFixForSpaceBetweenTokens(firstToken, secondToken);
-                if (fix) {
+                const fix = this.getDeleteFixForSpaceBetweenTokens(firstToken, secondToken);
+                if (fix !== undefined) {
                     let failureString = Rule.FAILURE_FORBIDDEN_SPACES_BEGINNING(firstToken.getText());
 
                     this.addFailure(this.createFailure(nodeStart, 1, failureString, fix));
@@ -153,16 +155,14 @@ class JsxCurlySpacingWalker extends Lint.RuleWalker {
             }
 
             if (!isExpressionMultiline(lastAndSecondToLastCombinedText)) {
-                let fix = this.getDeleteFixForSpaceBetweenTokens(secondToLastToken, lastToken);
-                if (fix) {
+                const fix = this.getDeleteFixForSpaceBetweenTokens(secondToLastToken, lastToken);
+                if (fix !== undefined) {
                     let failureString = Rule.FAILURE_FORBIDDEN_SPACES_END(lastToken.getText());
-                    let failure: Lint.RuleFailure;
-                    // degenerate case, do not apply fix
-                    if (firstToken === secondToLastToken) {
-                        failure = this.createFailure(nodeStart + nodeWidth - 1, 1, failureString);
-                    } else {
-                        failure = this.createFailure(nodeStart + nodeWidth - 1, 1, failureString, fix);
-                    }
+                    // degenerate case when firstToken is the same as the secondToLastToken as we would
+                    // have already queued up a fix in the previous branch, do not apply fix
+                    const failure = firstToken === secondToLastToken ?
+                        this.createFailure(nodeStart + nodeWidth - 1, 1, failureString) :
+                        this.createFailure(nodeStart + nodeWidth - 1, 1, failureString, fix);
                     this.addFailure(failure);
                 }
             }
@@ -191,7 +191,7 @@ class JsxCurlySpacingWalker extends Lint.RuleWalker {
                 this.createReplacement(secondNodeStart, secondNode.getStart() - secondNodeStart, replacements),
             ]);
         } else {
-            return null;
+            return undefined;
         }
     }
 }
