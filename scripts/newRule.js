@@ -32,8 +32,8 @@ const ruleTemplate =
  * limitations under the License.
  */
 
-import * as ts from "typescript";
 import * as Lint from "tslint";
+import * as ts from "typescript";
 
 export class Rule extends Lint.Rules.AbstractRule {
     public static FAILURE_STRING = "** ERROR MESSAGE HERE **";
