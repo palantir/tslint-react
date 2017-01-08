@@ -40,8 +40,8 @@ export class Rule extends Lint.Rules.AbstractRule {
     };
     /* tslint:enable:object-literal-sort-keys */
 
-    public static FAILURE_STRING_FACTORY = (expression: string, messageAddition?: string) => {
-        return `Use of the prop '${expression}' is not allowed.${messageAddition ? " " + messageAddition : ""}`;
+    public static FAILURE_STRING_FACTORY = (propName: string, explanation?: string) => {
+        return `Use of the prop '${propName}' is not allowed.${explanation ? " " + explanation : ""}`;
     }
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
@@ -69,18 +69,13 @@ class JsxBanPropsWalker extends Lint.RuleWalker {
             super.visitNode(node);
             this.isInJsxAttribute = false;
         } else if (node.kind === ts.SyntaxKind.Identifier && this.isInJsxAttribute) {
-            const name = (node as ts.Identifier).text;
-            if (name in this.bannedProps) {
-                const bannedPropExplanation = this.bannedProps[name];
-                this.reportFailure(node, name, bannedPropExplanation);
+            const propName = (node as ts.Identifier).text;
+            if (propName in this.bannedProps) {
+                const propBanExplanation = this.bannedProps[propName];
+                this.addFailureAtNode(node, Rule.FAILURE_STRING_FACTORY(propName, propBanExplanation));
             }
         } else {
             super.visitNode(node);
         }
-    }
-
-    private reportFailure(node: ts.Node, name: string, explanation?: string) {
-        this.addFailure(this.createFailure(node.getStart(), node.getWidth(),
-            Rule.FAILURE_STRING_FACTORY(name, explanation)));
     }
 }
