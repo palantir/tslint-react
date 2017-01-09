@@ -127,7 +127,7 @@ class JsxCurlySpacingWalker extends Lint.RuleWalker {
                 const fix = new Lint.Fix(Rule.metadata.ruleName, [
                     this.appendText(secondToken.getFullStart(), " "),
                 ]);
-                let failureString = Rule.FAILURE_NO_BEGINNING_SPACE(firstToken.getText());
+                const failureString = Rule.FAILURE_NO_BEGINNING_SPACE(firstToken.getText());
 
                 this.addFailure(this.createFailure(nodeStart, 1, failureString, fix));
             }
@@ -137,7 +137,7 @@ class JsxCurlySpacingWalker extends Lint.RuleWalker {
                 const fix = new Lint.Fix(Rule.metadata.ruleName, [
                     this.appendText(lastToken.getStart(), " "),
                 ]);
-                let failureString = Rule.FAILURE_NO_ENDING_SPACE(lastToken.getText());
+                const failureString = Rule.FAILURE_NO_ENDING_SPACE(lastToken.getText());
 
                 this.addFailure(this.createFailure(nodeStart + nodeWidth - 1, 1, failureString, fix));
             }
@@ -148,7 +148,7 @@ class JsxCurlySpacingWalker extends Lint.RuleWalker {
             if (!isExpressionMultiline(firstAndSecondTokensCombinedText)) {
                 const fix = this.getDeleteFixForSpaceBetweenTokens(firstToken, secondToken);
                 if (fix !== undefined) {
-                    let failureString = Rule.FAILURE_FORBIDDEN_SPACES_BEGINNING(firstToken.getText());
+                    const failureString = Rule.FAILURE_FORBIDDEN_SPACES_BEGINNING(firstToken.getText());
 
                     this.addFailure(this.createFailure(nodeStart, 1, failureString, fix));
                 }
@@ -157,7 +157,7 @@ class JsxCurlySpacingWalker extends Lint.RuleWalker {
             if (!isExpressionMultiline(lastAndSecondToLastCombinedText)) {
                 const fix = this.getDeleteFixForSpaceBetweenTokens(secondToLastToken, lastToken);
                 if (fix !== undefined) {
-                    let failureString = Rule.FAILURE_FORBIDDEN_SPACES_END(lastToken.getText());
+                    const failureString = Rule.FAILURE_FORBIDDEN_SPACES_END(lastToken.getText());
                     // degenerate case when firstToken is the same as the secondToLastToken as we would
                     // have already queued up a fix in the previous branch, do not apply fix
                     const failure = firstToken === secondToLastToken ?
