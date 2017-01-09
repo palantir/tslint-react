@@ -63,19 +63,19 @@ class JsxBanPropsWalker extends Lint.RuleWalker {
             : new Map<string, string>();
     }
 
-    protected visitNode(node: ts.Node) {
-        if (node.kind === ts.SyntaxKind.JsxAttribute) {
-            this.isInJsxAttribute = true;
-            super.visitNode(node);
-            this.isInJsxAttribute = false;
-        } else if (node.kind === ts.SyntaxKind.Identifier && this.isInJsxAttribute) {
+    protected visitJsxAttribute(node: ts.JsxAttribute) {
+        this.isInJsxAttribute = true;
+        super.visitJsxAttribute(node);
+        this.isInJsxAttribute = false;
+    }
+
+    protected visitIdentifier(node: ts.Identifier) {
+        if (this.isInJsxAttribute) {
             const propName = (node as ts.Identifier).text;
             if (this.bannedProps.has(propName)) {
                 const propBanExplanation = this.bannedProps.get(propName);
                 this.addFailureAtNode(node, Rule.FAILURE_STRING_FACTORY(propName, propBanExplanation));
             }
-        } else {
-            super.visitNode(node);
         }
     }
 }
