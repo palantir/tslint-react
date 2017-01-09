@@ -45,22 +45,22 @@ export class Rule extends Lint.Rules.AbstractRule {
     }
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
-        const options = this.getOptions();
-        const walker = new JsxBanPropsWalker(sourceFile, options);
-        const propsToBan = options.ruleArguments;
-        if (propsToBan !== undefined) {
-            propsToBan.forEach(walker.addBannedProp);
-        }
-        return this.applyWithWalker(walker);
+        return this.applyWithWalker(new JsxBanPropsWalker(sourceFile, this.getOptions()));
     }
 }
 
 class JsxBanPropsWalker extends Lint.RuleWalker {
     private isInJsxAttribute = false;
-    private bannedProps: {[name: string]: string} = {};
+    private bannedProps: Map<string, string>;
 
-    public addBannedProp = (bannedProp: string[]) => {
-        this.bannedProps[bannedProp[0]] = bannedProp.length > 1 ? bannedProp[1] : "";
+    constructor(sourceFile: ts.SourceFile, options: Lint.IOptions) {
+        super(sourceFile, options);
+
+        const propsToBan = options.ruleArguments;
+        this.bannedProps = propsToBan
+            ? new Map<string, string>(propsToBan.map((prop: string[]): [string, string] =>
+                [prop[0], prop.length > 1 ? prop[1] : ""]))
+            : new Map<string, string>();
     }
 
     protected visitNode(node: ts.Node) {
@@ -70,8 +70,8 @@ class JsxBanPropsWalker extends Lint.RuleWalker {
             this.isInJsxAttribute = false;
         } else if (node.kind === ts.SyntaxKind.Identifier && this.isInJsxAttribute) {
             const propName = (node as ts.Identifier).text;
-            if (propName in this.bannedProps) {
-                const propBanExplanation = this.bannedProps[propName];
+            if (this.bannedProps.has(propName)) {
+                const propBanExplanation = this.bannedProps.get(propName);
                 this.addFailureAtNode(node, Rule.FAILURE_STRING_FACTORY(propName, propBanExplanation));
             }
         } else {
