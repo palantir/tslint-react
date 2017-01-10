@@ -89,7 +89,13 @@ We track rule suggestions on Github issues -- [here's a useful link](https://git
 
 We're happy to accept PRs for new rules, especially those marked as [Status: Accepting PRs](https://github.com/palantir/tslint-react/issues?q=is%3Aissue+is%3Aopen+label%3A%22Status%3A+Accepting+PRs%22). If submitting a PR, try to follow the same style conventions as the [core TSLint project](https://github.com/palantir/tslint).
 
+Quick Start (requires Node v6+, yarn v0.18):
+
+1. `yarn`
+1. `yarn compile`
+1. `yarn lint`
+1. `./scripts/verify.sh`
+
 ### Changelog
 
 See the Github [release history](https://github.com/palantir/tslint-react/releases).
-
