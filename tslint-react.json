@@ -7,6 +7,7 @@
         "jsx-no-multiline-js": true,
         "jsx-no-string-ref": true,
         "jsx-self-close": true,
-        "jsx-wrap-multiline": true
+        // pretty buggy right now; we can re-enable when issues like #53 are fixed
+        "jsx-wrap-multiline": false
     }
 }
