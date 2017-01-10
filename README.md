@@ -43,6 +43,8 @@ Sample configuration where `tslint.json` lives adjacent to your `node_modules` f
       size={size}
   />
   ```
+- `jsx-ban-props` (since v2.3.0)
+  - Allows blacklisting of props in JSX with an optional explanatory message in the reported failure.
 - `jsx-curly-spacing` (since v1.1.0)
   - Requires _or_ bans spaces between curly brace characters in JSX.
   - Rule options: `["always", "never"]`
