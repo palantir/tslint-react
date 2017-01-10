@@ -38,6 +38,7 @@ class JsxNoStringRefWalker extends Lint.RuleWalker {
                 const hasStringInitializer = initializer.kind === ts.SyntaxKind.StringLiteral;
                 const hasStringExpressionInitializer =
                     nodeIsKind<ts.JsxExpression>(initializer, ts.SyntaxKind.JsxExpression)
+                    && initializer.expression !== undefined
                     && (initializer.expression.kind === ts.SyntaxKind.StringLiteral
                         || initializer.expression.kind === ts.SyntaxKind.TemplateExpression);
 
