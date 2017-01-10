@@ -1,0 +1,11 @@
+<span className="primary" foo="bar">baz</span>
+                          ~~~ [Use of the prop 'foo' is not allowed.]
+
+<span bar={5}>baz</span>
+      ~~~ [Use of the prop 'bar' is not allowed. It is obsolete.]
+
+<button type="button">bar</button>
+
+function imHarmless(foo){
+    console.log(foo);
+}

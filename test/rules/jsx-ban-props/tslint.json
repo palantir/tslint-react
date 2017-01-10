@@ -1,0 +1,5 @@
+{
+    "rules": {
+        "jsx-ban-props": [true, ["foo"], ["bar", "It is obsolete."]]
+    }
+}
