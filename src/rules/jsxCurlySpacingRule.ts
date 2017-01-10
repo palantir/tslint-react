@@ -21,36 +21,11 @@ import * as ts from "typescript";
 const OPTION_ALWAYS = "always";
 const OPTION_NEVER = "never";
 const SPACING_VALUES = [OPTION_ALWAYS, OPTION_NEVER];
-/* tslint:disable:object-literal-sort-keys */
 const SPACING_OBJECT = {
-    type: "string",
     enum: SPACING_VALUES,
+    type: "string",
 };
-/* tslint:enable:object-literal-sort-keys */
-const newLineRegexp = /\n/;
-
-function isExpressionMultiline(text: string) {
-    return newLineRegexp.test(text);
-}
-
-function getTokensCombinedText(firstToken: ts.Node, nextToken: ts.Node) {
-    const parentNodeText = nextToken.parent.getText();
-    const firstTokenText = firstToken.getText();
-    const secondTokenText = nextToken.getText();
-    const secondTokenTextLocation = parentNodeText.indexOf(secondTokenText);
-    const firstTokenTextLocation = parentNodeText.indexOf(firstTokenText);
-    const combinedTokeText = parentNodeText.slice(
-        firstTokenTextLocation,
-        secondTokenTextLocation + secondTokenText.length);
-
-    return combinedTokeText;
-}
-
-function getTotalCharCount(comments: ts.CommentRange[]) {
-    return comments
-        .map((comment) => comment.end - comment.pos)
-        .reduce((l, r) => l + r, 0);
-}
+const NEWLINE_REGEX = /\n/;
 
 export class Rule extends Lint.Rules.AbstractRule {
     /* tslint:disable:object-literal-sort-keys */
@@ -102,7 +77,6 @@ export class Rule extends Lint.Rules.AbstractRule {
 class JsxCurlySpacingWalker extends Lint.RuleWalker {
     protected visitJsxExpression(node: ts.JsxExpression) {
         this.validateBraceSpacing(node);
-
         super.visitJsxExpression(node);
     }
 
@@ -122,7 +96,7 @@ class JsxCurlySpacingWalker extends Lint.RuleWalker {
         const nodeWidth = node.getWidth();
 
         if (this.hasOption(OPTION_ALWAYS)) {
-            let deleteFix = this.getDeleteFixForSpaceBetweenTokens(firstToken, secondToken);
+            let deleteFix = this.maybeGetDeleteFixForSpaceBetweenTokens(firstToken, secondToken);
             if (deleteFix === undefined) {
                 const fix = new Lint.Fix(Rule.metadata.ruleName, [
                     this.appendText(secondToken.getFullStart(), " "),
@@ -132,7 +106,7 @@ class JsxCurlySpacingWalker extends Lint.RuleWalker {
                 this.addFailure(this.createFailure(nodeStart, 1, failureString, fix));
             }
 
-            deleteFix = this.getDeleteFixForSpaceBetweenTokens(secondToLastToken, lastToken);
+            deleteFix = this.maybeGetDeleteFixForSpaceBetweenTokens(secondToLastToken, lastToken);
             if (deleteFix === undefined) {
                 const fix = new Lint.Fix(Rule.metadata.ruleName, [
                     this.appendText(lastToken.getStart(), " "),
@@ -146,7 +120,7 @@ class JsxCurlySpacingWalker extends Lint.RuleWalker {
             const lastAndSecondToLastCombinedText = getTokensCombinedText(secondToLastToken, lastToken);
 
             if (!isExpressionMultiline(firstAndSecondTokensCombinedText)) {
-                const fix = this.getDeleteFixForSpaceBetweenTokens(firstToken, secondToken);
+                const fix = this.maybeGetDeleteFixForSpaceBetweenTokens(firstToken, secondToken);
                 if (fix !== undefined) {
                     const failureString = Rule.FAILURE_FORBIDDEN_SPACES_BEGINNING(firstToken.getText());
 
@@ -155,32 +129,32 @@ class JsxCurlySpacingWalker extends Lint.RuleWalker {
             }
 
             if (!isExpressionMultiline(lastAndSecondToLastCombinedText)) {
-                const fix = this.getDeleteFixForSpaceBetweenTokens(secondToLastToken, lastToken);
+                const fix = this.maybeGetDeleteFixForSpaceBetweenTokens(secondToLastToken, lastToken);
                 if (fix !== undefined) {
                     const failureString = Rule.FAILURE_FORBIDDEN_SPACES_END(lastToken.getText());
                     // degenerate case when firstToken is the same as the secondToLastToken as we would
                     // have already queued up a fix in the previous branch, do not apply fix
-                    const failure = firstToken === secondToLastToken ?
-                        this.createFailure(nodeStart + nodeWidth - 1, 1, failureString) :
-                        this.createFailure(nodeStart + nodeWidth - 1, 1, failureString, fix);
+                    const failure = firstToken === secondToLastToken
+                        ? this.createFailure(nodeStart + nodeWidth - 1, 1, failureString)
+                        : this.createFailure(nodeStart + nodeWidth - 1, 1, failureString, fix);
                     this.addFailure(failure);
                 }
             }
         }
     }
 
-    private getDeleteFixForSpaceBetweenTokens(firstNode: ts.Node, secondNode: ts.Node) {
+    private maybeGetDeleteFixForSpaceBetweenTokens(firstNode: ts.Node, secondNode: ts.Node) {
         if (firstNode.parent !== secondNode.parent) {
             throw Error("Expected identical parents for both nodes");
         }
 
-        const parent = firstNode.parent;
-        const parentStart = parent.getStart();
+        const { parent } = firstNode;
+        const parentStart = parent!.getStart();
         const secondNodeStart =  secondNode.getFullStart();
         const firstNodeEnd = firstNode.getStart() + firstNode.getWidth();
         const secondNodeRelativeStart = secondNodeStart - parentStart;
         const firstNodeRelativeEnd = firstNodeEnd - parentStart;
-        const parentText = parent.getText();
+        const parentText = parent!.getText();
         const trailingComments = ts.getTrailingCommentRanges(parentText, firstNodeRelativeEnd) || [];
         const leadingComments = ts.getLeadingCommentRanges(parentText, secondNodeRelativeStart) || [];
         const comments = trailingComments.concat(leadingComments);
@@ -194,4 +168,28 @@ class JsxCurlySpacingWalker extends Lint.RuleWalker {
             return undefined;
         }
     }
+}
+
+function isExpressionMultiline(text: string) {
+    return NEWLINE_REGEX.test(text);
+}
+
+function getTokensCombinedText(firstToken: ts.Node, nextToken: ts.Node) {
+    const parentNodeText = nextToken.parent!.getText();
+    const firstTokenText = firstToken.getText();
+    const secondTokenText = nextToken.getText();
+    const secondTokenTextLocation = parentNodeText.indexOf(secondTokenText);
+    const firstTokenTextLocation = parentNodeText.indexOf(firstTokenText);
+    const combinedTokeText = parentNodeText.slice(
+        firstTokenTextLocation,
+        secondTokenTextLocation + secondTokenText.length,
+    );
+
+    return combinedTokeText;
+}
+
+function getTotalCharCount(comments: ts.CommentRange[]) {
+    return comments
+        .map((comment) => comment.end - comment.pos)
+        .reduce((l, r) => l + r, 0);
 }
