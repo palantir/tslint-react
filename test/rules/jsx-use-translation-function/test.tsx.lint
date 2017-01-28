@@ -2,7 +2,7 @@
      ~~~~~~~~~~~~         [0]
 
 <div>{'Hello world!'}</div>
-       ~~~~~~~~~~~~       [0]
+     ~~~~~~~~~~~~~~~~       [0]
 
 <div>{translate('hello-world')}</div>
 
