@@ -6,9 +6,11 @@
 
 <div>{translate('hello-world')}</div>
 
+<input placeholder={translate('name')} />
 <input placeholder="Name" />
                    ~~~~~~ [0]
 
+<input placeholder={translate('name')} />
 <input placeholder={"Name"} />
                    ~~~~~~~~  [0]
 
