@@ -14,4 +14,8 @@
 <input placeholder={"Name"} />
                    ~~~~~~~~  [0]
 
+<div>
+    <div>{translate('hi')}</div>
+</div>
+
 [0]: No string literal in JSX. Use a translation function.

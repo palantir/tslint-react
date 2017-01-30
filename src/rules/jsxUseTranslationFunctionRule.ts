@@ -32,7 +32,7 @@ class JsxUseTranslationFunctionWalker extends Lint.RuleWalker {
     public visitJsxElement(node: ts.JsxElement) {
         // TODO: replace this method with visitJsxText for simpler implementation
         for (const child of node.children) {
-            if (child.kind === ts.SyntaxKind.JsxText) {
+            if (child.kind === ts.SyntaxKind.JsxText && child.getText().trim() !== "") {
                 this.addFailure(this.createFailure(child.getStart(), child.getWidth(), Rule.FAILURE_STRING));
             }
             if (child.kind === ts.SyntaxKind.JsxExpression) {
