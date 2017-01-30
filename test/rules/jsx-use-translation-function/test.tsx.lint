@@ -18,4 +18,18 @@
     <div>{translate('hi')}</div>
 </div>
 
+<div>
+    <span>{translate('this')}</span>is bad<span>
+                                    ~~~~~~       [0]
+</div>
+
+<ul>
+    <li>{translate('one')}</li>
+    Two
+    ~~~
+    <li>Three</li>
+~~~~               [0]
+        ~~~~~      [0]
+</ul>
+
 [0]: No string literal in JSX. Use a translation function.

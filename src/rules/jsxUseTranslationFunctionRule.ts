@@ -41,6 +41,7 @@ class JsxUseTranslationFunctionWalker extends Lint.RuleWalker {
                 }
             }
         }
+        super.visitJsxElement(node);
     }
 
     public visitJsxAttribute(node: ts.JsxAttribute) {
@@ -63,5 +64,6 @@ class JsxUseTranslationFunctionWalker extends Lint.RuleWalker {
                 }
             }
         }
+        super.visitJsxAttribute(node);
     }
 }
