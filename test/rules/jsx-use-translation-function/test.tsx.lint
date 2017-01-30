@@ -23,6 +23,11 @@
                                     ~~~~~~       [0]
 </div>
 
+<div>{`foo`}</div>
+     ~~~~~~~       [0]
+
+<div>{`foo ${1}`}</div>
+
 <ul>
     <li>{translate('one')}</li>
     Two

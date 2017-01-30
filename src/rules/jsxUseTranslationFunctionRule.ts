@@ -39,6 +39,9 @@ class JsxUseTranslationFunctionWalker extends Lint.RuleWalker {
                 if (child.expression && child.expression.kind === ts.SyntaxKind.StringLiteral) {
                     this.addFailure(this.createFailure(child.getStart(), child.getWidth(), Rule.FAILURE_STRING));
                 }
+                if (child.expression && child.expression.kind === ts.SyntaxKind.FirstTemplateToken) {
+                    this.addFailure(this.createFailure(child.getStart(), child.getWidth(), Rule.FAILURE_STRING));
+                }
             }
         }
         super.visitJsxElement(node);
