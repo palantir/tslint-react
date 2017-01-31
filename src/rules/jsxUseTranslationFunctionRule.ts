@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2016 Palantir Technologies, Inc.
+ * Copyright 2017 Palantir Technologies, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import * as ts from "typescript";
 
 export class Rule extends Lint.Rules.AbstractRule {
     public static TRANSLATABLE_ATTRIBUTES = new Set(["placeholder", "title", "alt"]);
-    public static FAILURE_STRING = "No string literal in JSX. Use a translation function.";
+    public static FAILURE_STRING = "String literals are disallowed as JSX attribute values. Use a translation function";
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
         const walker = new JsxUseTranslationFunctionWalker(sourceFile, this.getOptions());

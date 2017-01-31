@@ -37,4 +37,4 @@
         ~~~~~      [0]
 </ul>
 
-[0]: No string literal in JSX. Use a translation function.
+[0]: String literals are disallowed as JSX attribute values. Use a translation function
