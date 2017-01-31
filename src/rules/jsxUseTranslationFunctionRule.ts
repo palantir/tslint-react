@@ -21,7 +21,7 @@ import {nodeIsKind} from "../guards";
 
 export class Rule extends Lint.Rules.AbstractRule {
     public static TRANSLATABLE_ATTRIBUTES = new Set(["placeholder", "title", "alt"]);
-    public static FAILURE_STRING = "String literals are disallowed as JSX attribute values. Use a translation function";
+    public static FAILURE_STRING = "String literals are disallowed as JSX. Use a translation function";
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
         const walker = new JsxUseTranslationFunctionWalker(sourceFile, this.getOptions());
@@ -54,7 +54,7 @@ class JsxUseTranslationFunctionWalker extends Lint.RuleWalker {
                 this.addFailure(this.createFailure(
                     node.initializer.getStart(),
                     node.initializer.getWidth(),
-                    Rule.FAILURE_STRING,
+                    `String literal is not allowed for value of ${node.name.text}. Use a translation function`,
                 ));
             }
             if (nodeIsKind<ts.JsxExpression>(node.initializer, ts.SyntaxKind.JsxExpression) &&
@@ -63,7 +63,7 @@ class JsxUseTranslationFunctionWalker extends Lint.RuleWalker {
                     this.addFailure(this.createFailure(
                         node.initializer.getStart(),
                         node.initializer.getWidth(),
-                        Rule.FAILURE_STRING,
+                        `String literal is not allowed for value of ${node.name.text}. Use a translation function`,
                     ));
             }
         }

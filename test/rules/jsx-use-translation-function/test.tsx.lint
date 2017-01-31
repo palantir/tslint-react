@@ -8,11 +8,11 @@
 
 <input placeholder={translate('name')} />
 <input placeholder="Name" />
-                   ~~~~~~ [0]
+                   ~~~~~~ [1]
 
 <input placeholder={translate('name')} />
 <input placeholder={"Name"} />
-                   ~~~~~~~~  [0]
+                   ~~~~~~~~  [1]
 
 <div>
     <div>{translate('hi')}</div>
@@ -37,4 +37,5 @@
         ~~~~~      [0]
 </ul>
 
-[0]: String literals are disallowed as JSX attribute values. Use a translation function
+[0]: String literals are disallowed as JSX. Use a translation function
+[1]: String literal is not allowed for value of placeholder. Use a translation function
