@@ -17,6 +17,7 @@
 
 import * as Lint from "tslint";
 import * as ts from "typescript";
+import {nodeIsKind} from "../guards";
 
 export class Rule extends Lint.Rules.AbstractRule {
     public static TRANSLATABLE_ATTRIBUTES = new Set(["placeholder", "title", "alt"]);
@@ -32,10 +33,10 @@ class JsxUseTranslationFunctionWalker extends Lint.RuleWalker {
     public visitJsxElement(node: ts.JsxElement) {
         // TODO: replace this method with visitJsxText for simpler implementation
         for (const child of node.children) {
-            if (child.kind === ts.SyntaxKind.JsxText && child.getText().trim() !== "") {
+            if (nodeIsKind(child, ts.SyntaxKind.JsxText) && child.getText().trim() !== "") {
                 this.addFailure(this.createFailure(child.getStart(), child.getWidth(), Rule.FAILURE_STRING));
             }
-            if (child.kind === ts.SyntaxKind.JsxExpression) {
+            if (nodeIsKind<ts.JsxExpression>(child, ts.SyntaxKind.JsxExpression)) {
                 if (child.expression && child.expression.kind === ts.SyntaxKind.StringLiteral) {
                     this.addFailure(this.createFailure(child.getStart(), child.getWidth(), Rule.FAILURE_STRING));
                 }
@@ -49,22 +50,21 @@ class JsxUseTranslationFunctionWalker extends Lint.RuleWalker {
 
     public visitJsxAttribute(node: ts.JsxAttribute) {
         if (Rule.TRANSLATABLE_ATTRIBUTES.has(node.name.text) && node.initializer) {
-            if (node.initializer.kind === ts.SyntaxKind.StringLiteral) {
+            if (nodeIsKind(node.initializer, ts.SyntaxKind.StringLiteral)) {
                 this.addFailure(this.createFailure(
                     node.initializer.getStart(),
                     node.initializer.getWidth(),
                     Rule.FAILURE_STRING,
                 ));
             }
-            if (node.initializer.kind === ts.SyntaxKind.JsxExpression) {
-                if (node.initializer.expression &&
-                    node.initializer.expression.kind === ts.SyntaxKind.StringLiteral) {
+            if (nodeIsKind<ts.JsxExpression>(node.initializer, ts.SyntaxKind.JsxExpression) &&
+                nodeIsKind<ts.StringLiteral>(node.initializer.expression!, ts.SyntaxKind.StringLiteral)
+            ) {
                     this.addFailure(this.createFailure(
                         node.initializer.getStart(),
                         node.initializer.getWidth(),
                         Rule.FAILURE_STRING,
                     ));
-                }
             }
         }
         super.visitJsxAttribute(node);
