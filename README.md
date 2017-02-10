@@ -59,6 +59,10 @@ Sample configuration where `tslint.json` lives adjacent to your `node_modules` f
   - Passing strings to the `ref` prop of React elements is considered a legacy feature and will soon be deprecated.
     Instead, [use a callback](https://facebook.github.io/react/docs/more-about-refs.html#the-ref-callback-attribute).
   - Rule options: _none_
+- `jsx-use-translation-function` (since v2.3.1)
+   - Enforces use of a translation function. Plain string literals are disallowed in JSX when enabled. 
+   - Rule options: _none_
+   - Off by default
 - `jsx-self-close` (since v0.4.0)
   - Enforces that JSX elements with no children are self-closing.
   ```ts
