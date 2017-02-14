@@ -59,7 +59,7 @@ Sample configuration where `tslint.json` lives adjacent to your `node_modules` f
   - Passing strings to the `ref` prop of React elements is considered a legacy feature and will soon be deprecated.
     Instead, [use a callback](https://facebook.github.io/react/docs/more-about-refs.html#the-ref-callback-attribute).
   - Rule options: _none_
-- `jsx-use-translation-function` (since v2.3.1)
+- `jsx-use-translation-function` (since v2.4.0)
    - Enforces use of a translation function. Plain string literals are disallowed in JSX when enabled. 
    - Rule options: _none_
    - Off by default
@@ -76,6 +76,7 @@ Sample configuration where `tslint.json` lives adjacent to your `node_modules` f
   - Enforces that multiline JSX expressions are wrapped with parentheses.
   - Opening parenthesis must be followed by a newline.
   - Closing parenthesis must be preceded by a newline.
+  - Off by default
   ```ts
   // bad
   const button = <button type="submit">
