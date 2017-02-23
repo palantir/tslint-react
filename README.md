@@ -45,6 +45,10 @@ Sample configuration where `tslint.json` lives adjacent to your `node_modules` f
   ```
 - `jsx-ban-props` (since v2.3.0)
   - Allows blacklisting of props in JSX with an optional explanatory message in the reported failure.
+- `jsx-boolean-value`
+  - When using a boolean attribute in JSX, you can set the attribute value to true or omit the value. This rule will enforce one or the other to keep consistency in your code.
+  - Rule options: `always`, `never`
+  - Default is set to `never`
 - `jsx-curly-spacing` (since v1.1.0)
   - Requires _or_ bans spaces between curly brace characters in JSX.
   - Rule options: `["always", "never"]`
@@ -60,7 +64,7 @@ Sample configuration where `tslint.json` lives adjacent to your `node_modules` f
     Instead, [use a callback](https://facebook.github.io/react/docs/more-about-refs.html#the-ref-callback-attribute).
   - Rule options: _none_
 - `jsx-use-translation-function` (since v2.4.0)
-   - Enforces use of a translation function. Plain string literals are disallowed in JSX when enabled. 
+   - Enforces use of a translation function. Plain string literals are disallowed in JSX when enabled.
    - Rule options: _none_
    - Off by default
 - `jsx-self-close` (since v0.4.0)
