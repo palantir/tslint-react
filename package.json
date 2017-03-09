@@ -19,6 +19,9 @@
     "test-rules": "scripts/verify.sh"
   },
   "devDependencies": {
+    "@types/colors": "^1.1.1",
+    "@types/glob": "^5.0.30",
+    "@types/node": "^7.0.7",
     "colors": "^1.1.2",
     "glob": "^7.0.3",
     "npm-run-all": "^2.1.2",
