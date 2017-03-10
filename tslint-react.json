@@ -2,12 +2,12 @@
     "rulesDirectory": "./rules",
     "rules": {
         "jsx-alignment": true,
+        "jsx-boolean-value": true,
         "jsx-curly-spacing": [true, "never"],
         "jsx-no-lambda": true,
         "jsx-no-multiline-js": true,
         "jsx-no-string-ref": true,
         "jsx-self-close": true,
-        // pretty buggy right now; we can re-enable when issues like #53 are fixed
-        "jsx-wrap-multiline": false
+        "jsx-wrap-multiline": true
     }
 }
