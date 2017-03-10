@@ -70,6 +70,16 @@ const badNestedElements = <div>
 
 const goodFunctionWrap = mount<ITestComponentProps, {}>(
     <TestComponent
-    str1='My string'
+        str1="My string"
     />
+);
+
+shallowRender(
+    <TestComponent2 />
+);
+
+shallowRender(
+    <TestComponent3>
+        <span />
+    </TestComponent3>
 );

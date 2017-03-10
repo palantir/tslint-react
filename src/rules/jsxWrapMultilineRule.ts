@@ -19,12 +19,12 @@ import * as Lint from "tslint";
 import * as ts from "typescript";
 
 export class Rule extends Lint.Rules.AbstractRule {
-    public static FAILURE_NOT_WRAPPED
-    = "Multiline JSX elements must be wrapped in parentheses";
-    public static FAILURE_MISSING_NEW_LINE_AFTER_OPEN
-    = "New line required after open parenthesis when wrapping multiline JSX elements";
-    public static FAILURE_MISSING_NEW_LINE_BEFORE_CLOSE
-    = "New line requred before close parenthesis when wrapping multiline JSX elements";
+    public static FAILURE_NOT_WRAPPED =
+        "Multiline JSX elements must be wrapped in parentheses";
+    public static FAILURE_MISSING_NEW_LINE_AFTER_OPEN =
+        "New line required after open parenthesis when wrapping multiline JSX elements";
+    public static FAILURE_MISSING_NEW_LINE_BEFORE_CLOSE =
+        "New line requred before close parenthesis when wrapping multiline JSX elements";
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
         return this.applyWithWalker(new JsxWrapMultilineWalker(sourceFile, this.getOptions()));
@@ -76,14 +76,11 @@ class JsxWrapMultilineWalker extends Lint.RuleWalker {
         const previousToken = siblings[index - 1];
         const nextToken = siblings[index + 1];
 
-        if (prevTokenKind === ts.SyntaxKind.OpenParenToken
-            && node.getFullText().match(/^[\r\n]+/)) {
+        if (prevTokenKind === ts.SyntaxKind.OpenParenToken && node.getFullText().match(/^[\r\n]+/)) {
             return;
         }
 
-        if (nextToken == null
-            || nextToken.kind !== ts.SyntaxKind.CloseParenToken
-        ) {
+        if (nextToken == null || nextToken.kind !== ts.SyntaxKind.CloseParenToken) {
             this.addNotWrappedFailure(node);
             return;
         }
