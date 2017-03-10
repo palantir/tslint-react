@@ -46,7 +46,7 @@ export class Rule extends Lint.Rules.AbstractRule {
             `[true, "${OPTION_NEVER}"]`,
         ],
         type: "style",
-        typescriptOnly: true,
+        typescriptOnly: false,
     };
     /* tslint:enable:object-literal-sort-keys */
 
@@ -60,19 +60,20 @@ export class Rule extends Lint.Rules.AbstractRule {
 
 class JsxBooleanValueWalker extends Lint.RuleWalker {
     protected visitJsxAttribute(node: ts.JsxAttribute) {
+        const { initializer } = node;
 
-        if (node.initializer && node.initializer.kind === ts.SyntaxKind.JsxExpression) {
-            const kind = node.initializer.expression && node.initializer.expression.kind;
-            const isValueTrue = kind === ts.SyntaxKind.TrueKeyword;
-            const noOptionsSet = !this.hasOption(OPTION_ALWAYS) && !this.hasOption(OPTION_NEVER);
+        if (initializer === undefined) {
+            // if no option set, or explicitly set to "always"
+            if (!this.hasOption(OPTION_NEVER)) {
+                this.addFailure(this.createFailure(node.getStart(), node.getWidth(), Rule.ALWAYS_MESSAGE));
+            }
+        } else if (initializer.kind === ts.SyntaxKind.JsxExpression) {
+            const isValueTrue = initializer.expression !== undefined
+                && initializer.expression.kind === ts.SyntaxKind.TrueKeyword;
 
-            if ((noOptionsSet || this.hasOption(OPTION_NEVER)) && isValueTrue) {
+            if (isValueTrue && this.hasOption(OPTION_NEVER)) {
                 this.addFailure(this.createFailure(node.getStart(), node.getWidth(), Rule.NEVER_MESSAGE));
             }
-        }
-
-        if (!node.initializer && (this.hasOption(OPTION_ALWAYS))) {
-            this.addFailure(this.createFailure(node.getStart(), node.getWidth(), Rule.ALWAYS_MESSAGE));
         }
     }
 }
