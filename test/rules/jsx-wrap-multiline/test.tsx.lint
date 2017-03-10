@@ -67,3 +67,19 @@ const badNestedElements = <div>
 ~~~~~~~
 </div>;
 ~~~~~~  [Multiline JSX elements must be wrapped in parentheses]
+
+const goodFunctionWrap = mount<ITestComponentProps, {}>(
+    <TestComponent
+        str1="My string"
+    />
+);
+
+shallowRender(
+    <TestComponent2 />
+);
+
+shallowRender(
+    <TestComponent3>
+        <span />
+    </TestComponent3>
+);

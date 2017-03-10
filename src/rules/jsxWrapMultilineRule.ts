@@ -19,12 +19,12 @@ import * as Lint from "tslint";
 import * as ts from "typescript";
 
 export class Rule extends Lint.Rules.AbstractRule {
-    public static FAILURE_NOT_WRAPPED
-        = "Multiline JSX elements must be wrapped in parentheses";
-    public static FAILURE_MISSING_NEW_LINE_AFTER_OPEN
-        = "New line required after open parenthesis when wrapping multiline JSX elements";
-    public static FAILURE_MISSING_NEW_LINE_BEFORE_CLOSE
-    = "New line requred before close parenthesis when wrapping multiline JSX elements";
+    public static FAILURE_NOT_WRAPPED =
+        "Multiline JSX elements must be wrapped in parentheses";
+    public static FAILURE_MISSING_NEW_LINE_AFTER_OPEN =
+        "New line required after open parenthesis when wrapping multiline JSX elements";
+    public static FAILURE_MISSING_NEW_LINE_BEFORE_CLOSE =
+        "New line requred before close parenthesis when wrapping multiline JSX elements";
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
         return this.applyWithWalker(new JsxWrapMultilineWalker(sourceFile, this.getOptions()));
@@ -32,6 +32,13 @@ export class Rule extends Lint.Rules.AbstractRule {
 }
 
 class JsxWrapMultilineWalker extends Lint.RuleWalker {
+    private scanner: ts.Scanner;
+
+    constructor(sourceFile: ts.SourceFile, options: Lint.IOptions) {
+        super(sourceFile, options);
+        this.scanner = ts.createScanner(ts.ScriptTarget.ES5, false, ts.LanguageVariant.Standard, sourceFile.text);
+    }
+
     protected visitJsxElement(node: ts.JsxElement) {
         this.checkNode(node);
         super.visitJsxElement(node);
@@ -61,18 +68,19 @@ class JsxWrapMultilineWalker extends Lint.RuleWalker {
             return;
         }
 
+        this.scanner.setTextPos(node.getFullStart() - 1);
+        const prevTokenKind = this.scanner.scan();
         const siblings = node.parent.getChildren(sourceFile);
         const index = siblings.indexOf(node);
 
         const previousToken = siblings[index - 1];
         const nextToken = siblings[index + 1];
 
-        if (
-            previousToken == null
-            || previousToken.kind !== ts.SyntaxKind.OpenParenToken
-            || nextToken == null
-            || nextToken.kind !== ts.SyntaxKind.CloseParenToken
-        ) {
+        if (prevTokenKind === ts.SyntaxKind.OpenParenToken && node.getFullText().match(/^[\r\n]+/)) {
+            return;
+        }
+
+        if (nextToken == null || nextToken.kind !== ts.SyntaxKind.CloseParenToken) {
             this.addNotWrappedFailure(node);
             return;
         }
