@@ -1,0 +1,8 @@
+function render(){
+  return(
+    <Foo readOnly={true} />
+         ~~~~~~~~~~~~~~~ [Value must be omitted for boolean attributes]
+    <Foo readOnly />
+    <Foo readOnly={false} />
+  );
+}
