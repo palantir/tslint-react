@@ -47,8 +47,8 @@ Sample configuration where `tslint.json` lives adjacent to your `node_modules` f
   - Allows blacklisting of props in JSX with an optional explanatory message in the reported failure.
 - `jsx-boolean-value`
   - When using a boolean attribute in JSX, you can set the attribute value to true or omit the value. This rule will enforce one or the other to keep consistency in your code.
-  - Rule options: `always`, `never`
-  - Default is set to `never`
+  - Rule options: `always`, `never`.
+  - Default is set to `never`.
 - `jsx-curly-spacing` (since v1.1.0)
   - Requires _or_ bans spaces between curly brace characters in JSX.
   - Rule options: `["always", "never"]`
