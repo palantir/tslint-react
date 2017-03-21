@@ -80,7 +80,6 @@ Sample configuration where `tslint.json` lives adjacent to your `node_modules` f
   - Enforces that multiline JSX expressions are wrapped with parentheses.
   - Opening parenthesis must be followed by a newline.
   - Closing parenthesis must be preceded by a newline.
-  - Off by default
   ```ts
   // bad
   const button = <button type="submit">
