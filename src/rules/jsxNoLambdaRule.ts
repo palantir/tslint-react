@@ -29,22 +29,22 @@ export class Rule extends Lint.Rules.AbstractRule {
 function walk(ctx: Lint.WalkContext<void>) {
     return ts.forEachChild(ctx.sourceFile, function cb(node: ts.Node): void {
         // continue iterations until JsxAttribute will be found
-        if (node.kind !== ts.SyntaxKind.JsxAttribute) {
-            return ts.forEachChild(node, cb);
+        if (node.kind === ts.SyntaxKind.JsxAttribute) {
+            const initializer = (node as ts.JsxAttribute).initializer;
+
+            // early exit in case when initializer is string literal or not provided (e.d. `disabled`)
+            if (!initializer || initializer.kind !== ts.SyntaxKind.JsxExpression) {
+                return;
+            }
+
+            const expression = (initializer as ts.JsxExpression).expression;
+
+            if (expression && isLambda(expression)) {
+                return ctx.addFailureAtNode(expression, Rule.FAILURE_STRING);
+            }
         }
 
-        const initializer = (node as ts.JsxAttribute).initializer;
-
-        // early exit in case when initializer is string literal or not provided (e.d. `disabled`)
-        if (!initializer || initializer.kind !== ts.SyntaxKind.JsxExpression) {
-            return;
-        }
-
-        const expression = (initializer as ts.JsxExpression).expression;
-
-        if (expression && isLambda(expression)) {
-            return ctx.addFailureAtNode(expression, Rule.FAILURE_STRING);
-        }
+        return ts.forEachChild(node, cb);
     });
 }
 

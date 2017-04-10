@@ -59,4 +59,25 @@ const ComponentWithFunctionCallback: React.SFC<{}> = () => (
     })} />
 );
 
+const ComplexComposableComponentWith: React.SFC<{}> = () => (
+    <ComposableComponent
+        header={<HeadingComponent title="test" onClick={()=>{console.log('arrow function show be reported')}} />}
+                                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      [0]
+        footer={(
+            <FooterComponent
+                disabled
+                onClick={function(ev) {
+                         ~~~~~~~~~~~~~~
+                    console.log('function should be reported', ev);
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                }}
+~~~~~~~~~~~~~~~~~  [0]
+            />
+        )}
+    >
+        {bodyElements.map(x => x.toValidLambda())}
+        {/*<a href="#" onClick={()=>{console.log('in comment)}}>Legacy code</a>*/}
+    </ComposableComponent>
+);
+
 [0]: Lambdas are forbidden in JSX attributes due to their rendering performance impact
