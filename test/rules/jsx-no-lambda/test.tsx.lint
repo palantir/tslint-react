@@ -10,7 +10,7 @@ const myButton2 = (
                      ~~~~~~~~~~~~~
         // another bad one
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
-    }} />
+    }} disabled/>
 ~~~~~     [0]
 )
 
@@ -48,5 +48,15 @@ const StatelessComponent: React.SFC<{}> = () => {
         </div>
     );
 };
+
+const ComponentWithArrowCallback: React.SFC<{}> = () => (
+    <Currency amount={ _.sumBy(items, (item: Item) => item.value) } />
+);
+
+const ComponentWithFunctionCallback: React.SFC<{}> = () => (
+    <Currency amount={ _.sumBy(items, function(item: Item) {
+        return item.value;
+    })} />
+);
 
 [0]: Lambdas are forbidden in JSX attributes due to their rendering performance impact
