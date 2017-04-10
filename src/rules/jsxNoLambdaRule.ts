@@ -22,39 +22,42 @@ export class Rule extends Lint.Rules.AbstractRule {
     public static FAILURE_STRING = "Lambdas are forbidden in JSX attributes due to their rendering performance impact";
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
-        const jsxNoLambdaWalker = new JsxNoLambdaWalker(sourceFile, this.getOptions());
-        return this.applyWithWalker(jsxNoLambdaWalker);
+        return this.applyWithFunction(sourceFile, walk);
     }
 }
 
-class JsxNoLambdaWalker extends Lint.RuleWalker {
-    private isInJsxAttribute = false;
-
-    protected visitNode(node: ts.Node) {
+function walk(ctx: Lint.WalkContext<void>) {
+    return ts.forEachChild(ctx.sourceFile, function cb(node: ts.Node): void {
+        // continue iterations until JsxAttribute will be found
         if (node.kind === ts.SyntaxKind.JsxAttribute) {
-            this.isInJsxAttribute = true;
-            super.visitNode(node);
-            this.isInJsxAttribute = false;
-        } else {
-            super.visitNode(node);
-        }
-    }
+            const initializer = (node as ts.JsxAttribute).initializer;
 
-    protected visitFunctionExpression(node: ts.FunctionExpression) {
-        if (this.isInJsxAttribute) {
-            this.reportFailure(node);
-        }
-        super.visitFunctionExpression(node);
-    }
+            // early exit in case when initializer is string literal or not provided (e.d. `disabled`)
+            if (!initializer || initializer.kind !== ts.SyntaxKind.JsxExpression) {
+                return;
+            }
 
-    protected visitArrowFunction(node: ts.ArrowFunction) {
-        if (this.isInJsxAttribute) {
-            this.reportFailure(node);
-        }
-        super.visitArrowFunction(node);
-    }
+            const expression = (initializer as ts.JsxExpression).expression;
 
-    private reportFailure(node: ts.Node) {
-        this.addFailure(this.createFailure(node.getStart(), node.getWidth(), Rule.FAILURE_STRING));
+            if (expression && isLambda(expression)) {
+                return ctx.addFailureAtNode(expression, Rule.FAILURE_STRING);
+            }
+        }
+
+        return ts.forEachChild(node, cb);
+    });
+}
+
+function isLambda(node: ts.Node): boolean {
+    switch (node.kind) {
+        case ts.SyntaxKind.FunctionExpression:
+        case ts.SyntaxKind.ArrowFunction:
+            return true;
+
+        case ts.SyntaxKind.ParenthesizedExpression:
+            return isLambda((node as ts.ParenthesizedExpression).expression);
+
+        default:
+            return false;
     }
 }
