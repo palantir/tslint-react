@@ -53,6 +53,11 @@ Sample configuration where `tslint.json` lives adjacent to your `node_modules` f
   - Requires _or_ bans spaces between curly brace characters in JSX.
   - Rule options: `["always", "never"]`
   - _Includes automatic code fix_
+- `jsx-no-bind` (since v2.6.0)
+  - Forbids function binding in JSX attributes. This has the same intent as `jsx-no-lambda` in helping you avoid excessive re-rendres.
+  - Note that this currently only does a simple _syntactic_ check, not a _semantic_ one (it doesn't use the type checker). So it may have some
+    rare false positives if you define your own `.bind` function and supply `this` as a parameter.
+  - Rule options: _none_
 - `jsx-no-lambda`
   - Creating new anonymous functions (with either the `function` syntax or ES2015 arrow syntax) inside the `render` call stack works against _pure component rendering_. When doing an equality check between two lambdas, React will always consider them unequal values and force the component to re-render more often than necessary.
   - Rule options: _none_
