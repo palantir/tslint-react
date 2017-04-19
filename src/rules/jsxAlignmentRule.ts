@@ -56,10 +56,11 @@ class JsxAlignmentWalker extends Lint.RuleWalker {
 
     private checkElement(
         elementOpen: ts.LineAndCharacter,
-        attributes: Array<ts.JsxAttribute | ts.JsxSpreadAttribute>,
+        attributes: Array<ts.JsxAttribute | ts.JsxSpreadAttribute> | { properties: Array<ts.JsxAttribute | ts.JsxSpreadAttribute> },
         elementClose: ts.LineAndCharacter,
         closingTag?: ts.JsxClosingElement,
     ) {
+        attributes = attributes == null || Array.isArray(attributes) ? attributes : attributes.properties;
         if (attributes == null || attributes.length === 0) { return; }
 
         // in a line like "const element = <Foo",
