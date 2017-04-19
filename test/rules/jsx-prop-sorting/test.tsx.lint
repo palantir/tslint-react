@@ -1,0 +1,31 @@
+export interface Props {
+    /**
+     * With comment.
+     */
+    aProp?: boolean;
+
+    /**
+     * Another comment.
+     */
+    propTwo?: boolean;
+}
+
+export interface Props {
+    aProp?: boolean;
+    propTwo: boolean;
+    thirdProp?: string;
+}
+
+export interface Props {
+    propTwo?: boolean;
+    aProp?: boolean;
+    ~~~~~~~~~~~~~~~~ [Prop names are not alphabetized]
+}
+
+export interface Props {
+    propTwo?: boolean;
+    tProp: string;
+    aProp?: boolean;
+    ~~~~~~~~~~~~~~~~ [Prop names are not alphabetized]
+    zProp: number;
+}
