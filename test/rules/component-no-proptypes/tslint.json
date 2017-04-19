@@ -1,0 +1,5 @@
+{
+    "rules": {
+        "component-no-proptypes": true
+    }
+}

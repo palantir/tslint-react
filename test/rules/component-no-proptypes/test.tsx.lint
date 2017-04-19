@@ -1,0 +1,13 @@
+const test = "test";
+
+const propTypes = {};
+      ~~~~~~~~~ [PropTypes are forbidden as TypeScript should manage type checking, not React]
+
+propTypes: {
+~~~~~~~~~ [PropTypes are forbidden as TypeScript should manage type checking, not React]
+	test: React.PropTypes.string
+}
+
+myVar: {
+	value: Type
+}
