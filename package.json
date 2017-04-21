@@ -15,7 +15,7 @@
     "copy": "cp -f package.json README.md tslint-react.json build/",
     "lint": "tslint 'src/**/*.ts'",
     "preversion": "npm-run-all clean test copy",
-    "test-rules": "scripts/verify.sh",
+    "test-rules": "scripts/testRules.sh",
     "verify": "npm-run-all build test-rules"
   },
   "devDependencies": {
