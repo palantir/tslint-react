@@ -56,7 +56,8 @@ class JsxAlignmentWalker extends Lint.RuleWalker {
 
     private checkElement(
         elementOpen: ts.LineAndCharacter,
-        attributes: Array<ts.JsxAttribute | ts.JsxSpreadAttribute> | { properties: Array<ts.JsxAttribute | ts.JsxSpreadAttribute> },
+        attributes: Array<ts.JsxAttribute | ts.JsxSpreadAttribute> // TS <=2.2
+            | { properties: Array<ts.JsxAttribute | ts.JsxSpreadAttribute> }, // TS 2.3
         elementClose: ts.LineAndCharacter,
         closingTag?: ts.JsxClosingElement,
     ) {
