@@ -98,9 +98,7 @@ class JsxCurlySpacingWalker extends Lint.RuleWalker {
         if (this.hasOption(OPTION_ALWAYS)) {
             let deleteFix = this.maybeGetDeleteFixForSpaceBetweenTokens(firstToken, secondToken);
             if (deleteFix === undefined) {
-                const fix = new Lint.Fix(Rule.metadata.ruleName, [
-                    this.appendText(secondToken.getFullStart(), " "),
-                ]);
+                const fix = this.appendText(secondToken.getFullStart(), " ");
                 const failureString = Rule.FAILURE_NO_BEGINNING_SPACE(firstToken.getText());
 
                 this.addFailure(this.createFailure(nodeStart, 1, failureString, fix));
@@ -108,9 +106,7 @@ class JsxCurlySpacingWalker extends Lint.RuleWalker {
 
             deleteFix = this.maybeGetDeleteFixForSpaceBetweenTokens(secondToLastToken, lastToken);
             if (deleteFix === undefined) {
-                const fix = new Lint.Fix(Rule.metadata.ruleName, [
-                    this.appendText(lastToken.getStart(), " "),
-                ]);
+                const fix = this.appendText(lastToken.getStart(), " ");
                 const failureString = Rule.FAILURE_NO_ENDING_SPACE(lastToken.getText());
 
                 this.addFailure(this.createFailure(nodeStart + nodeWidth - 1, 1, failureString, fix));
@@ -161,9 +157,7 @@ class JsxCurlySpacingWalker extends Lint.RuleWalker {
 
         if (secondNode.getStart() - firstNode.getStart() - firstNode.getWidth() > getTotalCharCount(comments)) {
             const replacements = comments.map((comment) => parentText.slice(comment.pos, comment.end)).join("");
-            return new Lint.Fix(Rule.metadata.ruleName, [
-                this.createReplacement(secondNodeStart, secondNode.getStart() - secondNodeStart, replacements),
-            ]);
+            return this.createReplacement(secondNodeStart, secondNode.getStart() - secondNodeStart, replacements);
         } else {
             return undefined;
         }
