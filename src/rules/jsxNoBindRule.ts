@@ -23,8 +23,14 @@ export class Rule extends Lint.Rules.AbstractRule {
     /* tslint:disable:object-literal-sort-keys */
     public static metadata: Lint.IRuleMetadata = {
         ruleName: "jsx-no-bind",
-        description: "Checks for usage of .bind(this) inside JSX attributes",
-        descriptionDetails: "Similar in spirit to the jsx-no-lambda rule",
+        description: Lint.Utils.dedent
+            `Forbids function binding in JSX attributes. This has the same intent \
+            as jsx-no-lambda in helping you avoid excessive re-renders.`,
+        descriptionDetails: Lint.Utils.dedent
+            `Note that this currently only does a simple syntactic check, \
+            not a semantic one (it doesn't use the type checker). So it may \
+            have some rare false positives if you define your own .bind function \
+            and supply this as a parameter.`,
         options: null,
         optionsDescription: "",
         optionExamples: ["true"],

@@ -24,6 +24,11 @@ export class Rule extends Lint.Rules.AbstractRule {
     public static metadata: Lint.IRuleMetadata = {
         ruleName: "jsx-no-lambda",
         description: "Checks for fresh lambda literals used in JSX attributes",
+        descriptionDetails: Lint.Utils.dedent
+            `Creating new anonymous functions (with either the function syntax or \
+            ES2015 arrow syntax) inside the render call stack works against pure component \
+            rendering. When doing an equality check between two lambdas, React will always \
+            consider them unequal values and force the component to re-render more often than necessary.`,
         options: null,
         optionsDescription: "",
         optionExamples: ["true"],
