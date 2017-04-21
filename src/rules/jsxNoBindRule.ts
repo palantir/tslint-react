@@ -16,6 +16,7 @@
  */
 
 import * as Lint from "tslint";
+import { isCallExpression, isJsxExpression } from "tsutils";
 import * as ts from "typescript";
 
 export class Rule extends Lint.Rules.AbstractRule {
@@ -31,29 +32,23 @@ export class Rule extends Lint.Rules.AbstractRule {
 }
 
 function walk(ctx: Lint.WalkContext<void>): void {
-    return ts.forEachChild(ctx.sourceFile, cb);
-
-    function cb(node: ts.Node): void {
+    return ts.forEachChild(ctx.sourceFile, function cb(node: ts.Node): void {
         if (node.kind !== ts.SyntaxKind.JsxAttribute) {
             return ts.forEachChild(node, cb);
         }
 
         const initializer = (node as ts.JsxAttribute).initializer;
-
-        if (!initializer || (initializer.kind !== ts.SyntaxKind.JsxExpression)) {
+        if (initializer === undefined || !isJsxExpression(initializer)) {
             return;
         }
 
         const expression = (initializer as ts.JsxExpression).expression;
-
-        if (!expression || expression.kind !== ts.SyntaxKind.CallExpression) {
-            return;
-        }
-
-        if (!expression.getText(ctx.sourceFile).includes(".bind(this)")) {
+        if (expression === undefined
+            || !isCallExpression(expression)
+            || !expression.getText(ctx.sourceFile).includes(".bind(this)")) {
             return;
         }
 
         return ctx.addFailureAtNode(expression, Rule.FAILURE_STRING);
-    }
+    });
 }
