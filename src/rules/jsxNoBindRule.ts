@@ -16,10 +16,23 @@
  */
 
 import * as Lint from "tslint";
-import { isCallExpression, isJsxExpression } from "tsutils";
+import { isCallExpression, isJsxAttribute, isJsxExpression } from "tsutils";
 import * as ts from "typescript";
 
 export class Rule extends Lint.Rules.AbstractRule {
+    /* tslint:disable:object-literal-sort-keys */
+    public static metadata: Lint.IRuleMetadata = {
+        ruleName: "jsx-no-bind",
+        description: "Checks for usage of .bind(this) inside JSX attributes",
+        descriptionDetails: "Similar in spirit to the jsx-no-lambda rule",
+        options: null,
+        optionsDescription: "",
+        optionExamples: ["true"],
+        type: "functionality",
+        typescriptOnly: false,
+    };
+    /* tslint:enable:object-literal-sort-keys */
+
     public static FAILURE_STRING = "Binds are forbidden in JSX attributes due to their rendering performance impact";
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
@@ -33,16 +46,16 @@ export class Rule extends Lint.Rules.AbstractRule {
 
 function walk(ctx: Lint.WalkContext<void>): void {
     return ts.forEachChild(ctx.sourceFile, function cb(node: ts.Node): void {
-        if (node.kind !== ts.SyntaxKind.JsxAttribute) {
+        if (!isJsxAttribute(node)) {
             return ts.forEachChild(node, cb);
         }
 
-        const initializer = (node as ts.JsxAttribute).initializer;
+        const initializer = node.initializer;
         if (initializer === undefined || !isJsxExpression(initializer)) {
             return;
         }
 
-        const expression = (initializer as ts.JsxExpression).expression;
+        const { expression } = initializer;
         if (expression === undefined
             || !isCallExpression(expression)
             || !expression.getText(ctx.sourceFile).includes(".bind(this)")) {
