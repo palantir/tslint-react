@@ -20,6 +20,18 @@ import { isJsxElement, isJsxSelfClosingElement } from "tsutils";
 import * as ts from "typescript";
 
 export class Rule extends Lint.Rules.AbstractRule {
+    /* tslint:disable:object-literal-sort-keys */
+    public static metadata: Lint.IRuleMetadata = {
+        ruleName: "jsx-wrap-multiline",
+        description: "Checks that multiline JSX elements are wrapped in parens",
+        options: null,
+        optionsDescription: "",
+        optionExamples: ["true"],
+        type: "style",
+        typescriptOnly: false,
+    };
+    /* tslint:enable:object-literal-sort-keys */
+
     public static FAILURE_NOT_WRAPPED =
         "Multiline JSX elements must be wrapped in parentheses";
     public static FAILURE_MISSING_NEW_LINE_AFTER_OPEN =

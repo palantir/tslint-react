@@ -20,6 +20,18 @@ import { isJsxElement } from "tsutils";
 import * as ts from "typescript";
 
 export class Rule extends Lint.Rules.AbstractRule {
+    /* tslint:disable:object-literal-sort-keys */
+    public static metadata: Lint.IRuleMetadata = {
+        ruleName: "jsx-self-close",
+        description: "Checks that JSX elements with no children are self-closing",
+        options: null,
+        optionsDescription: "",
+        optionExamples: ["true"],
+        type: "style",
+        typescriptOnly: false,
+    };
+    /* tslint:enable:object-literal-sort-keys */
+
     public static FAILURE_STRING = "JSX elements with no children must be self-closing";
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
