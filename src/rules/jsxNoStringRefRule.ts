@@ -16,42 +16,46 @@
  */
 
 import * as Lint from "tslint";
+import { isJsxAttribute, isJsxExpression, isStringLiteral, isTemplateExpression } from "tsutils";
 import * as ts from "typescript";
 
-import { nodeIsKind } from "../guards";
-
 export class Rule extends Lint.Rules.AbstractRule {
+    /* tslint:disable:object-literal-sort-keys */
+    public static metadata: Lint.IRuleMetadata = {
+        ruleName: "jsx-no-string-ref",
+        description: "Checks for string literal refs",
+        descriptionDetails: "This syntax is deprecated and will be removed in a future version of React",
+        options: null,
+        optionsDescription: "",
+        optionExamples: ["true"],
+        type: "style",
+        typescriptOnly: false,
+    };
+    /* tslint:enable:object-literal-sort-keys */
+
     public static FAILURE_STRING = "Pass a callback to ref prop instead of a string literal";
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
-        const walker = new JsxNoStringRefWalker(sourceFile, this.getOptions());
-        return this.applyWithWalker(walker);
+        return this.applyWithFunction(sourceFile, walk);
     }
 }
 
-class JsxNoStringRefWalker extends Lint.RuleWalker {
-    protected visitNode(node: ts.Node) {
-        if (nodeIsKind<ts.JsxAttribute>(node, ts.SyntaxKind.JsxAttribute)) {
+function walk(ctx: Lint.WalkContext<void>): void {
+    return ts.forEachChild(ctx.sourceFile, function cb(node: ts.Node): void {
+        if (isJsxAttribute(node)) {
             const { name, initializer } = node;
             const isRefAttribute = name != null && name.text === "ref";
             if (isRefAttribute && initializer != null) {
                 const hasStringInitializer = initializer.kind === ts.SyntaxKind.StringLiteral;
-                const hasStringExpressionInitializer =
-                    nodeIsKind<ts.JsxExpression>(initializer, ts.SyntaxKind.JsxExpression)
+                const hasStringExpressionInitializer = isJsxExpression(initializer)
                     && initializer.expression !== undefined
-                    && (initializer.expression.kind === ts.SyntaxKind.StringLiteral
-                        || initializer.expression.kind === ts.SyntaxKind.TemplateExpression);
+                    && (isStringLiteral(initializer.expression) || isTemplateExpression(initializer.expression));
 
                 if (hasStringInitializer || hasStringExpressionInitializer) {
-                    this.addFailure(this.createFailure(
-                        initializer.getStart(),
-                        initializer.getWidth(),
-                        Rule.FAILURE_STRING,
-                    ));
+                    ctx.addFailureAtNode(initializer, Rule.FAILURE_STRING);
                 }
             }
         }
-
-        super.visitNode(node);
-    }
+        return ts.forEachChild(node, cb);
+    });
 }

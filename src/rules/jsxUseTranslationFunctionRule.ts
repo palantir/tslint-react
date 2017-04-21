@@ -16,57 +16,42 @@
  */
 
 import * as Lint from "tslint";
+import { isJsxAttribute, isJsxElement, isJsxExpression, isJsxText, isStringLiteral } from "tsutils";
 import * as ts from "typescript";
-import {nodeIsKind} from "../guards";
 
 export class Rule extends Lint.Rules.AbstractRule {
     public static TRANSLATABLE_ATTRIBUTES = new Set(["placeholder", "title", "alt"]);
     public static FAILURE_STRING = "String literals are disallowed as JSX. Use a translation function";
+    public static FAILURE_STRING_FACTORY = (text: string) =>
+        `String literal is not allowed for value of ${text}. Use a translation function`
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
-        const walker = new JsxUseTranslationFunctionWalker(sourceFile, this.getOptions());
-        return this.applyWithWalker(walker);
+        return this.applyWithFunction(sourceFile, walk);
     }
 }
 
-class JsxUseTranslationFunctionWalker extends Lint.RuleWalker {
-    public visitJsxElement(node: ts.JsxElement) {
-        // TODO: replace this method with visitJsxText for simpler implementation
-        for (const child of node.children) {
-            if (nodeIsKind(child, ts.SyntaxKind.JsxText) && child.getText().trim() !== "") {
-                this.addFailure(this.createFailure(child.getStart(), child.getWidth(), Rule.FAILURE_STRING));
-            }
-            if (nodeIsKind<ts.JsxExpression>(child, ts.SyntaxKind.JsxExpression)) {
-                if (child.expression && child.expression.kind === ts.SyntaxKind.StringLiteral) {
-                    this.addFailure(this.createFailure(child.getStart(), child.getWidth(), Rule.FAILURE_STRING));
+function walk(ctx: Lint.WalkContext<void>) {
+    return ts.forEachChild(ctx.sourceFile, function cb(node: ts.Node): void {
+        if (isJsxElement(node)) {
+            for (const child of node.children) {
+                if (isJsxText(child) && child.getText().trim() !== "") {
+                    ctx.addFailureAtNode(child, Rule.FAILURE_STRING);
                 }
-                if (child.expression && child.expression.kind === ts.SyntaxKind.FirstTemplateToken) {
-                    this.addFailure(this.createFailure(child.getStart(), child.getWidth(), Rule.FAILURE_STRING));
+                if (isJsxExpression(child)
+                    && child.expression !== undefined
+                    && (isStringLiteral(child.expression)
+                        || child.expression.kind === ts.SyntaxKind.FirstTemplateToken)) {
+                    ctx.addFailureAtNode(child, Rule.FAILURE_STRING);
+                }
+            }
+        } else if (isJsxAttribute(node)) {
+            if (Rule.TRANSLATABLE_ATTRIBUTES.has(node.name.text) && node.initializer) {
+                if (isStringLiteral(node.initializer)
+                    || (isJsxExpression(node.initializer) && isStringLiteral(node.initializer.expression!))) {
+                    ctx.addFailureAtNode(node.initializer, Rule.FAILURE_STRING_FACTORY(node.name.text));
                 }
             }
         }
-        super.visitJsxElement(node);
-    }
-
-    public visitJsxAttribute(node: ts.JsxAttribute) {
-        if (Rule.TRANSLATABLE_ATTRIBUTES.has(node.name.text) && node.initializer) {
-            if (nodeIsKind(node.initializer, ts.SyntaxKind.StringLiteral)) {
-                this.addFailure(this.createFailure(
-                    node.initializer.getStart(),
-                    node.initializer.getWidth(),
-                    `String literal is not allowed for value of ${node.name.text}. Use a translation function`,
-                ));
-            }
-            if (nodeIsKind<ts.JsxExpression>(node.initializer, ts.SyntaxKind.JsxExpression) &&
-                nodeIsKind<ts.StringLiteral>(node.initializer.expression!, ts.SyntaxKind.StringLiteral)
-            ) {
-                    this.addFailure(this.createFailure(
-                        node.initializer.getStart(),
-                        node.initializer.getWidth(),
-                        `String literal is not allowed for value of ${node.name.text}. Use a translation function`,
-                    ));
-            }
-        }
-        super.visitJsxAttribute(node);
-    }
+        return ts.forEachChild(node, cb);
+    });
 }
