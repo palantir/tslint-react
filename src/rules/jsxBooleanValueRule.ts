@@ -16,15 +16,11 @@
  */
 
 import * as Lint from "tslint";
+import { isJsxAttribute } from "tsutils";
 import * as ts from "typescript";
 
 const OPTION_ALWAYS = "always";
 const OPTION_NEVER = "never";
-const BOOLEAN_RULE_VALUES = [OPTION_ALWAYS, OPTION_NEVER];
-const BOOLEAN_RULE_OBJECT = {
-    enum: BOOLEAN_RULE_VALUES,
-    type: "string",
-};
 
 export class Rule extends Lint.Rules.AbstractRule {
     /* tslint:disable:object-literal-sort-keys */
@@ -37,7 +33,10 @@ export class Rule extends Lint.Rules.AbstractRule {
             * \`"${OPTION_NEVER}"\` prevents JSX boolean values to be explicity set as \`true\``,
         options: {
             type: "array",
-            items: [BOOLEAN_RULE_OBJECT],
+            items: [{
+                enum: [OPTION_ALWAYS, OPTION_NEVER],
+                type: "string",
+            }],
             minLength: 1,
             maxLength: 1,
         },
@@ -54,26 +53,30 @@ export class Rule extends Lint.Rules.AbstractRule {
     public static ALWAYS_MESSAGE = `Value must be set for boolean attributes`;
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
-        return this.applyWithWalker(new JsxBooleanValueWalker(sourceFile, this.getOptions()));
+        const option = Array.isArray(this.ruleArguments) ? this.ruleArguments[0] : undefined;
+        return this.applyWithFunction(sourceFile, walk, option);
     }
 }
 
-class JsxBooleanValueWalker extends Lint.RuleWalker {
-    protected visitJsxAttribute(node: ts.JsxAttribute) {
-        const { initializer } = node;
+function walk(ctx: Lint.WalkContext<string | undefined>): void {
+    return ts.forEachChild(ctx.sourceFile, function cb(node: ts.Node): void {
+        if (isJsxAttribute(node)) {
+            const { initializer } = node;
 
-        if (initializer === undefined) {
-            // if no option set, or explicitly set to "always"
-            if (!this.hasOption(OPTION_NEVER)) {
-                this.addFailure(this.createFailure(node.getStart(), node.getWidth(), Rule.ALWAYS_MESSAGE));
-            }
-        } else if (initializer.kind === ts.SyntaxKind.JsxExpression) {
-            const isValueTrue = initializer.expression !== undefined
-                && initializer.expression.kind === ts.SyntaxKind.TrueKeyword;
+            if (initializer === undefined) {
+                // if no option set, or explicitly set to "always"
+                if (ctx.options === undefined || ctx.options === OPTION_ALWAYS) {
+                    ctx.addFailureAt(node.getStart(), node.getWidth(), Rule.ALWAYS_MESSAGE);
+                }
+            } else if (initializer.kind === ts.SyntaxKind.JsxExpression) {
+                const isValueTrue = initializer.expression !== undefined
+                    && initializer.expression.kind === ts.SyntaxKind.TrueKeyword;
 
-            if (isValueTrue && this.hasOption(OPTION_NEVER)) {
-                this.addFailure(this.createFailure(node.getStart(), node.getWidth(), Rule.NEVER_MESSAGE));
+                if (isValueTrue && ctx.options === OPTION_NEVER) {
+                    ctx.addFailureAt(node.getStart(), node.getWidth(), Rule.NEVER_MESSAGE);
+                }
             }
         }
-    }
+        return ts.forEachChild(node, cb);
+    });
 }
