@@ -9,14 +9,18 @@ Lint rules related to React & JSX for [TSLint](https://github.com/palantir/tslin
 
 ### Usage
 
-Sample configuration where `tslint.json` lives adjacent to your `node_modules` folder:
+tslint-react has _implicit_ peer dependencies on TSLint and TypeScript. The recommended versions of those packages are
+listed as `devDependencies`.
+
+To use these lint rules with the default preset, use configuration inheritance via the `extends` keyword.
+Here's a sample configuration where `tslint.json` lives adjacent to your `node_modules` folder:
 
 ```js
 {
   "extends": ["tslint:latest", "tslint-react"],
   "rules": {
-    // enable tslint-react rules here
-    "jsx-no-lambda": true
+    // override tslint-react rules here
+    "jsx-wrap-multiline": false
   }
 }
 ```
@@ -100,16 +104,17 @@ Sample configuration where `tslint.json` lives adjacent to your `node_modules` f
 
 ### Development
 
-We track rule suggestions on Github issues -- [here's a useful link](https://github.com/palantir/tslint-react/issues?q=is%3Aissue+is%3Aopen+label%3A%22Type%3A+Rule+Suggestion%22) to view all the current suggestions. Tickets are roughly triaged by priority (P1, P2, P3).
+We track rule suggestions on Github issues -- [here's a useful link](https://github.com/palantir/tslint-react/issues?q=is%3Aissue+is%3Aopen+label%3A%22Type%3A+Rule+Suggestion%22)
+to view all the current suggestions. Tickets are roughly triaged by priority (P1, P2, P3).
 
-We're happy to accept PRs for new rules, especially those marked as [Status: Accepting PRs](https://github.com/palantir/tslint-react/issues?q=is%3Aissue+is%3Aopen+label%3A%22Status%3A+Accepting+PRs%22). If submitting a PR, try to follow the same style conventions as the [core TSLint project](https://github.com/palantir/tslint).
+We're happy to accept PRs for new rules, especially those marked as [Status: Accepting PRs](https://github.com/palantir/tslint-react/issues?q=is%3Aissue+is%3Aopen+label%3A%22Status%3A+Accepting+PRs%22).
+If submitting a PR, try to follow the same style conventions as the [core TSLint project](https://github.com/palantir/tslint).
 
-Quick Start (requires Node v6+, yarn v0.18):
+Quick Start (requires Node v6+, yarn v0.22+):
 
 1. `yarn`
-1. `yarn compile`
+1. `yarn verify`
 1. `yarn lint`
-1. `./scripts/verify.sh`
 
 ### Changelog
 
