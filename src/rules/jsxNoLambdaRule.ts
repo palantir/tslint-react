@@ -16,9 +16,27 @@
  */
 
 import * as Lint from "tslint";
+import { isJsxAttribute, isJsxExpression } from "tsutils";
 import * as ts from "typescript";
 
 export class Rule extends Lint.Rules.AbstractRule {
+    /* tslint:disable:object-literal-sort-keys */
+    public static metadata: Lint.IRuleMetadata = {
+        ruleName: "jsx-no-lambda",
+        description: "Checks for fresh lambda literals used in JSX attributes",
+        descriptionDetails: Lint.Utils.dedent
+            `Creating new anonymous functions (with either the function syntax or \
+            ES2015 arrow syntax) inside the render call stack works against pure component \
+            rendering. When doing an equality check between two lambdas, React will always \
+            consider them unequal values and force the component to re-render more often than necessary.`,
+        options: null,
+        optionsDescription: "",
+        optionExamples: ["true"],
+        type: "functionality",
+        typescriptOnly: false,
+    };
+    /* tslint:enable:object-literal-sort-keys */
+
     public static FAILURE_STRING = "Lambdas are forbidden in JSX attributes due to their rendering performance impact";
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
@@ -29,17 +47,15 @@ export class Rule extends Lint.Rules.AbstractRule {
 function walk(ctx: Lint.WalkContext<void>) {
     return ts.forEachChild(ctx.sourceFile, function cb(node: ts.Node): void {
         // continue iterations until JsxAttribute will be found
-        if (node.kind === ts.SyntaxKind.JsxAttribute) {
-            const initializer = (node as ts.JsxAttribute).initializer;
-
+        if (isJsxAttribute(node)) {
+            const { initializer } = node;
             // early exit in case when initializer is string literal or not provided (e.d. `disabled`)
-            if (!initializer || initializer.kind !== ts.SyntaxKind.JsxExpression) {
+            if (initializer === undefined || !isJsxExpression(initializer)) {
                 return;
             }
 
-            const expression = (initializer as ts.JsxExpression).expression;
-
-            if (expression && isLambda(expression)) {
+            const { expression } = initializer;
+            if (expression !== undefined && isLambda(expression)) {
                 return ctx.addFailureAtNode(expression, Rule.FAILURE_STRING);
             }
         }

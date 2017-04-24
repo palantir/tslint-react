@@ -16,22 +16,37 @@
  */
 
 import * as Lint from "tslint";
+import { isJsxExpression } from "tsutils";
 import * as ts from "typescript";
 
 export class Rule extends Lint.Rules.AbstractRule {
+    /* tslint:disable:object-literal-sort-keys */
+    public static metadata: Lint.IRuleMetadata = {
+        ruleName: "jsx-no-multiline-js",
+        description: "Checks for multiline JS expressions inside JSX expressions",
+        descriptionDetails: "This helps reduce mental overhead when parsing JSX syntax",
+        options: null,
+        optionsDescription: "",
+        optionExamples: ["true"],
+        type: "style",
+        typescriptOnly: false,
+    };
+    /* tslint:enable:object-literal-sort-keys */
+
     public static FAILURE_STRING = "Multiline JS expressions inside JSX are forbidden";
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
-        const walker = new JsxNoMultilineJsWalker(sourceFile, this.getOptions());
-        return this.applyWithWalker(walker);
+        return this.applyWithFunction(sourceFile, walk);
     }
 }
 
-class JsxNoMultilineJsWalker extends Lint.RuleWalker {
-    protected visitJsxExpression(node: ts.JsxExpression) {
-        if (node.getText().indexOf("\n") > -1) {
-            this.addFailure(this.createFailure(node.getStart(), node.getWidth(), Rule.FAILURE_STRING));
+function walk(ctx: Lint.WalkContext<void>): void {
+    return ts.forEachChild(ctx.sourceFile, function cb(node: ts.Node): void {
+        if (isJsxExpression(node)) {
+            if (node.getText().indexOf("\n") > -1) {
+                ctx.addFailureAt(node.getStart(), node.getWidth(), Rule.FAILURE_STRING);
+            }
         }
-        super.visitJsxExpression(node);
-    }
+        return ts.forEachChild(node, cb);
+    });
 }

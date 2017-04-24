@@ -16,7 +16,13 @@
  */
 
 import * as Lint from "tslint";
+import { isIdentifier, isJsxAttribute } from "tsutils";
 import * as ts from "typescript";
+
+interface IRuleOptions {
+    /** Map from banned prop name -> its explanatory message */
+    bannedProps: Map<string, string>;
+}
 
 export class Rule extends Lint.Rules.AbstractRule {
     /* tslint:disable:object-literal-sort-keys */
@@ -45,36 +51,29 @@ export class Rule extends Lint.Rules.AbstractRule {
     }
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
-        return this.applyWithWalker(new JsxBanPropsWalker(sourceFile, this.getOptions()));
+        const bannedProps = this.ruleArguments
+            ? new Map<string, string>(this.ruleArguments.map((prop: string[]): [string, string] =>
+                [prop[0], prop.length > 1 ? prop[1] : ""]))
+            : new Map<string, string>();
+        return this.applyWithFunction(sourceFile, walk, { bannedProps });
     }
 }
 
-class JsxBanPropsWalker extends Lint.RuleWalker {
-    private isInJsxAttribute = false;
-    private bannedProps: Map<string, string>;
+function walk(ctx: Lint.WalkContext<IRuleOptions>): void {
+    return ts.forEachChild(ctx.sourceFile, function cb(node: ts.Node): void {
+        if (isJsxAttribute(node)) {
+            return ts.forEachChild(node, visitorInJsxAttribute);
+        } else {
+            return ts.forEachChild(node, cb);
+        }
+    });
 
-    constructor(sourceFile: ts.SourceFile, options: Lint.IOptions) {
-        super(sourceFile, options);
-
-        const propsToBan = options.ruleArguments;
-        this.bannedProps = propsToBan
-            ? new Map<string, string>(propsToBan.map((prop: string[]): [string, string] =>
-                [prop[0], prop.length > 1 ? prop[1] : ""]))
-            : new Map<string, string>();
-    }
-
-    protected visitJsxAttribute(node: ts.JsxAttribute) {
-        this.isInJsxAttribute = true;
-        super.visitJsxAttribute(node);
-        this.isInJsxAttribute = false;
-    }
-
-    protected visitIdentifier(node: ts.Identifier) {
-        if (this.isInJsxAttribute) {
-            const propName = (node as ts.Identifier).text;
-            if (this.bannedProps.has(propName)) {
-                const propBanExplanation = this.bannedProps.get(propName);
-                this.addFailureAtNode(node, Rule.FAILURE_STRING_FACTORY(propName, propBanExplanation));
+    function visitorInJsxAttribute(node: ts.Node): void {
+        if (isIdentifier(node)) {
+            const propName = node.text;
+            if (ctx.options.bannedProps.has(propName)) {
+                const propBanExplanation = ctx.options.bannedProps.get(propName);
+                ctx.addFailureAtNode(node, Rule.FAILURE_STRING_FACTORY(propName, propBanExplanation));
             }
         }
     }
