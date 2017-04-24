@@ -60,22 +60,21 @@ export class Rule extends Lint.Rules.AbstractRule {
 }
 
 function walk(ctx: Lint.WalkContext<IRuleOptions>): void {
-    let inJsxAttribute = false;
-
     return ts.forEachChild(ctx.sourceFile, function cb(node: ts.Node): void {
         if (isJsxAttribute(node)) {
-            inJsxAttribute = true;
-            ts.forEachChild(node, cb);
-            inJsxAttribute = false;
+            return ts.forEachChild(node, visitorInJsxAttribute);
         } else {
-            if (isIdentifier(node) && inJsxAttribute) {
-                const propName = node.text;
-                if (ctx.options.bannedProps.has(propName)) {
-                    const propBanExplanation = ctx.options.bannedProps.get(propName);
-                    ctx.addFailureAtNode(node, Rule.FAILURE_STRING_FACTORY(propName, propBanExplanation));
-                }
-            }
             return ts.forEachChild(node, cb);
         }
     });
+
+    function visitorInJsxAttribute(node: ts.Node): void {
+        if (isIdentifier(node)) {
+            const propName = node.text;
+            if (ctx.options.bannedProps.has(propName)) {
+                const propBanExplanation = ctx.options.bannedProps.get(propName);
+                ctx.addFailureAtNode(node, Rule.FAILURE_STRING_FACTORY(propName, propBanExplanation));
+            }
+        }
+    }
 }
