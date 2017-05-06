@@ -25,6 +25,8 @@ Here's a sample configuration where `tslint.json` lives adjacent to your `node_m
 }
 ```
 
+To lint your `.ts` **and** `.tsx` files you can simply run `tslint -c tslint.json 'src/**/*.{ts,tsx}'`.
+
 ### Rules
 
 - `jsx-alignment`
