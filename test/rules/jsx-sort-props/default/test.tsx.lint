@@ -1,0 +1,106 @@
+function passA(){
+  return(
+    <Foo a={1} b={true} />
+  );
+}
+
+function failA(){
+  return(
+    <Foo b={true} a={1} />
+                  ~ [The key 'a' is not sorted alphabetically]
+  );
+}
+
+function passB(){
+  return(
+    <Foo
+      a={1}
+      b={true}
+    >
+      test
+    </Foo>
+  );
+}
+
+function failB(){
+  return(
+    <Foo
+      b={true}
+      a={1}
+      ~ [The key 'a' is not sorted alphabetically]
+    >
+      test
+    </Foo>
+  );
+}
+
+function passSpread(){
+  return(
+    <Foo
+      a={1}
+      { ...z }
+      b={true}
+    >
+      test
+    </Foo>
+  );
+}
+
+function failSpread(){
+  return(
+    <Foo
+      b={true}
+      { ...z }
+      a={1}
+      ~ [The key 'a' is not sorted alphabetically]
+    >
+      test
+    </Foo>
+  );
+}
+
+function passShorthand(){
+  return(
+    <Foo
+      a
+      b={true}
+    >
+      test
+    </Foo>
+  );
+}
+
+function failShorthand(){
+  return(
+    <Foo
+      b={true}
+      a
+      ~ [The key 'a' is not sorted alphabetically]
+    >
+      test
+    </Foo>
+  );
+}
+
+function passCase(){
+  return(
+    <Foo
+      Tests={1}
+      test={2}
+    >
+      test
+    </Foo>
+  );
+}
+
+function failCase(){
+  return(
+    <Foo
+      test={2}
+      Tests={1}
+      ~~~~~ [The key 'Tests' is not sorted alphabetically]
+    >
+      test
+    </Foo>
+  );
+}

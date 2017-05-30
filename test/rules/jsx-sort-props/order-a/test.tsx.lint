@@ -1,0 +1,60 @@
+function passA(){
+  return(
+    <Foo
+      a
+      b={true}
+    >
+      test
+    </Foo>
+  );
+}
+
+function failA(){
+  return(
+    <Foo
+      b={true}
+      a
+      ~ [shorthand properties should come before longhand properties]
+    >
+      test
+    </Foo>
+  );
+}
+
+function passB(){
+  return(
+    <Foo a b={true} />
+  );
+}
+
+function failB(){
+  return(
+    <Foo b={true} a />
+                  ~ [shorthand properties should come before longhand properties]
+  );
+}
+
+function passC(){
+  return(
+    <Foo
+      Bats
+      bat
+      cat={true}
+    >
+      test
+    </Foo>
+  );
+}
+
+function failC(){
+  return(
+    <Foo
+      bat
+      Bats
+      ~~~~ [The key 'Bats' is not sorted alphabetically]
+      cat={true}
+    >
+      test
+    </Foo>
+  );
+}

@@ -1,0 +1,64 @@
+function passA(){
+  return(
+    <Foo
+      { ...z }
+      a
+      b={true}
+    >
+      test
+    </Foo>
+  );
+}
+
+function failA(){
+  return(
+    <Foo
+      a
+      { ...z }
+      ~~~~~~~~ [spread properties should come before shorthand properties]
+      b={true}
+    >
+      test
+    </Foo>
+  );
+}
+
+function passB(){
+  return(
+    <Foo { ...z } a b={true} />
+  );
+}
+
+function failB(){
+  return(
+    <Foo b={true} { ...z } a />
+                  ~~~~~~~~ [spread properties should come before longhand properties]
+  );
+}
+
+function passC(){
+  return(
+    <Foo
+      { ...z }
+      a
+      Bats={true}
+      bat={2}
+    >
+      test
+    </Foo>
+  );
+}
+
+function failC(){
+  return(
+    <Foo
+      { ...z }
+      a
+      bat={2}
+      Bats={true}
+      ~~~~ [The key 'Bats' is not sorted alphabetically]
+    >
+      test
+    </Foo>
+  );
+}

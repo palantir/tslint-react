@@ -1,0 +1,35 @@
+function passA(){
+  return(
+    <Foo
+      test={2}
+      Tests={1}
+    >
+      test
+    </Foo>
+  );
+}
+
+function failA(){
+  return(
+    <Foo
+      Tests={1}
+      test={2}
+      ~~~~ [The key 'test' is not sorted alphabetically]
+    >
+      test
+    </Foo>
+  );
+}
+
+function passB(){
+  return(
+    <Foo test={2} Tests={1} />
+  );
+}
+
+function failB(){
+  return(
+    <Foo Tests={1} test={2} />
+                   ~~~~ [The key 'test' is not sorted alphabetically]
+  );
+}
