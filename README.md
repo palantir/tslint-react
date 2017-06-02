@@ -5,6 +5,8 @@
 tslint-react
 ------------
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/palantir/tslint-react.svg)](https://greenkeeper.io/)
+
 Lint rules related to React & JSX for [TSLint](https://github.com/palantir/tslint/).
 
 ### Usage
