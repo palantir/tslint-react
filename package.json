@@ -27,7 +27,7 @@
     "npm-run-all": "^4.0.2",
     "path": "^0.12.7",
     "tslint": "^5.1.0",
-    "tsutils": "^1.7.0",
+    "tsutils": "^2.3.0",
     "typescript": "^2.3"
   }
 }
