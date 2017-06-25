@@ -1,13 +1,20 @@
 {
-    "version": "1.8.10",
+    "version": "2.2.1",
     "compilerOptions": {
-        "module": "commonjs",
-        "noImplicitAny": true,
         "declaration": true,
-        "sourceMap": false,
-        "target": "es5",
+        "lib": ["es6"],
+        "module": "commonjs",
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "noImplicitReturns": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "outDir": "build/",
         "rootDir": "src/",
-        "outDir": "build/"
+        "sourceMap": false,
+        "strictNullChecks": true,
+        "target": "es5"
     },
     "exclude": [
         "build",

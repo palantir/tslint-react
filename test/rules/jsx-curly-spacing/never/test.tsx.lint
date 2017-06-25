@@ -1,0 +1,91 @@
+const passA = <App foo={bar} />;
+
+const failA = <App foo={ bar } />;
+                       ~ [There should be no space after {]
+                             ~ [There should be no space before }]
+
+const failA2 = <App foo={bar } />;
+                             ~ [There should be no space before }]
+
+const failA3 = <App foo={ bar} />;
+                        ~ [There should be no space after {]
+
+const passB = <App foo={bar} {...bar} />;
+
+const failB = <App foo={ bar }  { ...bar } />;
+                       ~ [There should be no space after {]
+                             ~ [There should be no space before }]
+                                ~ [There should be no space after {]
+                                         ~ [There should be no space before }]
+
+const failB2 = <App foo={bar } {...bar } />;
+                             ~ [There should be no space before }]
+                                       ~ [There should be no space before }]
+
+const failB3 = <App foo={ bar} { ...bar} />;
+                        ~ [There should be no space after {]
+                               ~ [There should be no space after {]
+
+const failB4 = <App foo={bar} { ...bar } />;
+                              ~ [There should be no space after {]
+                                       ~ [There should be no space before }]
+
+const failB5 = <App foo={ bar } {...bar} />;
+                        ~ [There should be no space after {]
+                              ~ [There should be no space before }]
+
+const passC = <App foo={
+                        bar
+                        } {...bar} />;
+
+
+const failC = <App foo={ bar
+                       ~ [There should be no space after {]
+                        }
+                        {...bar
+                        } />;
+
+const failC2 = <App foo={
+                          bar }
+                              ~ [There should be no space before }]
+                        {
+                          ...bar } />;
+                                 ~ [There should be no space before }]
+
+const passD = <App foo={bar/* comment */} {...baz/* comment */} />;
+
+const failD = <App foo={bar /* comment */} {...baz/* comment */} />;
+                                         ~ [There should be no space before }]
+
+const passE = <App foo={{ bar:baz }} />;
+
+const failE = <App foo={ { bar:baz } } />;
+                       ~ [There should be no space after {]
+                                     ~ [There should be no space before }]
+
+const passF = <App foo={{ bar:baz }} {...baz} />;
+
+const failF = <App foo={ { bar:baz } } { ...baz } />;
+                       ~ [There should be no space after {]
+                                     ~ [There should be no space before }]
+                                       ~ [There should be no space after {]
+                                                ~ [There should be no space before }]
+
+const failG = <App foo={   { bar:baz }   } {   ...baz   } />;
+                       ~ [There should be no space after {]
+                                         ~ [There should be no space before }]
+                                           ~ [There should be no space after {]
+                                                        ~ [There should be no space before }]
+
+const passH = <App foo={{ bar:baz }} {...baz}>
+                <div>{}</div>
+              </App>;
+
+const failH = <App foo={{ bar:baz }} {...baz}>
+                <div>{  }</div>
+                     ~ [There should be no space after {]
+                        ~ [There should be no space before }]
+              </App>;
+
+const passI = <App foo={/* comment */
+                   /* comment 2 */ should_not_matter_because_multiline}/>

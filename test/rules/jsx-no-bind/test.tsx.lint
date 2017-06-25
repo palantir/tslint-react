@@ -1,0 +1,27 @@
+function foo() {
+}
+
+export const myButton = (
+    <button onClick={foo.bind(this)}>
+                     ~~~~~~~~~~~~~~   [0]
+        Log something
+    </button>
+);
+
+export const myButton2 = (
+    <button onClick={this.foo.bind(this)}>
+                     ~~~~~~~~~~~~~~~~~~~   [0]
+        Log something
+    </button>
+);
+
+export const selector = (
+    <Component
+        prop1={this.state.availableColumns}
+        prop2={this.onChangeHandler.bind(this)}
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   [0]
+        prop3={this.state.stateVar1}
+    />
+);
+
+[0]: Binds are forbidden in JSX attributes due to their rendering performance impact

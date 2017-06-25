@@ -1,5 +1,8 @@
 .DS_Store
-.tscache/
-/build/
-node_modules/
-tscommand*.txt
+*.log
+*.un~
+*.sw[op]
+
+/node_modules
+/coverage
+/build

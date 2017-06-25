@@ -15,10 +15,23 @@
  * limitations under the License.
  */
 
-import * as Lint from "tslint/lib/lint";
+import * as Lint from "tslint";
+import { isJsxElement, isJsxSelfClosingElement } from "tsutils";
 import * as ts from "typescript";
 
 export class Rule extends Lint.Rules.AbstractRule {
+    // tslint:disable object-literal-sort-keys
+    public static metadata: Lint.IRuleMetadata = {
+        ruleName: "jsx-alignment",
+        description: "Enforces consistent and readable vertical alignment of JSX tags and attributes",
+        optionsDescription: "Not configurable.",
+        options: null,
+        optionExamples: ["true"],
+        type: "style",
+        typescriptOnly: false,
+    };
+    // tslint:enable object-literal-sort-keys
+
     public static ATTR_LINE_FAILURE = "JSX attributes must be on a line below the opening tag";
     public static ATTR_INDENT_FAILURE = "JSX attributes must be indented further than the opening tag statement";
     public static ATTR_ALIGN_FAILURE = "JSX attributes must be on their own line and vertically aligned";
@@ -26,116 +39,116 @@ export class Rule extends Lint.Rules.AbstractRule {
     public static CLOSING_TAG_FAILURE = "Closing tag must be on its own line and aligned with opening tag";
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
-        const walker = new JsxAlignmentWalker(sourceFile, this.getOptions());
-        return this.applyWithWalker(walker);
+        return this.applyWithFunction(sourceFile, walk);
     }
 }
 
-const leadingWhitespaceRegex = /[ \t]/;
+const LEADING_WHITESPACE_REGEX = /[ \t]/;
 
-class JsxAlignmentWalker extends Lint.RuleWalker {
-    protected visitJsxElement(node: ts.JsxElement) {
-        if (this.isMultiline(node.openingElement)) {
-            const startLocation = this.getLineAndCharacter(node);
-            const closeLocation = this.getSourceFile().getLineAndCharacterOfPosition(
-                node.openingElement.getEnd() - ">".length
-            );
-            this.checkElement(startLocation, node.openingElement.attributes, closeLocation, node.closingElement);
+function walk(ctx: Lint.WalkContext<void>) {
+    return ts.forEachChild(ctx.sourceFile, function cb(node: ts.Node): void {
+        if (isJsxElement(node)) {
+            if (isMultiline(node.openingElement)) {
+                const startLocation = getLineAndCharacter(node);
+                const closeLocation = ctx.sourceFile.getLineAndCharacterOfPosition(
+                    node.openingElement.getEnd() - ">".length,
+                );
+                checkElement(startLocation, node.openingElement.attributes, closeLocation, node.closingElement);
+            }
+        } else if (isJsxSelfClosingElement(node)) {
+            if (isMultiline(node)) {
+                const startLocation = getLineAndCharacter(node);
+                const closeLocation = ctx.sourceFile.getLineAndCharacterOfPosition(node.getEnd() - "/>".length);
+                checkElement(startLocation, node.attributes, closeLocation);
+            }
         }
-        super.visitJsxElement(node);
-    }
+        return ts.forEachChild(node, cb);
+    });
 
-    protected visitJsxSelfClosingElement(node: ts.JsxSelfClosingElement) {
-        if (this.isMultiline(node)) {
-            const startLocation = this.getLineAndCharacter(node);
-            const closeLocation = this.getSourceFile().getLineAndCharacterOfPosition(node.getEnd() - "/>".length);
-            this.checkElement(startLocation, node.attributes, closeLocation);
-        }
-        super.visitJsxSelfClosingElement(node);
-    }
-
-    private checkElement(
+    function checkElement(
         elementOpen: ts.LineAndCharacter,
-        attributes: (ts.JsxAttribute | ts.JsxSpreadAttribute)[],
+        attributes: Array<ts.JsxAttribute | ts.JsxSpreadAttribute> // TS <=2.2
+            | { properties: Array<ts.JsxAttribute | ts.JsxSpreadAttribute> }, // TS 2.3
         elementClose: ts.LineAndCharacter,
-        closingTag?: ts.JsxClosingElement
+        closingTag?: ts.JsxClosingElement,
     ) {
+        attributes = attributes == null || Array.isArray(attributes) ? attributes : attributes.properties;
         if (attributes == null || attributes.length === 0) { return; }
 
         // in a line like "const element = <Foo",
         // we want the initial indent to be the start of "const" instead of the start of "<Foo"
-        const initialIndent = this.getFirstNonWhitespaceCharacter(elementOpen.line);
+        const initialIndent = getFirstNonWhitespaceCharacter(elementOpen.line);
 
         const firstAttr = attributes[0];
-        const firstAttrCharacter = this.getCharacter(firstAttr);
+        const firstAttrCharacter = getCharacter(firstAttr);
 
         // ensure that first attribute is not on the same line as the start of the tag
-        if (this.getLine(firstAttr) === elementOpen.line) {
-            this.reportFailure(firstAttr, Rule.ATTR_LINE_FAILURE);
+        if (getLine(firstAttr) === elementOpen.line) {
+            reportFailure(firstAttr, Rule.ATTR_LINE_FAILURE);
         }
 
         let lastSeenLine = -1;
         for (const attr of attributes) {
-            const character = this.getCharacter(attr);
+            const character = getCharacter(attr);
 
             // ensure each attribute is indented further than the start of the tag
             if (character <= initialIndent) {
-                this.reportFailure(attr, Rule.ATTR_INDENT_FAILURE);
+                reportFailure(attr, Rule.ATTR_INDENT_FAILURE);
             }
 
             // ensure each attribute is indented equally
             if (attr !== firstAttr && character !== firstAttrCharacter) {
-                this.reportFailure(attr, Rule.ATTR_ALIGN_FAILURE);
+                reportFailure(attr, Rule.ATTR_ALIGN_FAILURE);
             }
 
-            lastSeenLine = this.getLine(attr);
+            lastSeenLine = getLine(attr);
         }
 
         // ensure that the closing token of the tag with attributes is on its own line
         // and that it is indented the same as the opening
         if (lastSeenLine === elementClose.line || elementClose.character !== initialIndent) {
-            this.addFailure(this.createFailure(
-                this.getSourceFile().getPositionOfLineAndCharacter(elementClose.line, elementClose.character),
-                1,
-                Rule.TAG_CLOSE_FAILURE
-            ));
+            const start = ctx.sourceFile.getPositionOfLineAndCharacter(elementClose.line, elementClose.character);
+            ctx.addFailureAt(start, 1, Rule.TAG_CLOSE_FAILURE);
         }
 
         // ensure closing tag is on its own line and aligned with the opening tag
         if (closingTag != null) {
-            const closingTagLocation = this.getLineAndCharacter(closingTag);
+            const closingTagLocation = getLineAndCharacter(closingTag);
             if (closingTagLocation.line <= elementClose.line || closingTagLocation.character !== initialIndent) {
-                this.reportFailure(closingTag, Rule.CLOSING_TAG_FAILURE);
+                reportFailure(closingTag, Rule.CLOSING_TAG_FAILURE);
             }
         }
     }
 
-    private getFirstNonWhitespaceCharacter(line: number): number {
-        const lineStart = this.getSourceFile().getLineStarts()[line];
-        const source = this.getSourceFile().getFullText();
+    function getFirstNonWhitespaceCharacter(line: number): number {
+        const lineStart = ctx.sourceFile.getLineStarts()[line];
+        const source = ctx.sourceFile.getFullText();
 
         let width = 0;
-        while (lineStart + width < source.length && leadingWhitespaceRegex.test(source.charAt(lineStart + width))) {
+        while (lineStart + width < source.length && LEADING_WHITESPACE_REGEX.test(source.charAt(lineStart + width))) {
             width++;
         }
         return width;
     }
 
-    private isMultiline(node: ts.Node) {
-        const startLine = this.getLine(node);
-        const endLine = this.getSourceFile().getLineAndCharacterOfPosition(node.getEnd()).line;
+    function isMultiline(node: ts.Node) {
+        const startLine = getLine(node);
+        const endLine = ctx.sourceFile.getLineAndCharacterOfPosition(node.getEnd()).line;
         return startLine !== endLine;
     }
 
-    private getLineAndCharacter(node: ts.Node) {
-        const sourceFile = this.getSourceFile();
-        return sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile));
+    function getLineAndCharacter(node: ts.Node) {
+        return ctx.sourceFile.getLineAndCharacterOfPosition(node.getStart(ctx.sourceFile));
     }
 
-    private getCharacter = (node: ts.Node) => this.getLineAndCharacter(node).character;
-    private getLine = (node: ts.Node) => this.getLineAndCharacter(node).line;
+    function getCharacter(node: ts.Node) {
+        return getLineAndCharacter(node).character;
+    }
+    function getLine(node: ts.Node) {
+        return getLineAndCharacter(node).line;
+    }
 
-    private reportFailure(node: ts.Node, message: string) {
-        this.addFailure(this.createFailure(node.getStart(), node.getWidth(), message));
+    function reportFailure(node: ts.Node, message: string) {
+        ctx.addFailureAt(node.getStart(), node.getWidth(), message);
     }
 }

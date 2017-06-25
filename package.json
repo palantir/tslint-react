@@ -1,6 +1,6 @@
 {
   "name": "tslint-react",
-  "version": "1.0.0",
+  "version": "3.0.0",
   "description": "Lint rules related to React & JSX for TSLint",
   "main": "tslint-react.json",
   "repository": {
@@ -14,16 +14,20 @@
     "compile": "tsc -p ./",
     "copy": "cp -f package.json README.md tslint-react.json build/",
     "lint": "tslint 'src/**/*.ts'",
-    "preversion": "npm-run-all clean test copy",
-    "test": "npm-run-all build test-rules",
-    "test-rules": "for path in ./test/rules/*; do tslint -r ./build/rules/ --test $path; done"
+    "preversion": "npm-run-all clean verify copy",
+    "test-rules": "scripts/testRules.sh",
+    "verify": "npm-run-all build test-rules"
   },
   "devDependencies": {
+    "@types/colors": "^1.1.3",
+    "@types/glob": "^5.0.30",
+    "@types/node": "^7.0.13",
     "colors": "^1.1.2",
-    "glob": "^7.0.3",
-    "npm-run-all": "^2.1.2",
+    "glob": "^7.1.1",
+    "npm-run-all": "^4.0.2",
     "path": "^0.12.7",
-    "tslint": "^3.11.0",
-    "typescript": "^1.8.10"
+    "tslint": "^5.1.0",
+    "tsutils": "^1.7.0",
+    "typescript": "^2.3"
   }
 }

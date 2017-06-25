@@ -1,0 +1,5 @@
+{
+    "rules": {
+        "jsx-boolean-value": [true, "always"]
+    }
+}
