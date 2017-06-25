@@ -1,5 +1,0 @@
-{
-    "rules": {
-        "jsx-sort-props": [true, "ignore-case", ["spread", "shorthand"]]
-    }
-}

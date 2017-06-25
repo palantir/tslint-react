@@ -16,45 +16,15 @@
  */
 
 import * as Lint from "tslint";
-import {
-    isJsxAttribute,
-    isJsxOpeningLikeElement,
-    isJsxSpreadAttribute,
-} from "tsutils";
+import { isJsxOpeningLikeElement } from "tsutils";
 import * as ts from "typescript";
 
 const OPTION_IGNORE_CASE = "ignore-case";
-
-const OPTION_ORDER_SPREAD = "spread";
-const OPTION_ORDER_SHORTHAND = "shorthand";
-const OPTION_ORDER_LONGHAND = "longhand";
-type ORDER_OPTION = "spread" | "shorthand" | "longhand";
-
-enum KEY_ORDER {
-  OPTION_ORDER_SPREAD,
-  OPTION_ORDER_SHORTHAND,
-  OPTION_ORDER_LONGHAND,
-}
-
-const BEHAVIOR_OPTIONS = {
-  enum: [
-    OPTION_IGNORE_CASE,
-  ],
-  type: "string",
-};
-
-const SORT_OPTIONS = {
-  items: {
-    enum: KEY_ORDER,
-    type: "string",
-  },
-  maxLength: 3,
-  type: "array",
-};
+const OPTION_SHORTHAND_FIRST = "shorthand-first";
 
 interface IOptions {
     ignoreCase: boolean;
-    order?: ORDER_OPTION[];
+    shorthandFirst: boolean;
 }
 
 export class Rule extends Lint.Rules.AbstractRule {
@@ -63,36 +33,40 @@ export class Rule extends Lint.Rules.AbstractRule {
         ruleName: "jsx-sort-props",
         description: "Requires props in JSX elements to be sorted alphabetically, and grouped as specified",
         optionsDescription: Lint.Utils.dedent`
-            Two types of options are available:
+            Two arguments may be optionally provided:
 
-            Individual strings that control general functionality.
-            Possible settings are:
-
-            * \`"${OPTION_IGNORE_CASE}"\`: Ignore case when comparing props.
-
-            An array of strings that control ordering of props by type.
-            Possible settings are:
-
-            * \`"${OPTION_ORDER_SPREAD}"\`: Spread assignments \`{...props}\`.
-            * \`"${OPTION_ORDER_SHORTHAND}"\`: Shorthand properties \`{ isError, isValid }\`.
-            * \`"${OPTION_ORDER_LONGHAND}"\`: Normal, longhand properties \`{ isError: false }\`.
+            * \`"${OPTION_IGNORE_CASE}"\`: Ignore case when comparing keys.
+            * \`"${OPTION_SHORTHAND_FIRST}"\`: Enforces shorthand syntax appears first. \
+            E.g. boolean attributes w/o a value: \`<Component isError className="error" />\`
         `,
         options: {
             type: "array",
-            items: [BEHAVIOR_OPTIONS, SORT_OPTIONS],
+            items: {
+                enum: [
+                    OPTION_IGNORE_CASE,
+                    OPTION_SHORTHAND_FIRST,
+                ],
+                type: "string",
+            },
             additionalItems: false,
+            minLength: 0,
+            maxLength: 2,
         },
         optionExamples: [
             `true`,
             `[true, "${OPTION_IGNORE_CASE}"]`,
-            `[true, "${OPTION_IGNORE_CASE}", ["${OPTION_ORDER_SPREAD}", "${OPTION_ORDER_SHORTHAND}"]]`,
+            `[true, "${OPTION_IGNORE_CASE}", "${OPTION_SHORTHAND_FIRST}"]`,
         ],
         type: "maintainability",
         typescriptOnly: false,
     };
     /* tslint:enable:object-literal-sort-keys */
 
-    public static FAILURE_STRING_FACTORY(name: string) {
+    public static SHORTHAND_FAILURE_FACTORY(name: string) {
+        return `Shorthand property '${name}' should come before normal properties`;
+    }
+
+    public static ALHPA_FAILURE_FACTORY(name: string) {
         return `The key '${name}' is not sorted alphabetically`;
     }
 
@@ -104,37 +78,21 @@ export class Rule extends Lint.Rules.AbstractRule {
 function parseOptions(ruleArgs: any[]): IOptions {
     const options: IOptions = {
         ignoreCase: ruleArgs.indexOf(OPTION_IGNORE_CASE) !== -1,
+        shorthandFirst: ruleArgs.indexOf(OPTION_SHORTHAND_FIRST) !== -1,
     };
-
-    for (const arg of ruleArgs) {
-        if (Array.isArray(arg)) {
-            options.order = arg;
-            break;
-        }
-    }
-
     return options;
 }
 
 function walk(ctx: Lint.WalkContext<IOptions>): void {
     const { options, sourceFile } = ctx;
-    const { ignoreCase, order } = options;
+    const { ignoreCase, shorthandFirst } = options;
 
-    function propertyKind(property: ts.JsxAttributeLike): ORDER_OPTION {
-        if (isJsxSpreadAttribute(property)) {
-            return OPTION_ORDER_SPREAD;
+    function shouldCheckSyntax(currentProperty: ts.JsxAttribute, lastProperty?: ts.JsxAttribute) {
+        // Only check syntax if option is set, we have a property to check ,and they changed
+        if (!shorthandFirst || lastProperty === undefined) {
+            return false;
         }
-        if (property.initializer === undefined) {
-            return OPTION_ORDER_SHORTHAND;
-        }
-        return OPTION_ORDER_LONGHAND;
-    }
-
-    function propertyRank(propKind: ORDER_OPTION): number {
-        if (order === undefined) {
-            return -1;
-        }
-        return order.indexOf(propKind);
+        return !!currentProperty.initializer !== !!lastProperty.initializer;
     }
 
     function cb(node: ts.Node): void {
@@ -149,54 +107,42 @@ function walk(ctx: Lint.WalkContext<IOptions>): void {
         }
 
         let lastKey: string | undefined;
-        let lastRank: number | undefined;
-        let lastRankKind: string | undefined;
+        let lastProperty: ts.JsxAttribute | undefined;
 
-        for (const property of properties) {
-            if (!isJsxAttribute(property) && !isJsxSpreadAttribute(property)) {
-                continue;
-            }
+        outer: for (const property of properties) {
+            // Only evaluate properties that apply
+            switch (property.kind) {
+                // Restart ordering after spread assignments
+                case ts.SyntaxKind.JsxSpreadAttribute:
+                    lastKey = undefined;
+                    lastProperty = undefined;
+                    break;
 
-            if (order !== undefined) {
-                const propKind = propertyKind(property);
-                const propRank = propertyRank(propKind);
-                const hasError = lastRank !== undefined // not the first prop
-                    && propRank !== -1 // have a specified order
-                    && (lastRank! > propRank || lastRank! === -1); // last rank is higher order or not set
+                case ts.SyntaxKind.JsxAttribute:
+                    const propName = property.name;
+                    const propText = propName.text;
+                    const key = ignoreCase ? propText.toLowerCase() : propText;
 
-                if (hasError) {
-                    let error2 = "first";
-                    if (lastRankKind !== undefined) {
-                        error2 = `before ${lastRankKind} properties`;
+                    if (shouldCheckSyntax(property, lastProperty)) {
+                        // Syntax changed and it's shorthand now, so we were not previously
+                        if (property.initializer === undefined) {
+                            ctx.addFailureAtNode(propName, Rule.SHORTHAND_FAILURE_FACTORY(propText));
+                            break outer;
+                        }
+                        // Reset the alpha keys to re-start alpha sorting by syntax
+                        lastKey = key;
+                        lastProperty = property;
+                        break;
                     }
 
-                    const error = `${order[propRank]} properties should come ${error2}`;
-                    ctx.addFailureAtNode(property, error);
-                    break;
-                }
-
-                if (propRank !== lastRank) {
-                    lastKey = undefined;
-                }
-
-                lastRank = propRank;
-                lastRankKind = propKind;
+                    // comparison with undefined is expected
+                    if (lastKey! > key) {
+                        ctx.addFailureAtNode(propName, Rule.ALHPA_FAILURE_FACTORY(propText));
+                        break outer;
+                    }
+                    lastKey = key;
+                    lastProperty = property;
             }
-
-            // Not alpha-checking spread assignments
-            if (isJsxSpreadAttribute(property)) {
-                continue;
-            }
-
-            const { name: propName } = property;
-            const propText = propName.text;
-            const key = ignoreCase ? propText.toLowerCase() : propText;
-            // comparison with undefined is expected
-            if (lastKey! > key) {
-                ctx.addFailureAtNode(propName, Rule.FAILURE_STRING_FACTORY(propText));
-                break;
-            }
-            lastKey = key;
         }
 
         return ts.forEachChild(node, cb);

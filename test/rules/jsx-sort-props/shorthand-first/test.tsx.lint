@@ -1,0 +1,118 @@
+function passA(){
+    return(
+        <Foo
+            a
+            b={true}
+        >
+            test
+        </Foo>
+    );
+}
+
+function failA(){
+    return(
+        <Foo
+            b={true}
+            a
+            ~ [Shorthand property 'a' should come before normal properties]
+        >
+            test
+        </Foo>
+    );
+}
+
+function passB(){
+    return(
+        <Foo a b={true} />
+    );
+}
+
+function failB(){
+    return(
+        <Foo b={true} a />
+                      ~ [Shorthand property 'a' should come before normal properties]
+    );
+}
+
+function passC(){
+    return(
+        <Foo
+            Bats
+            bat
+            cat={true}
+        >
+            test
+        </Foo>
+    );
+}
+
+function failC(){
+    return(
+        <Foo
+            bat
+            Bats
+            ~~~~ [The key 'Bats' is not sorted alphabetically]
+            cat={true}
+        >
+            test
+        </Foo>
+    );
+}
+
+function passSpreadA(){
+    return(
+        <Foo
+            a
+            d={3}
+            { ...test }
+            b
+            c={4}
+        >
+            test
+        </Foo>
+    );
+}
+
+function failSpreadA(){
+    return(
+        <Foo
+            a
+            d={3}
+            { ...test }
+            b
+            f={4}
+            c={4}
+            ~ [The key 'c' is not sorted alphabetically]
+        >
+            test
+        </Foo>
+    );
+}
+
+function passSpreadA(){
+    return(
+        <Foo
+            a
+            d
+            { ...test }
+            b={1}
+            c={4}
+        >
+            test
+        </Foo>
+    );
+}
+
+function failSpreadB(){
+    return(
+        <Foo
+            a
+            { ...test }
+            c={4}
+            b
+            ~ [Shorthand property 'b' should come before normal properties]
+        >
+            test
+        </Foo>
+    );
+}
