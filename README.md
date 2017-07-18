@@ -9,8 +9,7 @@ Lint rules related to React & JSX for [TSLint](https://github.com/palantir/tslin
 
 ### Usage
 
-tslint-react has _implicit_ peer dependencies on TSLint and TypeScript. The recommended versions of those packages are
-listed as `devDependencies`.
+tslint-react has peer dependencies on TSLint and TypeScript.
 
 To use these lint rules with the default preset, use configuration inheritance via the `extends` keyword.
 Here's a sample configuration where `tslint.json` lives adjacent to your `node_modules` folder:
