@@ -18,9 +18,11 @@
     "test-rules": "scripts/testRules.sh",
     "verify": "npm-run-all build test-rules"
   },
+  "dependencies": {
+    "tsutils": "^1.7.0"
+  },
   "peerDependencies": {
     "tslint": "^5.1.0",
-    "tsutils": "^1.7.0",
     "typescript": ">=2.1.0 || >=2.1.0-dev || >=2.2.0-dev || >=2.3.0-dev || >=2.4.0-dev || >=2.5.0-dev || >=2.6.0-dev"
   },
   "devDependencies": {
