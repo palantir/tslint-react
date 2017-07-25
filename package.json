@@ -19,7 +19,7 @@
     "verify": "npm-run-all build test-rules"
   },
   "dependencies": {
-    "tsutils": "^1.7.0",
+    "tsutils": "^1.7.0"
   },
   "peerDependencies": {
     "tslint": "^5.1.0",
