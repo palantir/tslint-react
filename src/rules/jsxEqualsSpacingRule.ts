@@ -92,9 +92,10 @@ function isSpaceBetweenTokens(firstNode: ts.Node, secondNode: ts.Node) {
     const comments = trailingComments.concat(leadingComments);
 
     if (secondNode.getStart() - firstNode.getStart() - firstNode.getWidth() > getTotalCharCount(comments)) {
-        return true;
+        const replacements = comments.map((comment) => parentText.slice(comment.pos, comment.end)).join("");
+        return new Lint.Replacement(secondNodeStart, secondNode.getStart() - secondNodeStart, replacements);
     } else {
-        return false;
+        return undefined;
     }
 }
 
@@ -113,19 +114,23 @@ function validateSpacing(attribute: ts.JsxAttribute, ctx: Lint.WalkContext<strin
 
     if (ctx.options === OPTION_ALWAYS) {
         if (!spacedBefore) {
-            ctx.addFailureAt(equalToken.getStart(), 1, Rule.FAILURE_REQUIRED_SPACE_BEFORE);
+            const fix = Lint.Replacement.appendText(equalToken.getFullStart(), " ");
+
+            ctx.addFailureAt(equalToken.getStart(), 1, Rule.FAILURE_REQUIRED_SPACE_BEFORE, fix);
         }
 
         if (!spacedAfter) {
-            ctx.addFailureAt(equalToken.getEnd(), 1, Rule.FAILURE_REQUIRED_SPACE_AFTER);
+            const fix = Lint.Replacement.appendText(attribute.initializer.getFullStart(), " ");
+
+            ctx.addFailureAt(equalToken.getEnd(), 1, Rule.FAILURE_REQUIRED_SPACE_AFTER, fix);
         }
     } else if (ctx.options === OPTION_NEVER) {
         if (spacedBefore) {
-            ctx.addFailureAt(equalToken.getStart() - 1, 1, Rule.FAILURE_FORBIDDEN_SPACE_BEFORE);
+            ctx.addFailureAt(equalToken.getStart() - 1, 1, Rule.FAILURE_FORBIDDEN_SPACE_BEFORE, spacedBefore);
         }
 
         if (spacedAfter) {
-            ctx.addFailureAt(equalToken.getEnd(), 1, Rule.FAILURE_FORBIDDEN_SPACE_AFTER);
+            ctx.addFailureAt(equalToken.getEnd(), 1, Rule.FAILURE_FORBIDDEN_SPACE_AFTER, spacedAfter);
         }
     }
 }
