@@ -46,5 +46,4 @@ function nestedRender() {
         </div>
     );
 }
-
 [0]: Missing "key" prop for element.
