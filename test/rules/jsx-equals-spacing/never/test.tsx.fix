@@ -6,3 +6,4 @@
 <App foo={bar} />
 <App foo={bar} />
 <App foo={bar} bar={baz} />
+

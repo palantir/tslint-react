@@ -3,11 +3,7 @@
 <App foo = "bar" />
 <App foo = {e => bar(e)} />
 <App {...props} />
-
 <App foo = {bar} />
-
 <App foo = {bar} />
-
 <App foo = {bar} />
-
 <App foo = {bar} bar = {baz} />;

@@ -52,6 +52,7 @@ export class Rule extends Lint.Rules.AbstractRule {
         optionsDescription: Lint.Utils.dedent`
             One of the following two options must be provided:
 
+            * \`"${OPTION_ALWAYS}"\` requires JSX attributes to have spaces before and after the equals sign
             * \`"${OPTION_NEVER}"\` requires JSX attributes to NOT have spaces before and after the equals sign`,
         type: "style",
         typescriptOnly: false,
