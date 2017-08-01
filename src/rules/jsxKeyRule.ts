@@ -53,6 +53,41 @@ export class Rule extends Lint.Rules.AbstractRule {
     }
 }
 
+function walk(ctx: Lint.WalkContext<void>): void {
+    return ts.forEachChild(ctx.sourceFile, function cb(node: ts.Node): void {
+        if ((isJsxElement(node) || isJsxSelfClosingElement(node))
+                && node.parent !== undefined
+                && isArrayLiteralExpression(node.parent)) {
+            checkIteratorElement(node, ctx);
+        }
+
+        if (isPropertyAccessExpression(node) && node.name.text === "map") {
+            const mapFn = node.parent !== undefined && isCallExpression(node.parent)
+                ? node.parent.arguments[0]
+                : undefined;
+
+            if (mapFn !== undefined && (isArrowFunction(mapFn) || isFunctionExpression(mapFn))) {
+                if (isJsxElement(mapFn.body) || isJsxSelfClosingElement(mapFn.body)) {
+                    checkIteratorElement(mapFn.body, ctx);
+                } else if (isBlock(mapFn.body)) {
+                    const returnStatement = getReturnStatement(mapFn.body.statements);
+
+                    if (returnStatement !== undefined && returnStatement.expression !== undefined) {
+                        if (isParenthesizedExpression(returnStatement.expression)) {
+                            checkIteratorElement(returnStatement.expression.expression, ctx);
+                        } else {
+                            checkIteratorElement(returnStatement.expression, ctx);
+                        }
+                    }
+                }
+            }
+        }
+
+        return ts.forEachChild(node, cb);
+    });
+}
+
+
 function checkIteratorElement(node: ts.Node, ctx: Lint.WalkContext<void>) {
     if (isJsxElement(node) && !hasKeyProp(node.openingElement.attributes)) {
         ctx.addFailureAtNode(node, Rule.FAILURE_STRING);
@@ -70,40 +105,5 @@ function hasKeyProp(attributes: ts.JsxAttributes) {
 }
 
 function getReturnStatement(body: ts.NodeArray<ts.Statement>) {
-    return body.filter((item) => {
-        return isReturnStatement(item);
-    })[0] as ts.ReturnStatement;
-}
-
-function walk(ctx: Lint.WalkContext<void>): void {
-    return ts.forEachChild(ctx.sourceFile, function cb(node: ts.Node): void {
-        if (
-            (isJsxElement(node) || isJsxSelfClosingElement(node)) &&
-            node.parent && isArrayLiteralExpression(node.parent)
-        ) {
-            checkIteratorElement(node, ctx);
-        }
-
-        if (isPropertyAccessExpression(node) && node.name.text === "map") {
-            const fn = node.parent && isCallExpression(node.parent) && node.parent.arguments[0];
-
-            if (fn && (isArrowFunction(fn) || isFunctionExpression(fn))) {
-                if (isJsxElement(fn.body) || isJsxSelfClosingElement(fn.body)) {
-                    checkIteratorElement(fn.body, ctx);
-                } else if (isBlock(fn.body)) {
-                    const returnStatement = getReturnStatement(fn.body.statements);
-
-                    if (returnStatement && returnStatement.expression) {
-                        if (isParenthesizedExpression(returnStatement.expression)) {
-                            checkIteratorElement(returnStatement.expression.expression, ctx);
-                        } else {
-                            checkIteratorElement(returnStatement.expression, ctx);
-                        }
-                    }
-                }
-            }
-        }
-
-        return ts.forEachChild(node, cb);
-    });
+    return body.filter((item) => isReturnStatement(item))[0] as ts.ReturnStatement | undefined;
 }
