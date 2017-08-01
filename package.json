@@ -9,14 +9,13 @@
   },
   "license": "Apache-2.0",
   "scripts": {
-    "build": "npm-run-all -p compile lint",
+    "build": "tsc -p ./",
     "clean": "rm -rf build/",
-    "compile": "tsc -p ./",
     "copy": "cp -f package.json README.md tslint-react.json build/",
     "lint": "tslint 'src/**/*.ts'",
     "preversion": "npm-run-all clean verify copy",
     "test-rules": "scripts/testRules.sh",
-    "verify": "npm-run-all build test-rules"
+    "verify": "npm-run-all build lint test-rules"
   },
   "dependencies": {
     "tsutils": "^1.7.0"

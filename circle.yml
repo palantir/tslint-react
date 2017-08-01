@@ -22,4 +22,3 @@ deployment:
     tag: /.*/
     commands:
       - ./scripts/npmPublish.sh
-
