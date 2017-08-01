@@ -1,0 +1,9 @@
+<App />
+<App foo />
+<App foo="bar" />
+<App {...props} />
+<App foo={e => bar(e)} />
+<App foo={bar} />
+<App foo={bar} />
+<App foo={bar} bar={baz} />
+
