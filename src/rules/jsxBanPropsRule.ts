@@ -21,7 +21,7 @@ import * as ts from "typescript";
 
 interface IRuleOptions {
     /** Map from banned prop name -> its explanatory message */
-    bannedProps: Map<string, string>;
+    bannedProps: Map<string, string | string>;
 }
 
 export class Rule extends Lint.Rules.AbstractRule {
@@ -47,14 +47,15 @@ export class Rule extends Lint.Rules.AbstractRule {
     /* tslint:enable:object-literal-sort-keys */
 
     public static FAILURE_STRING_FACTORY = (propName: string, explanation?: string) => {
-        return `Use of the prop '${propName}' is not allowed.${explanation !== undefined ? " " + explanation : ""}`;
+        const explanationSuffix = explanation === undefined || explanation === "" ? "" : ` ${explanation}`;
+        return `Use of the prop '${propName}' is not allowed.${explanationSuffix}`;
     }
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
         const bannedProps = this.ruleArguments.length > 0
-            ? new Map<string, string>(this.ruleArguments.map((prop: string[]): [string, string] =>
+            ? new Map(this.ruleArguments.map((prop: string[]): [string, string] =>
                 [prop[0], prop.length > 1 ? prop[1] : ""]))
-            : new Map<string, string>();
+            : new Map();
         return this.applyWithFunction(sourceFile, walk, { bannedProps });
     }
 }
