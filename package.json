@@ -12,7 +12,7 @@
     "build": "tsc -p ./",
     "clean": "rm -rf build/",
     "copy": "cp -f package.json README.md tslint-react.json build/",
-    "lint": "tslint 'src/**/*.ts'",
+    "lint": "tslint --project tsconfig.json --format stylish",
     "preversion": "npm-run-all clean verify copy",
     "test-rules": "scripts/testRules.sh",
     "verify": "npm-run-all build lint test-rules"
@@ -33,6 +33,7 @@
     "npm-run-all": "^4.0.2",
     "path": "^0.12.7",
     "tslint": "^5.5.0",
+    "tslint-language-service": "^0.9.6",
     "typescript": "~2.4.2"
   }
 }

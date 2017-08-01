@@ -13,7 +13,14 @@
         "rootDir": "src/",
         "sourceMap": false,
         "strict": true,
-        "target": "es5"
+        "target": "es5",
+        "plugins": [
+            {
+                "name": "tslint-language-service",
+                "alwaysShowRuleFailuresAsWarnings": true,
+                "ignoreDefinitionFiles": true
+            }
+        ]
     },
     "exclude": [
         "build",

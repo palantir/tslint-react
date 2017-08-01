@@ -47,11 +47,11 @@ export class Rule extends Lint.Rules.AbstractRule {
     /* tslint:enable:object-literal-sort-keys */
 
     public static FAILURE_STRING_FACTORY = (propName: string, explanation?: string) => {
-        return `Use of the prop '${propName}' is not allowed.${explanation ? " " + explanation : ""}`;
+        return `Use of the prop '${propName}' is not allowed.${explanation !== undefined ? " " + explanation : ""}`;
     }
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
-        const bannedProps = this.ruleArguments
+        const bannedProps = this.ruleArguments.length > 0
             ? new Map<string, string>(this.ruleArguments.map((prop: string[]): [string, string] =>
                 [prop[0], prop.length > 1 ? prop[1] : ""]))
             : new Map<string, string>();
