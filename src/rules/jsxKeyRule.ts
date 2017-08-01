@@ -87,7 +87,6 @@ function walk(ctx: Lint.WalkContext<void>): void {
     });
 }
 
-
 function checkIteratorElement(node: ts.Node, ctx: Lint.WalkContext<void>) {
     if (isJsxElement(node) && !hasKeyProp(node.openingElement.attributes)) {
         ctx.addFailureAtNode(node, Rule.FAILURE_STRING);
