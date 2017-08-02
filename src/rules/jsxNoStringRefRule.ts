@@ -44,8 +44,9 @@ function walk(ctx: Lint.WalkContext<void>): void {
     return ts.forEachChild(ctx.sourceFile, function cb(node: ts.Node): void {
         if (isJsxAttribute(node)) {
             const { name, initializer } = node;
-            const isRefAttribute = name != null && name.text === "ref";
-            if (isRefAttribute && initializer != null) {
+            const isRefAttribute = name.text === "ref";
+
+            if (isRefAttribute && initializer !== undefined) {
                 const hasStringInitializer = initializer.kind === ts.SyntaxKind.StringLiteral;
                 const hasStringExpressionInitializer = isJsxExpression(initializer)
                     && initializer.expression !== undefined

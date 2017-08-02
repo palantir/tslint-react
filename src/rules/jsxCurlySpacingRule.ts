@@ -18,6 +18,7 @@
 import * as Lint from "tslint";
 import { isJsxExpression, isJsxSpreadAttribute } from "tsutils";
 import * as ts from "typescript";
+import { getDeleteFixForSpaceBetweenTokens, isMultilineText } from "../utils";
 
 const OPTION_ALWAYS = "always";
 const OPTION_NEVER = "never";
@@ -26,7 +27,6 @@ const SPACING_OBJECT = {
     enum: SPACING_VALUES,
     type: "string",
 };
-const NEWLINE_REGEX = /\n/;
 
 export class Rule extends Lint.Rules.AbstractRule {
     /* tslint:disable:object-literal-sort-keys */
@@ -81,14 +81,14 @@ function walk(ctx: Lint.WalkContext<string | undefined>): void {
         const nodeWidth = node.getWidth();
 
         if (ctx.options === OPTION_ALWAYS) {
-            let deleteFix = maybeGetDeleteFixForSpaceBetweenTokens(firstToken, secondToken);
+            let deleteFix = getDeleteFixForSpaceBetweenTokens(firstToken, secondToken);
             if (deleteFix === undefined) {
                 const fix = Lint.Replacement.appendText(secondToken.getFullStart(), " ");
                 const failureString = Rule.FAILURE_NO_BEGINNING_SPACE(firstToken.getText());
                 ctx.addFailureAt(nodeStart, 1, failureString, fix);
             }
 
-            deleteFix = maybeGetDeleteFixForSpaceBetweenTokens(secondToLastToken, lastToken);
+            deleteFix = getDeleteFixForSpaceBetweenTokens(secondToLastToken, lastToken);
             if (deleteFix === undefined) {
                 const fix = Lint.Replacement.appendText(lastToken.getStart(), " ");
                 const failureString = Rule.FAILURE_NO_ENDING_SPACE(lastToken.getText());
@@ -98,16 +98,16 @@ function walk(ctx: Lint.WalkContext<string | undefined>): void {
             const firstAndSecondTokensCombinedText = getTokensCombinedText(firstToken, secondToken);
             const lastAndSecondToLastCombinedText = getTokensCombinedText(secondToLastToken, lastToken);
 
-            if (!isExpressionMultiline(firstAndSecondTokensCombinedText)) {
-                const fix = maybeGetDeleteFixForSpaceBetweenTokens(firstToken, secondToken);
+            if (!isMultilineText(firstAndSecondTokensCombinedText)) {
+                const fix = getDeleteFixForSpaceBetweenTokens(firstToken, secondToken);
                 if (fix !== undefined) {
                     const failureString = Rule.FAILURE_FORBIDDEN_SPACES_BEGINNING(firstToken.getText());
                     ctx.addFailureAt(nodeStart, 1, failureString, fix);
                 }
             }
 
-            if (!isExpressionMultiline(lastAndSecondToLastCombinedText)) {
-                const fix = maybeGetDeleteFixForSpaceBetweenTokens(secondToLastToken, lastToken);
+            if (!isMultilineText(lastAndSecondToLastCombinedText)) {
+                const fix = getDeleteFixForSpaceBetweenTokens(secondToLastToken, lastToken);
                 if (fix !== undefined) {
                     const failureString = Rule.FAILURE_FORBIDDEN_SPACES_END(lastToken.getText());
                     // degenerate case when firstToken is the same as the secondToLastToken as we would
@@ -121,34 +121,6 @@ function walk(ctx: Lint.WalkContext<string | undefined>): void {
             }
         }
     }
-
-    function maybeGetDeleteFixForSpaceBetweenTokens(firstNode: ts.Node, secondNode: ts.Node) {
-        if (firstNode.parent !== secondNode.parent) {
-            throw Error("Expected identical parents for both nodes");
-        }
-
-        const { parent } = firstNode;
-        const parentStart = parent!.getStart();
-        const secondNodeStart =  secondNode.getFullStart();
-        const firstNodeEnd = firstNode.getStart() + firstNode.getWidth();
-        const secondNodeRelativeStart = secondNodeStart - parentStart;
-        const firstNodeRelativeEnd = firstNodeEnd - parentStart;
-        const parentText = parent!.getText();
-        const trailingComments = ts.getTrailingCommentRanges(parentText, firstNodeRelativeEnd) || [];
-        const leadingComments = ts.getLeadingCommentRanges(parentText, secondNodeRelativeStart) || [];
-        const comments = trailingComments.concat(leadingComments);
-
-        if (secondNode.getStart() - firstNode.getStart() - firstNode.getWidth() > getTotalCharCount(comments)) {
-            const replacements = comments.map((comment) => parentText.slice(comment.pos, comment.end)).join("");
-            return new Lint.Replacement(secondNodeStart, secondNode.getStart() - secondNodeStart, replacements);
-        } else {
-            return undefined;
-        }
-    }
-}
-
-function isExpressionMultiline(text: string) {
-    return NEWLINE_REGEX.test(text);
 }
 
 function getTokensCombinedText(firstToken: ts.Node, nextToken: ts.Node) {
@@ -163,10 +135,4 @@ function getTokensCombinedText(firstToken: ts.Node, nextToken: ts.Node) {
     );
 
     return combinedTokeText;
-}
-
-function getTotalCharCount(comments: ts.CommentRange[]) {
-    return comments
-        .map((comment) => comment.end - comment.pos)
-        .reduce((l, r) => l + r, 0);
 }

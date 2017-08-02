@@ -54,6 +54,12 @@ function walk(ctx: Lint.WalkContext<void>) {
                 return;
             }
 
+            // Ignore "ref" attribute.
+            // ref is not part of the props so using lambdas here will not trigger useless re-renders
+            if (node.name.text === "ref") {
+                return;
+            }
+
             const { expression } = initializer;
             if (expression !== undefined && isLambda(expression)) {
                 return ctx.addFailureAtNode(expression, Rule.FAILURE_STRING);

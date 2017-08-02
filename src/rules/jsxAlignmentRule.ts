@@ -72,8 +72,10 @@ function walk(ctx: Lint.WalkContext<void>) {
         elementClose: ts.LineAndCharacter,
         closingTag?: ts.JsxClosingElement,
     ) {
-        attributes = attributes == null || Array.isArray(attributes) ? attributes : attributes.properties;
-        if (attributes == null || attributes.length === 0) { return; }
+        attributes = Array.isArray(attributes) ? attributes : attributes.properties;
+        if (attributes.length === 0) {
+            return;
+        }
 
         // in a line like "const element = <Foo",
         // we want the initial indent to be the start of "const" instead of the start of "<Foo"
@@ -112,7 +114,7 @@ function walk(ctx: Lint.WalkContext<void>) {
         }
 
         // ensure closing tag is on its own line and aligned with the opening tag
-        if (closingTag != null) {
+        if (closingTag !== undefined) {
             const closingTagLocation = getLineAndCharacter(closingTag);
             if (closingTagLocation.line <= elementClose.line || closingTagLocation.character !== initialIndent) {
                 reportFailure(closingTag, Rule.CLOSING_TAG_FAILURE);

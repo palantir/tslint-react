@@ -1,0 +1,17 @@
+<App />
+<App foo />
+<App foo="bar" />
+<App {...props} />
+<App foo={e => bar(e)} />
+<App foo = {bar} />
+        ~            [0]
+          ~            [1]
+<App foo= {bar} />
+         ~          [1]
+<App foo= {bar} bar = {baz} />
+         ~                     [1]
+                   ~           [0]
+                     ~           [1]
+[0]: There should be no space before '='
+[1]: There should be no space after '='
+

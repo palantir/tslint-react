@@ -11,8 +11,7 @@ Lint rules related to React & JSX for [TSLint](https://github.com/palantir/tslin
 
 ### Usage
 
-tslint-react has _implicit_ peer dependencies on TSLint and TypeScript. The recommended versions of those packages are
-listed as `devDependencies`.
+tslint-react has peer dependencies on TSLint and TypeScript.
 
 To use these lint rules with the default preset, use configuration inheritance via the `extends` keyword.
 Here's a sample configuration where `tslint.json` lives adjacent to your `node_modules` folder:
@@ -61,6 +60,14 @@ To lint your `.ts` **and** `.tsx` files you can simply run `tslint -c tslint.jso
   - Requires _or_ bans spaces between curly brace characters in JSX.
   - Rule options: `["always", "never"]`
   - _Includes automatic code fix_
+- `jsx-equals-spacing` (since v3.2.0)
+  - Requires _or_ bans spaces before and after the `=` token in JSX element attributes.
+  - Rule options: `["always", "never"]`
+  - _Includes automatic code fix_
+- `jsx-key` (since v3.2.0)
+  - Warns for missing `key` props in JSX element array literals and inside return statements of `Array.prototype.map` callbacks.
+    - N.B. This rule only does a simple check for `.map(...)` syntax and does not inspect computed types of expressions. As such, it may produce false positives if you use APIs that look similar to `.map()`.
+  - Rule options: _none_
 - `jsx-no-bind` (since v2.6.0)
   - Forbids function binding in JSX attributes. This has the same intent as `jsx-no-lambda` in helping you avoid excessive re-rendres.
   - Note that this currently only does a simple _syntactic_ check, not a _semantic_ one (it doesn't use the type checker). So it may have some
