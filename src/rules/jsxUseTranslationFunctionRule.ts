@@ -45,7 +45,7 @@ function walk(ctx: Lint.WalkContext<void>) {
                 }
             }
         } else if (isJsxAttribute(node)) {
-            if (Rule.TRANSLATABLE_ATTRIBUTES.has(node.name.text) && node.initializer) {
+            if (Rule.TRANSLATABLE_ATTRIBUTES.has(node.name.text) && node.initializer !== undefined) {
                 if (isStringLiteral(node.initializer)
                     || (isJsxExpression(node.initializer) && isStringLiteral(node.initializer.expression!))) {
                     ctx.addFailureAtNode(node.initializer, Rule.FAILURE_STRING_FACTORY(node.name.text));
