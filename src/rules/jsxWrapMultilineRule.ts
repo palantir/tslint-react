@@ -85,7 +85,7 @@ class JsxWrapMultilineWalker extends Lint.AbstractWalker<void> {
         const previousToken = siblings[index - 1];
         const nextToken = siblings[index + 1];
 
-        if (prevTokenKind === ts.SyntaxKind.OpenParenToken && node.getFullText().match(/^[\r\n]+/) !== undefined) {
+        if (prevTokenKind === ts.SyntaxKind.OpenParenToken && node.getFullText().match(/^[\r\n]+/) !== null) {
             return;
         }
 

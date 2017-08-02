@@ -21,7 +21,6 @@ import {
     isJsxAttribute,
     isJsxOpeningElement,
     isJsxSelfClosingElement,
-    isJsxSpreadAttribute,
 } from "tsutils";
 import * as ts from "typescript";
 import { getDeleteFixForSpaceBetweenTokens } from "../utils";
@@ -38,8 +37,8 @@ export class Rule extends Lint.Rules.AbstractRule {
     /* tslint:disable:object-literal-sort-keys */
     public static metadata: Lint.IRuleMetadata = {
         ruleName: "jsx-equals-spacing",
-        description: Lint.Utils.dedent
-            `Disallow or enforce spaces around equal signs in JSX attributes`,
+        description: Lint.Utils.dedent`
+            Disallow or enforce spaces around equal signs in JSX attributes`,
         options: {
             type: "array",
             items: [OPTIONS_SCHEMA],
@@ -75,8 +74,8 @@ function walk(ctx: Lint.WalkContext<string | undefined>): void {
     return ts.forEachChild(ctx.sourceFile, function cb(node: ts.Node): void {
         if (isJsxOpeningElement(node) || isJsxSelfClosingElement(node)) {
             node.attributes.forEachChild((attribute) => {
-                if (isJsxAttribute(attribute) && !isJsxSpreadAttribute(attribute)) {
-                    validateSpacing(attribute);
+                if (isJsxAttribute(attribute)) {
+                    validateJsxAttributeSpacing(attribute);
                 }
             });
         }
@@ -84,7 +83,7 @@ function walk(ctx: Lint.WalkContext<string | undefined>): void {
         return ts.forEachChild(node, cb);
     });
 
-    function validateSpacing(attribute: ts.JsxAttribute) {
+    function validateJsxAttributeSpacing(attribute: ts.JsxAttribute) {
         if (attribute.initializer === undefined) {
             return;
         }
@@ -108,11 +107,11 @@ function walk(ctx: Lint.WalkContext<string | undefined>): void {
                 ctx.addFailureAt(equalToken.getEnd(), 1, Rule.FAILURE_REQUIRED_SPACE_AFTER, fix);
             }
         } else if (ctx.options === OPTION_NEVER) {
-            if (spacedBefore === undefined) {
+            if (spacedBefore !== undefined) {
                 ctx.addFailureAt(equalToken.getStart() - 1, 1, Rule.FAILURE_FORBIDDEN_SPACE_BEFORE, spacedBefore);
             }
 
-            if (spacedAfter === undefined) {
+            if (spacedAfter !== undefined) {
                 ctx.addFailureAt(equalToken.getEnd(), 1, Rule.FAILURE_FORBIDDEN_SPACE_AFTER, spacedAfter);
             }
         }

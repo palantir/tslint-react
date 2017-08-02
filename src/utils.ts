@@ -28,7 +28,7 @@ export function getDeleteFixForSpaceBetweenTokens(
 ): Lint.Replacement | undefined {
     const { parent } = firstNode;
     const parentStart = parent!.getStart();
-    const secondNodeStart =  secondNode.getFullStart();
+    const secondNodeStart = secondNode.getFullStart();
     const firstNodeEnd = firstNode.getStart() + firstNode.getWidth();
     const secondNodeRelativeStart = secondNodeStart - parentStart;
     const firstNodeRelativeEnd = firstNodeEnd - parentStart;
