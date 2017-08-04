@@ -26,6 +26,10 @@ Here's a sample configuration where `tslint.json` lives adjacent to your `node_m
 
 To lint your `.ts` **and** `.tsx` files you can simply run `tslint -c tslint.json 'src/**/*.{ts,tsx}'`.
 
+### Semantic versioning
+
+The built-in configuration preset you get with `"extends": "tslint-react"` is semantically versioned in a manner similar to TSLint's built-in presets and the TypeScript language itself. As new rules are added to tslint-react across minor versions, stricter checks may be enabled here. Your code is not guaranteed to continue passing checks across these version bumps. If you wish to ensure that `npm upgrade` or `yarn upgrade` never breaks your build, declare a tilde dependency on this package (e.g. `"~1.0.0"`).
+
 ### Rules
 
 - `jsx-alignment`
