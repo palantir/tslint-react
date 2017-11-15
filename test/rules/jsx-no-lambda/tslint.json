@@ -1,5 +1,5 @@
 {
     "rules": {
-        "jsx-no-lambda": true
+        "jsx-no-lambda": [true, "ref", "whiteListedProp"]
     }
 }

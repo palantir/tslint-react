@@ -35,7 +35,7 @@ const anotherOkFunction = () {
 class TypicalRefHandler extends React.Component<{}, {}> {
     private element: HTMLElement;
     public render() {
-        // ref is not part of the props so using lambdas here will not trigger useless re-renders
+        // ref is whitelisted in the config
         return <div ref={(ref) => this.element = ref} />
     }
 }
@@ -79,5 +79,7 @@ const ComplexComposableComponentWith: React.SFC<{}> = () => (
         {/*<a href="#" onClick={()=>{console.log('in comment)}}>Legacy code</a>*/}
     </ComposableComponent>
 );
+
+<Component whiteListedProp={() => {}} />
 
 [0]: Lambdas are forbidden in JSX attributes due to their rendering performance impact

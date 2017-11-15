@@ -19,6 +19,8 @@ import * as Lint from "tslint";
 import { isJsxAttribute, isJsxExpression } from "tsutils";
 import * as ts from "typescript";
 
+type IWhitelistedNames = Set<string>;
+
 export class Rule extends Lint.Rules.AbstractRule {
     /* tslint:disable:object-literal-sort-keys */
     public static metadata: Lint.IRuleMetadata = {
@@ -29,9 +31,15 @@ export class Rule extends Lint.Rules.AbstractRule {
             ES2015 arrow syntax) inside the render call stack works against pure component \
             rendering. When doing an equality check between two lambdas, React will always \
             consider them unequal values and force the component to re-render more often than necessary.`,
-        options: null,
-        optionsDescription: "",
-        optionExamples: ["true"],
+        options: {
+            type: "list",
+            listType: {
+                type: "array",
+                items: { type: "string" },
+            },
+        },
+        optionsDescription: "A list of whitelisted prop names to ignore",
+        optionExamples: [true, [true, "ref", "anotherWhitelistedProp"]],
         type: "functionality",
         typescriptOnly: false,
     };
@@ -40,12 +48,16 @@ export class Rule extends Lint.Rules.AbstractRule {
     public static FAILURE_STRING = "Lambdas are forbidden in JSX attributes due to their rendering performance impact";
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
-        return this.applyWithFunction(sourceFile, walk);
+        const whitelistedNames: IWhitelistedNames = new Set(this.ruleArguments);
+
+        return this.applyWithFunction(sourceFile, walk, whitelistedNames);
     }
 }
 
-function walk(ctx: Lint.WalkContext<void>) {
+function walk(ctx: Lint.WalkContext<IWhitelistedNames>) {
     return ts.forEachChild(ctx.sourceFile, function cb(node: ts.Node): void {
+        const whitelistedNames = ctx.options;
+
         // continue iterations until JsxAttribute will be found
         if (isJsxAttribute(node)) {
             const { initializer } = node;
@@ -54,9 +66,7 @@ function walk(ctx: Lint.WalkContext<void>) {
                 return;
             }
 
-            // Ignore "ref" attribute.
-            // ref is not part of the props so using lambdas here will not trigger useless re-renders
-            if (node.name.text === "ref") {
+            if (whitelistedNames.has(node.name.text)) {
                 return;
             }
 
