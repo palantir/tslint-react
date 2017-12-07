@@ -56,7 +56,7 @@ The built-in configuration preset you get with `"extends": "tslint-react"` is se
   - Allows blacklisting of props in JSX with an optional explanatory message in the reported failure.
 - `jsx-boolean-value` (since v2.5.0)
   - When using a boolean attribute in JSX, you can set the attribute value to true or omit the value. This rule will enforce one or the other to keep consistency in your code.
-  - Rule options: `always`, `never`.
+  - Rule options: `["always", "never"]`
   - Default is set to `always`.
 - `jsx-curly-spacing` (since v1.1.0)
   - Requires _or_ bans spaces between curly brace characters in JSX.
