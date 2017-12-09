@@ -10,6 +10,8 @@ var App = () => <div />;
 [1, 2, 3].map(function(x) { return; });
 foo(() => <div />)
 [<App />];
+[1, 2, 3].map((x, idx) => <App {...{x: x, key: idx}} />);
+[1, 2, 3].map((x, key) => <App {...{x, key}} />);
 
 [<App {...key} />];
  ~~~~~~~~~~~~~~~~    [0]
