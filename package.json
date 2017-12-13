@@ -18,7 +18,7 @@
     "verify": "npm-run-all build lint test"
   },
   "dependencies": {
-    "tsutils": "^2.8.0"
+    "tsutils": "^2.13.1"
   },
   "peerDependencies": {
     "tslint": "^5.1.0",
@@ -34,6 +34,6 @@
     "path": "^0.12.7",
     "tslint": "^5.5.0",
     "tslint-language-service": "^0.9.6",
-    "typescript": "~2.4.2"
+    "typescript": "~2.6.2"
   }
 }

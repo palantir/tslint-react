@@ -68,12 +68,13 @@ function walk(ctx: Lint.WalkContext<void>) {
     function checkElement(
         elementOpen: ts.LineAndCharacter,
         attributes: Array<ts.JsxAttribute | ts.JsxSpreadAttribute> // TS <=2.2
-            | { properties: Array<ts.JsxAttribute | ts.JsxSpreadAttribute> }, // TS 2.3
+            | { properties: Array<ts.JsxAttribute | ts.JsxSpreadAttribute> } // TS 2.3
+            | ts.JsxAttributes, // TS 2.6
         elementClose: ts.LineAndCharacter,
         closingTag?: ts.JsxClosingElement,
     ) {
-        attributes = Array.isArray(attributes) ? attributes : attributes.properties;
-        if (attributes.length === 0) {
+        const attrs = Array.isArray(attributes) ? attributes : attributes.properties;
+        if (attrs.length === 0) {
             return;
         }
 
@@ -81,7 +82,7 @@ function walk(ctx: Lint.WalkContext<void>) {
         // we want the initial indent to be the start of "const" instead of the start of "<Foo"
         const initialIndent = getFirstNonWhitespaceCharacter(elementOpen.line);
 
-        const firstAttr = attributes[0];
+        const firstAttr = attrs[0];
         const firstAttrCharacter = getCharacter(firstAttr);
 
         // ensure that first attribute is not on the same line as the start of the tag
@@ -90,7 +91,7 @@ function walk(ctx: Lint.WalkContext<void>) {
         }
 
         let lastSeenLine = -1;
-        for (const attr of attributes) {
+        for (const attr of attrs) {
             const character = getCharacter(attr);
 
             // ensure each attribute is indented further than the start of the tag
