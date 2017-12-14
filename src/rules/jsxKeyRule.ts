@@ -22,9 +22,12 @@ import {
     isBlock,
     isCallExpression,
     isFunctionExpression,
+    isIdentifier,
     isJsxAttribute,
     isJsxElement,
     isJsxSelfClosingElement,
+    isJsxSpreadAttribute,
+    isObjectLiteralExpression,
     isParenthesizedExpression,
     isPropertyAccessExpression,
     isReturnStatement,
@@ -88,11 +91,12 @@ function walk(ctx: Lint.WalkContext<void>): void {
 }
 
 function checkIteratorElement(node: ts.Node, ctx: Lint.WalkContext<void>) {
-    if (isJsxElement(node) && !hasKeyProp(node.openingElement.attributes)) {
+    if (isJsxElement(node) && !hasKeyProp(node.openingElement.attributes) &&
+        !hasKeyPropSpread(node.openingElement.attributes)) {
         ctx.addFailureAtNode(node, Rule.FAILURE_STRING);
     }
 
-    if (isJsxSelfClosingElement(node) && !hasKeyProp(node.attributes)) {
+    if (isJsxSelfClosingElement(node) && !hasKeyProp(node.attributes) && !hasKeyPropSpread(node.attributes)) {
         ctx.addFailureAtNode(node, Rule.FAILURE_STRING);
     }
 }
@@ -101,6 +105,16 @@ function hasKeyProp(attributes: ts.JsxAttributes) {
     return attributes.properties
         .map((prop) => isJsxAttribute(prop) && prop.name.text === "key")
         .indexOf(true) !== -1;
+}
+
+function hasKeyPropSpread(attributes: ts.JsxAttributes) {
+    return attributes.properties.some((prop) => (
+        isJsxSpreadAttribute(prop) &&
+        isObjectLiteralExpression(prop.expression) &&
+        prop.expression.properties.some((expProp) => (
+            expProp.name !== undefined && isIdentifier(expProp.name) && expProp.name.text === "key"
+        ))
+    ));
 }
 
 function getReturnStatement(body: ts.NodeArray<ts.Statement>) {
