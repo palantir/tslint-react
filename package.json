@@ -14,8 +14,8 @@
     "copy": "cp -f package.json README.md tslint-react.json build/",
     "lint": "tslint --project tsconfig.json --format stylish",
     "preversion": "npm-run-all clean verify copy",
-    "test-rules": "scripts/testRules.sh",
-    "verify": "npm-run-all build lint test-rules"
+    "test": "scripts/test-rules",
+    "verify": "npm-run-all build lint test"
   },
   "dependencies": {
     "tsutils": "^2.8.0"

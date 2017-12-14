@@ -1,0 +1,101 @@
+version: 2
+jobs:
+  install-dependencies:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - restore_cache:
+          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+      - run:
+          name: Install dependencies
+          command: yarn
+      - save_cache:
+          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+      - persist_to_workspace:
+          root: '.'
+          paths:
+            - yarn.lock
+
+  build:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - restore_cache:
+          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+      - run: yarn build
+      - persist_to_workspace:
+          root: '.'
+          paths:
+            - lib
+            - build
+
+  lint:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - attach_workspace:
+          at: '.'
+      - restore_cache:
+          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+      - run: yarn lint
+
+  test:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - attach_workspace:
+          at: '.'
+      - restore_cache:
+          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+      - run: yarn test
+
+  test-next:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - attach_workspace:
+          at: '.'
+      - restore_cache:
+          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
+      - run: yarn add typescript@next
+      - run: yarn test
+
+  deploy-npm:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - attach_workspace:
+          at: '.'
+      - run: ./scripts/circle-publish-npm
+
+workflows:
+  version: 2
+  build_lint_test:
+    jobs:
+      - install-dependencies
+      - build:
+          requires: [install-dependencies]
+      - lint:
+          requires: [install-dependencies]
+      - test:
+          requires: [build]
+      - test-next:
+          requires: [build]
+      - deploy-npm:
+          requires:
+            - lint
+            - test
+            - test-next
+          filters:
+            branches:
+              only:
+                - master
+                - /^release\/.*/
