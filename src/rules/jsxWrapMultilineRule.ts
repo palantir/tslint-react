@@ -37,7 +37,7 @@ export class Rule extends Lint.Rules.AbstractRule {
     public static FAILURE_MISSING_NEW_LINE_AFTER_OPEN =
         "New line required after open parenthesis when wrapping multiline JSX elements";
     public static FAILURE_MISSING_NEW_LINE_BEFORE_CLOSE =
-        "New line requred before close parenthesis when wrapping multiline JSX elements";
+        "New line required before close parenthesis when wrapping multiline JSX elements";
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
         return this.applyWithWalker(new JsxWrapMultilineWalker(sourceFile, this.ruleName, undefined));
