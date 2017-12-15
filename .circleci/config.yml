@@ -74,6 +74,8 @@ jobs:
       - checkout
       - attach_workspace:
           at: '.'
+      - restore_cache:
+          key: v1-dependency-cache-{{ checksum "yarn.lock" }}
       - run: ./scripts/circle-publish-npm
 
 workflows:
@@ -99,3 +101,6 @@ workflows:
               only:
                 - master
                 - /^release\/.*/
+            tags:
+              only:
+                - /^v.*/
