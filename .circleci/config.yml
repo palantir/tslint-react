@@ -98,9 +98,6 @@ workflows:
             - test-next
           filters:
             branches:
-              only:
-                - master
-                - /^release\/.*/
+              ignore: /.*/
             tags:
-              only:
-                - /^v.*/
+              only: /^v.*/
