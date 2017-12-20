@@ -16,7 +16,7 @@
  */
 
 import * as Lint from "tslint";
-import { isJsxElement, isJsxSelfClosingElement } from "tsutils";
+import { isJsxElement, isJsxFragment, isJsxSelfClosingElement } from "tsutils";
 import * as ts from "typescript";
 
 export class Rule extends Lint.Rules.AbstractRule {
@@ -49,7 +49,7 @@ class JsxWrapMultilineWalker extends Lint.AbstractWalker<void> {
 
     public walk(sourceFile: ts.SourceFile) {
         const cb = (node: ts.Node): void => {
-            if (isJsxElement(node) || isJsxSelfClosingElement(node)) {
+            if (isJsxElement(node) || isJsxSelfClosingElement(node) || isJsxFragment(node)) {
                 this.checkNode(node, sourceFile);
             } else {
                 return ts.forEachChild(node, cb);
@@ -59,7 +59,7 @@ class JsxWrapMultilineWalker extends Lint.AbstractWalker<void> {
         return ts.forEachChild(sourceFile, cb);
     }
 
-    private checkNode(node: ts.JsxElement | ts.JsxSelfClosingElement, sourceFile: ts.SourceFile) {
+    private checkNode(node: ts.JsxElement | ts.JsxSelfClosingElement | ts.JsxFragment, sourceFile: ts.SourceFile) {
         const startLine = this.getLine(node.getStart(this.sourceFile));
         const endLine = this.getLine(node.getEnd());
 
@@ -72,7 +72,7 @@ class JsxWrapMultilineWalker extends Lint.AbstractWalker<void> {
             return;
         }
 
-        if (node.parent.kind === ts.SyntaxKind.JsxElement) {
+        if (isJsxElement(node.parent) || isJsxFragment(node.parent)) {
             return;
         }
 

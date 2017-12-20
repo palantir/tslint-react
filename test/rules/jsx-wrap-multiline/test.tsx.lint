@@ -74,6 +74,34 @@ const goodFunctionWrap = mount<ITestComponentProps, {}>(
     />
 );
 
+const goodMultilineWithFragments = (
+    <>
+        <div
+            className="my-class"
+            tabIndex={-1}
+        >
+            {children}
+        </div>
+    </>
+);
+
+const badMultilineWithFragments = <>
+                                  ~~~
+        <div
+~~~~~~~~~~~~~
+            className="my-class"
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            tabIndex={-1}
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+        >
+~~~~~~~~~~
+        {children}
+~~~~~~~~~~~~~~~~~~~
+    </div>
+~~~~~~~~~~~
+</>;
+~~~   [Multiline JSX elements must be wrapped in parentheses]
+
 shallowRender(
     <TestComponent2 />
 );
