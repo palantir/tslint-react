@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ret=0;
 for path in `find test -name tslint.json`; do
