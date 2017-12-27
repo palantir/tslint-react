@@ -80,24 +80,36 @@ jobs:
 
 workflows:
   version: 2
-  build_lint_test:
+  build_lint_test_deploy:
     jobs:
       - install-dependencies
       - build:
           requires: [install-dependencies]
+          filters:
+            tags:
+              only: /^v.*/
       - lint:
           requires: [install-dependencies]
+          filters:
+            tags:
+              only: /^v.*/
       - test:
           requires: [build]
+          filters:
+            tags:
+              only: /^v.*/
       - test-next:
           requires: [build]
+          filters:
+            tags:
+              only: /^v.*/
       - deploy-npm:
           requires:
             - lint
             - test
             - test-next
           filters:
-            branches:
-              ignore: /.*/
             tags:
               only: /^v.*/
+            branches:
+              ignore: /.*/
