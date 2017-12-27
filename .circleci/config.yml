@@ -115,6 +115,4 @@ workflows:
             tags:
               only: /.*/
             branches:
-              only:
-                - master
-                - /^release\/.*/
+              ignore: /.*/
