@@ -87,22 +87,22 @@ workflows:
           requires: [install-dependencies]
           filters:
             tags:
-              only: /^v.*/
+              only: /.*/
       - lint:
           requires: [install-dependencies]
           filters:
             tags:
-              only: /^v.*/
+              only: /.*/
       - test:
           requires: [build]
           filters:
             tags:
-              only: /^v.*/
+              only: /.*/
       - test-next:
           requires: [build]
           filters:
             tags:
-              only: /^v.*/
+              only: /.*/
       - deploy-npm:
           requires:
             - lint
@@ -110,6 +110,6 @@ workflows:
             - test-next
           filters:
             tags:
-              only: /^v.*/
+              only: /.*/
             branches:
               ignore: /.*/
