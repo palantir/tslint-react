@@ -82,7 +82,10 @@ workflows:
   version: 2
   build_lint_test_deploy:
     jobs:
-      - install-dependencies
+      - install-dependencies:
+          filters:
+            tags:
+              only: /.*/
       - build:
           requires: [install-dependencies]
           filters:
