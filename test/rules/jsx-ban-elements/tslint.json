@@ -1,0 +1,7 @@
+{
+    "rules": {
+        "jsx-ban-elements": [true, 
+            ["span", "Use div instead."]
+        ]
+    }
+}

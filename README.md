@@ -52,6 +52,8 @@ The built-in configuration preset you get with `"extends": "tslint-react"` is se
       size={size}
   />
   ```
+- `jsx-ban-elements` (since v3.3.4)
+  - Allows blacklisting of JSX elements with an optional explanatory message in the reported failure.
 - `jsx-ban-props` (since v2.3.0)
   - Allows blacklisting of props in JSX with an optional explanatory message in the reported failure.
 - `jsx-boolean-value` (since v2.5.0)
