@@ -28,7 +28,7 @@ export class Rule extends Lint.Rules.AbstractRule {
     public static metadata: Lint.IRuleMetadata = {
         ruleName: "jsx-ban-elements",
         description: Lint.Utils.dedent`
-            Bans specific jsx elements from being used.`,
+            Bans specific JSX elements from being used.`,
         options: {
             type: "list",
             listType: {
@@ -57,7 +57,7 @@ export class Rule extends Lint.Rules.AbstractRule {
 }
 
 function parseOption([pattern, message]: [string, string | undefined]): IOption {
-    return {message, pattern: new RegExp(`^${pattern}$`)};
+    return {message, pattern: new RegExp(`${pattern}`)};
 }
 
 function walk(ctx: Lint.WalkContext<IOption[]>) {
@@ -66,7 +66,7 @@ function walk(ctx: Lint.WalkContext<IOption[]>) {
             const typeName = node.tagName.getText();
             for (const ban of ctx.options) {
                 if (ban.pattern.test(typeName)) {
-                    ctx.addFailureAtNode(node, Rule.FAILURE_STRING_FACTORY(typeName, ban.message));
+                    ctx.addFailureAtNode(node.tagName, Rule.FAILURE_STRING_FACTORY(typeName, ban.message));
                     break;
                 }
             }
