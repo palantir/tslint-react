@@ -1,0 +1,8 @@
+<span className="primary" foo="bar">baz</span>
+ ~~~~ [JSX element 'span' is banned. Use div instead.]
+
+<span bar={5}/>
+ ~~~~ [JSX element 'span' is banned. Use div instead.]
+
+<button type="button">bar</button>
+
