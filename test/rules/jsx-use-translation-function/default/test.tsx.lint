@@ -37,5 +37,23 @@
         ~~~~~      [0]
 </ul>
 
+<div> - </div>
+      ~~         [0]
+
+<div>{' - '}</div>
+     ~~~~~~~       [0]
+
+<input placeholder="-" />
+                   ~~~ [1]
+
+<div>&nbsp;</div>
+     ~~~~~~         [0]
+
+<div>{'&nbsp;'}</div>
+     ~~~~~~~~~~       [0]
+
+<input placeholder="&nbsp;" />
+                   ~~~~~~~~ [1]
+
 [0]: String literals are disallowed as JSX. Use a translation function
 [1]: String literal is not allowed for value of placeholder. Use a translation function
