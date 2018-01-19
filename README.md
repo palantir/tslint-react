@@ -89,7 +89,7 @@ The built-in configuration preset you get with `"extends": "tslint-react"` is se
   - Rule options: _none_
 - `jsx-use-translation-function` (since v2.4.0)
    - Enforces use of a translation function. Plain string literals are disallowed in JSX when enabled.
-   - Rule options: _none_
+   - Rule options: `["allow-punctuation", "allow-htmlentities"]`
    - Off by default
 - `jsx-self-close` (since v0.4.0)
   - Enforces that JSX elements with no children are self-closing.
