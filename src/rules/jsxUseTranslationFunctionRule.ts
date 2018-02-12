@@ -39,8 +39,8 @@ export class Rule extends Lint.Rules.AbstractRule {
         },
         optionsDescription: Lint.Utils.dedent`
             Whether to allow punctuation and or HTML entities`,
-        type: "typescript",
-        typescriptOnly: true,
+        type: "functionality",
+        typescriptOnly: false,
     };
     /* tslint:enable:object-literal-sort-keys */
 
