@@ -42,20 +42,19 @@
 <div> & </div>
 
 <div>:&nbsp;</div>
-     ~~~~~~~       [0]
+
+<div>:&nbsp</div>
+     ~~~~~~       [0]
 
 <div>{' - '}</div>
 
 <input placeholder="-" />
 
 <div>&nbsp;</div>
-     ~~~~~~         [0]
 
 <div>{'&nbsp;'}</div>
-     ~~~~~~~~~~       [0]
 
 <input placeholder="&nbsp;" />
-                   ~~~~~~~~ [1]
 
 <div>hello - world</div>
      ~~~~~~~~~~~~~       [0]

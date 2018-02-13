@@ -48,9 +48,17 @@
 
 <div>&nbsp;</div>
 
+<div>&nbsp;&nbsp;</div>
+
 <div>{'&nbsp;'}</div>
 
 <input placeholder="&nbsp;" />
+
+<div>hello - world</div>
+     ~~~~~~~~~~~~~       [0]
+
+<div>hello&nbsp;world</div>
+     ~~~~~~~~~~~~~~~~       [0]
 
 [0]: String literals are disallowed as JSX. Use a translation function
 [1]: String literal is not allowed for value of placeholder. Use a translation function
