@@ -24,6 +24,8 @@ interface IOptions {
     allowHtmlEntities: boolean;
 }
 
+const htmlEntityRegex = /(&(?:#[0-9]+|[a-zA-Z]+);)/;
+
 export class Rule extends Lint.Rules.AbstractRule {
     /* tslint:disable:object-literal-sort-keys */
     public static metadata: Lint.IRuleMetadata = {
@@ -99,17 +101,23 @@ function isInvalidText(text: string, options: Readonly<IOptions>) {
         return false;
     }
 
-    let invalid = true;
-
-    if (options.allowPunctuation) {
-        invalid = /\w/.test(t);
+    if (options.allowPunctuation && t.indexOf("&") === -1) {
+        // fast path: any punctuation that is not potentially an HTML entity
+        return /\w/.test(t);
     }
 
-    if (options.allowHtmlEntities && t.indexOf("&") !== -1) {
-        invalid = t.split("&")
-            .filter((entity) => entity !== "")
-            .some((entity) => /^&(?:#[0-9]+|[a-zA-Z]+);$/.test(`&${entity}`) !== true);
-    }
+    // split the text into HTML entities and everything else so we can test each part of the string individually
+    const parts = t.split(htmlEntityRegex).filter((entity) => entity !== "");
 
-    return invalid;
+    return parts.some((entity) => {
+        if (options.allowHtmlEntities && htmlEntityRegex.test(entity)) {
+            return false;
+        }
+
+        if (options.allowPunctuation) {
+            return /\w/.test(entity);
+        }
+
+        return true;
+    });
 }
