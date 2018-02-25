@@ -100,6 +100,9 @@ The built-in configuration preset you get with `"extends": "tslint-react"` is se
   <div className="foo" />
   ```
   - Rule options: _none_
+- `jsx-space-before-trailing-slash`
+  - Checks that self-closing JSX elements have a space before the '/>' part.
+  - Rule options: _none_
 - `jsx-wrap-multiline` (since v2.1)
   - Enforces that multiline JSX expressions are wrapped with parentheses.
   - Opening parenthesis must be followed by a newline.
