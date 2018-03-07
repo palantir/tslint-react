@@ -1,0 +1,19 @@
+class Test extends React.Component<{}, {}> {
+    private methodHandler() { }
+
+    private attributeHandler = () => {}
+
+    public render() {
+        return 
+            <>
+                <div onClick={this.methodHandler} />
+                              ~~~~~~~~~~~~~~~~~~ [0]
+                <div onClick={(this.methodHandler)} />
+                               ~~~~~~~~~~~~~~~~~~ [0]
+                <div onClick={() => this.methodHandler()} />
+                <div onClick={this.attributeHandler} />
+            </>;
+    }
+}
+
+[0]: Method references are forbidden in JSX attributes
