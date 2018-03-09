@@ -34,7 +34,7 @@ The built-in configuration preset you get with `"extends": "tslint-react"` is se
 
 - `jsx-alignment`
   - Enforces a consistent style for multiline JSX elements which promotes ease of editing via line-wise manipulations
-  as well as maintainabilty via small diffs when changes are made.
+  as well as maintainability via small diffs when changes are made.
   ```ts
   // Good:
   const element = <div
