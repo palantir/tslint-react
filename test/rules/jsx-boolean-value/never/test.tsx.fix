@@ -1,0 +1,7 @@
+function render(){
+  return(
+    <Foo readOnly />
+    <Foo readOnly />
+    <Foo readOnly />
+  );
+}

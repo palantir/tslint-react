@@ -66,14 +66,22 @@ function walk(ctx: Lint.WalkContext<string | undefined>): void {
             if (initializer === undefined) {
                 // if no option set, or explicitly set to "always"
                 if (ctx.options === undefined || ctx.options === OPTION_ALWAYS) {
-                    ctx.addFailureAt(node.getStart(), node.getWidth(), Rule.ALWAYS_MESSAGE);
+                    const text = node.name.text;
+                    const width = text.length;
+                    const start = node.end - width;
+                    const fix = Lint.Replacement.replaceFromTo(start, node.end, `${text}={true}`);
+                    ctx.addFailureAt(start, width, Rule.ALWAYS_MESSAGE, fix);
                 }
             } else if (initializer.kind === ts.SyntaxKind.JsxExpression) {
                 const isValueTrue = initializer.expression !== undefined
                     && initializer.expression.kind === ts.SyntaxKind.TrueKeyword;
 
                 if (isValueTrue && ctx.options === OPTION_NEVER) {
-                    ctx.addFailureAt(node.getStart(), node.getWidth(), Rule.NEVER_MESSAGE);
+                    const width = node.getWidth(ctx.sourceFile);
+                    const start = node.end - width;
+                    const fix = Lint.Replacement.replaceFromTo(
+                        start, node.end, node.getFirstToken(ctx.sourceFile).getText(ctx.sourceFile));
+                    ctx.addFailureAt(start, width, Rule.NEVER_MESSAGE, fix);
                 }
             }
         }
