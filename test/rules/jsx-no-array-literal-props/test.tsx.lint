@@ -1,0 +1,22 @@
+const ary = []
+const good = <Foo bar="car" car dar={ary} />;
+
+const bad = <Foo bar={[]} />
+                      ~~ [Array literal properties are forbidden in JSX attributes due to their rendering performance impact]
+
+function goodRender() {
+    const ary = this.props.ary
+    return (
+        <div className="red" ary={ary} />
+    );
+}
+
+
+function badRender_DynamicExpression() {
+    return (
+        <div bar={[]}
+                  ~~ [Array literal properties are forbidden in JSX attributes due to their rendering performance impact]
+     );
+}
+
+// TODO: Check splat properties, render local variables
