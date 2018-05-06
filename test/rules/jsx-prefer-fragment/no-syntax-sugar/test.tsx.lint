@@ -1,0 +1,8 @@
+function render(){
+  return(
+    <div>
+     ~~~  [An empty 'div' should be written as React.Fragment.]
+      <span>foo</span>
+    </div>
+  );
+}

@@ -1,0 +1,7 @@
+function render(){
+  return(
+    <React.Fragment>
+      <span>foo</span>
+    </React.Fragment>
+  );
+}

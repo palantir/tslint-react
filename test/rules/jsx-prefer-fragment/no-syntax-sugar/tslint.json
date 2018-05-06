@@ -1,0 +1,9 @@
+{
+    "rules": {
+        "jsx-prefer-fragment": {
+            "options": [
+                "no-syntax-sugar"
+            ]
+        }
+    }
+}
