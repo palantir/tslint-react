@@ -2378,12 +2378,6 @@ tslint-language-service@^0.9.9:
   dependencies:
     mock-require "^2.0.2"
 
-tslint-react@^3.5.1:
-  version "3.5.1"
-  resolved "https://registry.yarnpkg.com/tslint-react/-/tslint-react-3.5.1.tgz#a5ca48034bf583fb63b42763bb89fa23062d5390"
-  dependencies:
-    tsutils "^2.13.1"
-
 tslint@^5.10.0:
   version "5.10.0"
   resolved "https://registry.yarnpkg.com/tslint/-/tslint-5.10.0.tgz#11e26bccb88afa02dd0d9956cae3d4540b5f54c3"

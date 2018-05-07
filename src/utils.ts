@@ -1,68 +1,111 @@
-/**
- * @license
- * Copyright 2017 Palantir Technologies, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+import * as lint from 'tslint'
+import * as ts from 'typescript'
 
-import * as Lint from "tslint";
-import * as ts from "typescript";
-
-export function isMultilineText(text: string): boolean {
-  return /\n/.test(text);
+export function descendInto(
+	sourceFile: ts.SourceFile,
+	node: ts.Node,
+	predicate: (node: ts.Node, sourceFile: ts.SourceFile) => boolean,
+	whenTrue: (node: ts.Node, sourceFile: ts.SourceFile) => void,
+): void {
+	if (predicate(node, sourceFile)) {
+		whenTrue(node, sourceFile)
+	}
+	return ts.forEachChild(node, (child: ts.Node) =>
+		descendInto(sourceFile, child, predicate, whenTrue),
+	)
 }
 
-export function getDeleteFixForSpaceBetweenTokens(
-  firstNode: ts.Node,
-  secondNode: ts.Node
-): Lint.Replacement | undefined {
-  const { parent } = firstNode;
-  const parentStart = parent!.getStart();
-  const secondNodeStart = secondNode.getFullStart();
-  const firstNodeEnd = firstNode.getStart() + firstNode.getWidth();
-  const secondNodeRelativeStart = secondNodeStart - parentStart;
-  const firstNodeRelativeEnd = firstNodeEnd - parentStart;
-  const parentText = parent!.getText();
-  const trailingComments = ts.getTrailingCommentRanges(
-    parentText,
-    firstNodeRelativeEnd
-  );
-  const leadingComments = ts.getLeadingCommentRanges(
-    parentText,
-    secondNodeRelativeStart
-  );
-  // tslint:disable-next-line strict-boolean-expressions
-  const comments = (trailingComments || []).concat(leadingComments || []);
-
-  if (
-    secondNode.getStart() - firstNode.getStart() - firstNode.getWidth() >
-    getTotalCharCount(comments)
-  ) {
-    const replacements = comments
-      .map(comment => parentText.slice(comment.pos, comment.end))
-      .join("");
-    return new Lint.Replacement(
-      secondNodeStart,
-      secondNode.getStart() - secondNodeStart,
-      replacements
-    );
-  } else {
-    return undefined;
-  }
+export function getAttributeExpression(node: ts.JsxAttribute) {
+	const { initializer } = node
+	if (initializer !== undefined && ts.isJsxExpression(initializer)) {
+		return initializer.expression
+	}
+	return undefined
 }
 
-function getTotalCharCount(comments: ts.CommentRange[]) {
-  return comments
-    .map(comment => comment.end - comment.pos)
-    .reduce((l, r) => l + r, 0);
+export function isPropertyAssignment(
+	node: ts.Node,
+	sourceFile: ts.SourceFile,
+): boolean {
+	return (
+		ts.isObjectLiteralElement(node) &&
+		ts.isPropertyAssignment(node) &&
+		// [lval assign rval]
+		node.getChildCount(sourceFile) === 3
+	)
+}
+
+export function jsxWalker(
+	handleJsxAttribute: (
+		attr: ts.JsxAttribute,
+		context: lint.WalkContext<void>,
+	) => void,
+	handleSpreadAttribute: (
+		spread: ts.JsxSpreadAttribute,
+		context: lint.WalkContext<void>,
+	) => void,
+) {
+	return function walk(ctx: lint.WalkContext<void>) {
+		const { sourceFile } = ctx
+		return ts.forEachChild(sourceFile, function cb(node: ts.Node): void {
+			if (ts.isJsxAttribute(node)) {
+				handleJsxAttribute(node as ts.JsxAttribute, ctx)
+			} else if (ts.isJsxSpreadAttribute(node)) {
+				handleSpreadAttribute(node as ts.JsxSpreadAttribute, ctx)
+			}
+			return ts.forEachChild(node, cb)
+		})
+	}
+}
+
+export function jsxAttributeValueWalker(
+	handleJsxAttributeValue: (
+		attributeNode: ts.Node,
+		expression: ts.Node,
+		context: lint.WalkContext<void>,
+	) => void,
+) {
+	return jsxWalker(
+		(attr, context) => {
+			const expression = getAttributeExpression(attr)
+			if (expression === undefined) {
+				return
+			}
+			handleJsxAttributeValue(attr as ts.JsxAttribute, expression, context)
+		},
+		(spread, context) => {
+			descendInto(context.sourceFile, spread, isPropertyAssignment, node => {
+				// lvalue eq rvalue
+				const rValue = node.getChildren(context.sourceFile)[2]
+				handleJsxAttributeValue(spread, rValue, context)
+			})
+		},
+	)
+}
+
+export function findChildNodesMatchingCriteria(
+	node: ts.Node,
+	ctx: lint.WalkContext<void>,
+	predicate: (node: ts.Node) => boolean,
+): ts.Node[] {
+	if (predicate(node)) {
+		return [node]
+	}
+
+	if (ts.isParenthesizedExpression(node)) {
+		return findChildNodesMatchingCriteria(node.expression, ctx, predicate)
+	}
+
+	if (ts.isConditionalExpression(node)) {
+		let literals: ts.Node[] = []
+		node.forEachChild((child: ts.Node) => {
+			literals = [
+				...literals,
+				...findChildNodesMatchingCriteria(child, ctx, predicate),
+			]
+		})
+		return literals
+	}
+
+	return []
 }

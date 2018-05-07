@@ -1,7 +1,6 @@
 {
     "extends": ["tslint:latest", "tslint-config-prettier"],
     "rules": {
-        "file-header": [true, "Copyright \\d{4} Palantir Technologies, Inc."],
         "max-classes-per-file": [true, 2],
         "no-default-export": true,
         "restrict-plus-operands": true,

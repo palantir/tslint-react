@@ -7,6 +7,21 @@ const bad = <Foo bar={{a: true}} />
 const bad = <Foo style={{a: true}} />
                         ~~~~~~~~~ [Object literal properties are forbidden in JSX attributes due to their rendering performance impact]
 
+
+const badParenthized = <Foo bar={({a: true})} />
+                                  ~~~~~~~~~ [Object literal properties are forbidden in JSX attributes due to their rendering performance impact]
+
+
+const badTernary = <Foo bar={baz ? {a: true} : null)} />
+                                   ~~~~~~~~~ [Object literal properties are forbidden in JSX attributes due to their rendering performance impact]
+
+
+const badSpread = <Foo {...{bar: {a: true}}} />
+                                 ~~~~~~~~~ [Object literal properties are forbidden in JSX attributes due to their rendering performance impact]
+
+const badNested = <Foo {...{bar: baz ? ({a: true}) : 1}} />
+                                        ~~~~~~~~~ [Object literal properties are forbidden in JSX attributes due to their rendering performance impact]
+
 function goodRender() {
     const v = this.props.v
     return (

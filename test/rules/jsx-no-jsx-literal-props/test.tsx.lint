@@ -1,0 +1,46 @@
+const jsx = <div />
+const good = <Foo bar="car" car dar={() => <div />} />;
+
+const bad = <Foo bar={<div />} />
+                      ~~~~~~~ [JSX literal properties are forbidden in JSX attributes due to their rendering performance impact]
+
+const bad = <Foo bar={<div>text</div>} />
+                      ~~~~~~~~~~~~~~~ [JSX literal properties are forbidden in JSX attributes due to their rendering performance impact]
+
+const bad2 = <Foo {...{bar: <div />} />
+                            ~~~~~~~ [JSX literal properties are forbidden in JSX attributes due to their rendering performance impact]
+
+const badParenthized = <Foo bar={(<div />)} />
+                                  ~~~~~~~ [JSX literal properties are forbidden in JSX attributes due to their rendering performance impact]
+
+
+const badTernary = <Foo bar={baz ? <div /> : null)} />
+                                   ~~~~~~~ [JSX literal properties are forbidden in JSX attributes due to their rendering performance impact]
+
+
+const badSpread = <Foo {...{bar: <div />}} />
+                                 ~~~~~~~ [JSX literal properties are forbidden in JSX attributes due to their rendering performance impact]
+
+const badNested = <Foo {...{bar: baz ? (<div />) : 1}} />
+                                        ~~~~~~~ [JSX literal properties are forbidden in JSX attributes due to their rendering performance impact]
+
+function goodRender() {
+    const v = this.props.v
+    return (
+        <div className="red" v={v} />
+    );
+}
+
+function badRender_DynamicPropsExpression() {
+    return (
+        <div {...{bar: <div /> }}
+                       ~~~~~~~ [JSX literal properties are forbidden in JSX attributes due to their rendering performance impact]
+     );
+}
+
+function badRender_DynamicExpression() {
+    return (
+        <div bar={<div />}
+                  ~~~~~~~ [JSX literal properties are forbidden in JSX attributes due to their rendering performance impact]
+     );
+}

@@ -4,6 +4,21 @@ const good = <Foo bar="car" car dar={ary} />;
 const bad = <Foo bar={[]} />
                       ~~ [Array literal properties are forbidden in JSX attributes due to their rendering performance impact]
 
+
+const badParenthized = <Foo bar={([])} />
+                                  ~~ [Array literal properties are forbidden in JSX attributes due to their rendering performance impact]
+
+
+const badTernary = <Foo bar={baz ? [] : null)} />
+                                   ~~ [Array literal properties are forbidden in JSX attributes due to their rendering performance impact]
+
+
+const badSpread = <Foo {...{bar: []}} />
+                                 ~~ [Array literal properties are forbidden in JSX attributes due to their rendering performance impact]
+
+const badNested = <Foo {...{bar: baz ? ([]) : 1}} />
+                                        ~~ [Array literal properties are forbidden in JSX attributes due to their rendering performance impact]
+
 function goodRender() {
     const ary = this.props.ary
     return (

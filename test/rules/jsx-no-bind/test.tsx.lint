@@ -1,0 +1,41 @@
+function foo() {
+}
+
+const badParenthized = <Foo bar={(onHandle.bind(this))} />
+                                  ~~~~~~~~~~~~~~~~~~~ [Binds are forbidden in JSX attributes due to their rendering performance impact]
+
+
+const badTernary = <Foo bar={baz ? onHandle.bind(this) : null)} />
+                                   ~~~~~~~~~~~~~~~~~~~ [Binds are forbidden in JSX attributes due to their rendering performance impact]
+
+
+const badSpread = <Foo {...{bar: onHandle.bind(that)}} />
+                                 ~~~~~~~~~~~~~~~~~~~ [Binds are forbidden in JSX attributes due to their rendering performance impact]
+
+const badNested = <Foo {...{bar: baz ? (onHandle.bind(this)) : 1}} />
+                                        ~~~~~~~~~~~~~~~~~~~ [Binds are forbidden in JSX attributes due to their rendering performance impact]
+
+export const myButton = (
+    <button onClick={foo.bind(this)}>
+                     ~~~~~~~~~~~~~~   [0]
+        Log something
+    </button>
+);
+
+export const myButton2 = (
+    <button onClick={this.foo.bind(this)}>
+                     ~~~~~~~~~~~~~~~~~~~   [0]
+        Log something
+    </button>
+);
+
+export const selector = (
+    <Component
+        prop1={this.state.availableColumns}
+        prop2={this.onChangeHandler.bind(this)}
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   [0]
+        prop3={this.state.stateVar1}
+    />
+);
+
+[0]: Binds are forbidden in JSX attributes due to their rendering performance impact
