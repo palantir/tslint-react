@@ -1,11 +1,11 @@
 {
   "name": "tslint-react-perf",
-  "version": "3.5.1",
+  "version": "0.0.1",
   "description": "Lint rules related to React & JSX Performance for TSLint",
   "main": "tslint-react-perf.json",
   "scripts": {
     "build": "tsc -p ./",
-    "copy": "cp -f package.json README.md tslint-react-perf.json build/",
+    "copy": "cp -f package.json README.md tslint-react-perf.json yarn.lock build/",
     "clean": "rm -rf build/",
     "lint": "tslint --project tsconfig.json --format codeFrame",
     "test": "./scripts/test-rules",
@@ -18,12 +18,12 @@
     "lint-staged": "^7.1.0",
     "prettier": "^1.12.1",
     "tslint-config-prettier": "^1.12.0",
-    "tslint-react": "^3.5.1",
     "tsutils": "^2.13.1"
   },
   "peerDependencies": {
     "tslint": "^5.1.0",
-    "typescript": ">=2.1.0 || >=2.7.0-dev || >=2.8.0-dev"
+    "typescript": ">=2.1.0 || >=2.7.0-dev || >=2.8.0-dev",
+    "tslint-react": "^3.5.1"
   },
   "devDependencies": {
     "@types/colors": "^1.2.1",
@@ -34,6 +34,7 @@
     "npm-run-all": "^4.0.2",
     "path": "^0.12.7",
     "tslint": "^5.10.0",
+    "tslint-react": "^3.5.1",
     "tslint-language-service": "^0.9.9",
     "typescript": "^2.8.3"
   },

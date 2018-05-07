@@ -1,6 +1,12 @@
 {
-    "rulesDirectory": "./rules",
+    "extends": "tslint-react",
+    "rulesDirectory": "./build/rules",
     "rules": {
+        // tslint-react performance rules to enable
+        "jsx-no-lambda": true,
+        "jsx-no-bind": true,
+
+        // Custom performance rules
         "jsx-no-array-literal-props": true,
         "jsx-no-object-literal-props": true
     }
