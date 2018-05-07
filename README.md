@@ -30,4 +30,4 @@ Here's a sample configuration where `tslint.json` lives adjacent to your `node_m
 Quick Start (requires Node v6+, yarn v0.22+):
 
 1. `yarn`
-1. `yarn package`
+1. `yarn prepare`

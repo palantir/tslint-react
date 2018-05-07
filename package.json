@@ -9,8 +9,7 @@
     "lint": "tslint --project tsconfig.json --format codeFrame",
     "test": "./scripts/test-rules",
     "verify": "run-s build lint test",
-    "package": "run-s clean verify",
-    "prepublish": "npm run package"
+    "prepare": "run-s clean verify"
   },
   "dependencies": {
     "husky": "^0.14.3",
