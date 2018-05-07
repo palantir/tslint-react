@@ -20,65 +20,65 @@ import { isJsxAttribute, isJsxExpression } from "tsutils";
 import * as ts from "typescript";
 
 export class Rule extends Lint.Rules.AbstractRule {
-    /* tslint:disable:object-literal-sort-keys */
-    public static metadata: Lint.IRuleMetadata = {
-        ruleName: "jsx-no-object-literal-props",
-        description: "Checks for object literals used in JSX attributes",
-        descriptionDetails: Lint.Utils.dedent
-            `Creating new objects inside the render call stack works against pure component \
+  /* tslint:disable:object-literal-sort-keys */
+  public static metadata: Lint.IRuleMetadata = {
+    ruleName: "jsx-no-object-literal-props",
+    description: "Checks for object literals used in JSX attributes",
+    descriptionDetails: Lint.Utils
+      .dedent`Creating new objects inside the render call stack works against pure component \
             rendering. When doing an equality check between two objects, React will always \
             consider them unequal values and force the component to re-render more often than necessary.`,
-        options: null,
-        optionsDescription: "",
-        optionExamples: ["true"],
-        type: "functionality",
-        typescriptOnly: false,
-    };
-    /* tslint:enable:object-literal-sort-keys */
+    options: null,
+    optionsDescription: "",
+    optionExamples: ["true"],
+    type: "functionality",
+    typescriptOnly: false
+  };
+  /* tslint:enable:object-literal-sort-keys */
 
-    /* tslint:disable-next-line max-line-length */
-    public static FAILURE_STRING = "Object literal properties are forbidden in JSX attributes due to their rendering performance impact";
+  /* tslint:disable-next-line max-line-length */
+  public static FAILURE_STRING = "Object literal properties are forbidden in JSX attributes due to their rendering performance impact";
 
-    public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
-        return this.applyWithFunction(sourceFile, walk);
-    }
+  public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
+    return this.applyWithFunction(sourceFile, walk);
+  }
 }
 
 function walk(ctx: Lint.WalkContext<void>) {
-    return ts.forEachChild(ctx.sourceFile, function cb(node: ts.Node): void {
-        // continue iterations until JsxAttribute will be found
-        if (isJsxAttribute(node)) {
-            const { initializer } = node;
-            // early exit in case when initializer is string literal or not provided (e.d. `disabled`)
-            if (initializer === undefined || !isJsxExpression(initializer)) {
-                return;
-            }
+  return ts.forEachChild(ctx.sourceFile, function cb(node: ts.Node): void {
+    // continue iterations until JsxAttribute will be found
+    if (isJsxAttribute(node)) {
+      const { initializer } = node;
+      // early exit in case when initializer is string literal or not provided (e.d. `disabled`)
+      if (initializer === undefined || !isJsxExpression(initializer)) {
+        return;
+      }
 
-            // Ignore "ref" attribute.
-            // ref is not part of the props so using lambdas here will not trigger useless re-renders
-            if (node.name.text === "ref") {
-                return;
-            }
+      const { expression } = initializer;
+      if (expression === undefined) {
+        return;
+      }
 
-            const { expression } = initializer;
-            if (expression !== undefined && isObjectLiteral(expression)) {
-                return ctx.addFailureAtNode(expression, Rule.FAILURE_STRING);
-            }
-        }
+      if (isObjectLiteral(expression)) {
+        return ctx.addFailureAtNode(expression, Rule.FAILURE_STRING);
+      }
+    }
 
-        return ts.forEachChild(node, cb);
-    });
+    return ts.forEachChild(node, cb);
+  });
 }
 
 function isObjectLiteral(node: ts.Node): boolean {
-    switch (node.kind) {
-        case ts.SyntaxKind.ObjectLiteralExpression:
-            return true;
+  switch (node.kind) {
+    case ts.SyntaxKind.ObjectLiteralExpression:
+      return true;
 
-        case ts.SyntaxKind.ParenthesizedExpression:
-            return ts.isObjectLiteralExpression((node as ts.ParenthesizedExpression).expression);
+    case ts.SyntaxKind.ParenthesizedExpression:
+      return ts.isObjectLiteralExpression(
+        (node as ts.ParenthesizedExpression).expression
+      );
 
-        default:
-            return false;
-    }
+    default:
+      return false;
+  }
 }

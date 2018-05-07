@@ -1,0 +1,7 @@
+{
+    "rulesDirectory": "./rules",
+    "rules": {
+        "jsx-no-array-literal-props": true,
+        "jsx-no-object-literal-props": true
+    }
+}

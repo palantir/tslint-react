@@ -4,6 +4,9 @@ const good = <Foo bar="car" car dar={() => {a: true}} />;
 const bad = <Foo bar={{a: true}} />
                       ~~~~~~~~~ [Object literal properties are forbidden in JSX attributes due to their rendering performance impact]
 
+const bad = <Foo style={{a: true}} />
+                        ~~~~~~~~~ [Object literal properties are forbidden in JSX attributes due to their rendering performance impact]
+
 function goodRender() {
     const v = this.props.v
     return (

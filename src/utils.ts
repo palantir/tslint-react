@@ -19,35 +19,50 @@ import * as Lint from "tslint";
 import * as ts from "typescript";
 
 export function isMultilineText(text: string): boolean {
-    return /\n/.test(text);
+  return /\n/.test(text);
 }
 
 export function getDeleteFixForSpaceBetweenTokens(
-    firstNode: ts.Node,
-    secondNode: ts.Node,
+  firstNode: ts.Node,
+  secondNode: ts.Node
 ): Lint.Replacement | undefined {
-    const { parent } = firstNode;
-    const parentStart = parent!.getStart();
-    const secondNodeStart = secondNode.getFullStart();
-    const firstNodeEnd = firstNode.getStart() + firstNode.getWidth();
-    const secondNodeRelativeStart = secondNodeStart - parentStart;
-    const firstNodeRelativeEnd = firstNodeEnd - parentStart;
-    const parentText = parent!.getText();
-    const trailingComments = ts.getTrailingCommentRanges(parentText, firstNodeRelativeEnd);
-    const leadingComments = ts.getLeadingCommentRanges(parentText, secondNodeRelativeStart);
-    // tslint:disable-next-line strict-boolean-expressions
-    const comments = (trailingComments || []).concat(leadingComments || []);
+  const { parent } = firstNode;
+  const parentStart = parent!.getStart();
+  const secondNodeStart = secondNode.getFullStart();
+  const firstNodeEnd = firstNode.getStart() + firstNode.getWidth();
+  const secondNodeRelativeStart = secondNodeStart - parentStart;
+  const firstNodeRelativeEnd = firstNodeEnd - parentStart;
+  const parentText = parent!.getText();
+  const trailingComments = ts.getTrailingCommentRanges(
+    parentText,
+    firstNodeRelativeEnd
+  );
+  const leadingComments = ts.getLeadingCommentRanges(
+    parentText,
+    secondNodeRelativeStart
+  );
+  // tslint:disable-next-line strict-boolean-expressions
+  const comments = (trailingComments || []).concat(leadingComments || []);
 
-    if (secondNode.getStart() - firstNode.getStart() - firstNode.getWidth() > getTotalCharCount(comments)) {
-        const replacements = comments.map((comment) => parentText.slice(comment.pos, comment.end)).join("");
-        return new Lint.Replacement(secondNodeStart, secondNode.getStart() - secondNodeStart, replacements);
-    } else {
-        return undefined;
-    }
+  if (
+    secondNode.getStart() - firstNode.getStart() - firstNode.getWidth() >
+    getTotalCharCount(comments)
+  ) {
+    const replacements = comments
+      .map(comment => parentText.slice(comment.pos, comment.end))
+      .join("");
+    return new Lint.Replacement(
+      secondNodeStart,
+      secondNode.getStart() - secondNodeStart,
+      replacements
+    );
+  } else {
+    return undefined;
+  }
 }
 
 function getTotalCharCount(comments: ts.CommentRange[]) {
-    return comments
-        .map((comment) => comment.end - comment.pos)
-        .reduce((l, r) => l + r, 0);
+  return comments
+    .map(comment => comment.end - comment.pos)
+    .reduce((l, r) => l + r, 0);
 }

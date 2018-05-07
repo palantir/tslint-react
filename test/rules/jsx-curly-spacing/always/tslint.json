@@ -1,5 +1,0 @@
-{
-    "rules": {
-        "jsx-curly-spacing": [true, "always"]
-    }
-}
