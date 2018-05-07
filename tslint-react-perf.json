@@ -1,0 +1,10 @@
+{
+	"rulesDirectory": "./build/rules",
+	"rules": {
+		"jsx-no-bind-props": true,
+		"jsx-no-lambda-props": true,
+		"jsx-no-array-literal-props": true,
+		"jsx-no-object-literal-props": true,
+		"jsx-no-jsx-literal-props": true
+	}
+}

@@ -1,5 +1,5 @@
 {
-    "rules": {
-        "jsx-no-bind": true
-    }
+	"rules": {
+		"jsx-no-bind-props": true
+	}
 }

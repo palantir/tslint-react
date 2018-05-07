@@ -1,6 +1,20 @@
 function foo() {
 }
 
+const badParenthized = <Foo bar={(onHandle.bind(this))} />
+                                  ~~~~~~~~~~~~~~~~~~~ [Binds are forbidden in JSX attributes due to their rendering performance impact]
+
+
+const badTernary = <Foo bar={baz ? onHandle.bind(this) : null)} />
+                                   ~~~~~~~~~~~~~~~~~~~ [Binds are forbidden in JSX attributes due to their rendering performance impact]
+
+
+const badSpread = <Foo {...{bar: onHandle.bind(that)}} />
+                                 ~~~~~~~~~~~~~~~~~~~ [Binds are forbidden in JSX attributes due to their rendering performance impact]
+
+const badNested = <Foo {...{bar: baz ? (onHandle.bind(this)) : 1}} />
+                                        ~~~~~~~~~~~~~~~~~~~ [Binds are forbidden in JSX attributes due to their rendering performance impact]
+
 export const myButton = (
     <button onClick={foo.bind(this)}>
                      ~~~~~~~~~~~~~~   [0]
