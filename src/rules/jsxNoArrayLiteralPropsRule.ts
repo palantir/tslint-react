@@ -23,7 +23,7 @@ export class Rule extends Lint.Rules.AbstractRule {
 	/* tslint:enable:object-literal-sort-keys */
 
 	/* tslint:disable-next-line max-line-length */
-	public static FAILURE_STRING = 'Array literal properties are forbidden in JSX attributes due to their rendering performance impact'
+	public static FAILURE_STRING = 'Array literal props in JSX properties create new references on every render and may result in unnecessary rerenders (jsx-no-array-literal-props)'
 
 	public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
 		return this.applyWithFunction(

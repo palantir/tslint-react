@@ -21,7 +21,7 @@ export class Rule extends Lint.Rules.AbstractRule {
 	/* tslint:enable:object-literal-sort-keys */
 
 	/* tslint:disable-next-line max-line-length */
-	public static FAILURE_STRING = 'React Component classes should either implement shouldComponentUpdate() or extend PureComponent.'
+	public static FAILURE_STRING = 'React components extending React.Component should either implement shouldComponentUpdate() or extend PureComponent to avoid unnecessary renders (react-component-classes-should-implement-scu)'
 
 	public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
 		return this.applyWithFunction(sourceFile, walk, undefined)

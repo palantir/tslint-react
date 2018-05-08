@@ -22,7 +22,7 @@ export class Rule extends Lint.Rules.TypedRule {
 	/* tslint:enable:object-literal-sort-keys */
 
 	/* tslint:disable-next-line max-line-length */
-	public static FAILURE_STRING = 'Pure React components with complex properties, such as objects, may fail shouldComponentUpdate() checks, leading to excessive renders.'
+	public static FAILURE_STRING = 'React components using Pure semantics should avoid types that can cause shallow equality checks to fail. This is ignorable if you are certain that prop references will not change. (react-pure-components-have-simple-attributes)'
 
 	public applyWithProgram(
 		sourceFile: ts.SourceFile,

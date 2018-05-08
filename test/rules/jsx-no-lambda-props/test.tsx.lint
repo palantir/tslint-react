@@ -102,4 +102,4 @@ const ComplexComposableComponentWith: React.SFC<{}> = () => (
     </ComposableComponent>
 );
 
-[0]: Lambdas are forbidden in JSX attributes due to their rendering performance impact
+[0]: Lambda expressions in JSX create new references on every render and can cause unnecessary rerenders (jsx-no-lambda-props)

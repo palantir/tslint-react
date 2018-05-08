@@ -23,7 +23,7 @@ export class Rule extends Lint.Rules.AbstractRule {
 	/* tslint:enable:object-literal-sort-keys */
 
 	/* tslint:disable-next-line max-line-length */
-	public static FAILURE_STRING = 'Object literal properties are forbidden in JSX attributes due to their rendering performance impact'
+	public static FAILURE_STRING = 'Object literal props in JSX create new instances on every render and can cause unnecessary rerenders (jsx-no-object-literal-props)'
 
 	public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
 		return this.applyWithFunction(

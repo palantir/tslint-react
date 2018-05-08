@@ -45,4 +45,4 @@ function badRender_DynamicExpression() {
      );
 }
 
-[0]: JSX literal properties are forbidden in JSX attributes due to their rendering performance impact
+[0]: JSX literal expressions as JSX properties create new object references on every render and may result in unnecessary re-renders (jsx-no-jsx-literal-props)

@@ -36,4 +36,4 @@ function badRender_DynamicExpression() {
 
 // TODO: Check splat properties, render local variables
 
-[0]: Array literal properties are forbidden in JSX attributes due to their rendering performance impact
+[0]: Array literal props in JSX properties create new references on every render and may result in unnecessary rerenders (jsx-no-array-literal-props)

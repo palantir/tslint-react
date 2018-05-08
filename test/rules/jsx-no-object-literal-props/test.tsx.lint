@@ -38,4 +38,4 @@ function badRender_DynamicExpression() {
 
 // TODO: Check splat properties, render local variables
 
-[0]: Object literal properties are forbidden in JSX attributes due to their rendering performance impact
+[0]: Object literal props in JSX create new instances on every render and can cause unnecessary rerenders (jsx-no-object-literal-props)

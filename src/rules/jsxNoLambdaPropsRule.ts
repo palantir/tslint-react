@@ -40,7 +40,7 @@ export class Rule extends Lint.Rules.AbstractRule {
 	}
 	/* tslint:enable:object-literal-sort-keys */
 
-	public static FAILURE_STRING = 'Lambdas are forbidden in JSX attributes due to their rendering performance impact'
+	public static FAILURE_STRING = 'Lambda expressions in JSX create new references on every render and can cause unnecessary rerenders (jsx-no-lambda-props)'
 
 	public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
 		return this.applyWithFunction(

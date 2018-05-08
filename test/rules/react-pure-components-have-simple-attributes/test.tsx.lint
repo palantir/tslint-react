@@ -56,4 +56,4 @@ class NonPureComponent extends React.Component<NonPureComponent> {
     }
 }
 
-[0]: Pure React components with complex properties, such as objects, may fail shouldComponentUpdate() checks, leading to excessive renders.
+[0]: React components using Pure semantics should avoid types that can cause shallow equality checks to fail. This is ignorable if you are certain that prop references will not change. (react-pure-components-have-simple-attributes)

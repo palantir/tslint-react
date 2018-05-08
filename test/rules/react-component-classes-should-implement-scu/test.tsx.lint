@@ -55,4 +55,4 @@ class BadComponent2 extends React.Component<Props> {
 }
 ~ [0]
 
-[0]: React Component classes should either implement shouldComponentUpdate() or extend PureComponent.
+[0]: React components extending React.Component should either implement shouldComponentUpdate() or extend PureComponent to avoid unnecessary renders (react-component-classes-should-implement-scu)
