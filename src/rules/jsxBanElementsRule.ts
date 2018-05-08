@@ -43,7 +43,7 @@ export class Rule extends Lint.Rules.AbstractRule {
             types that match \`regex\``,
         optionExamples: [[true, ["Object", "Use {} instead."], ["String"]]],
         type: "typescript",
-        typescriptOnly: true,
+        typescriptOnly: false,
     };
     /* tslint:enable:object-literal-sort-keys */
 
