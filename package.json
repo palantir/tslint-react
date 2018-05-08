@@ -1,6 +1,6 @@
 {
 	"name": "tslint-react-perf",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Lint rules related to React & JSX Performance for TSLint",
 	"main": "tslint-react-perf.json",
 	"scripts": {
