@@ -2,22 +2,22 @@ const ary = []
 const good = <Foo bar="car" car dar={ary} />;
 
 const bad = <Foo bar={[]} />
-                      ~~ [Array literal properties are forbidden in JSX attributes due to their rendering performance impact]
+                      ~~ [0]
 
 
 const badParenthized = <Foo bar={([])} />
-                                  ~~ [Array literal properties are forbidden in JSX attributes due to their rendering performance impact]
+                                  ~~ [0]
 
 
 const badTernary = <Foo bar={baz ? [] : null)} />
-                                   ~~ [Array literal properties are forbidden in JSX attributes due to their rendering performance impact]
+                                   ~~ [0]
 
 
 const badSpread = <Foo {...{bar: []}} />
-                                 ~~ [Array literal properties are forbidden in JSX attributes due to their rendering performance impact]
+                                 ~~ [0]
 
 const badNested = <Foo {...{bar: baz ? ([]) : 1}} />
-                                        ~~ [Array literal properties are forbidden in JSX attributes due to their rendering performance impact]
+                                        ~~ [0]
 
 function goodRender() {
     const ary = this.props.ary
@@ -30,8 +30,10 @@ function goodRender() {
 function badRender_DynamicExpression() {
     return (
         <div bar={[]}
-                  ~~ [Array literal properties are forbidden in JSX attributes due to their rendering performance impact]
+                  ~~ [0]
      );
 }
 
 // TODO: Check splat properties, render local variables
+
+[0]: Array literal properties are forbidden in JSX attributes due to their rendering performance impact

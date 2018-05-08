@@ -1,0 +1,58 @@
+interface Props {
+    num_a: number;
+    num_b: number;
+}
+
+class GoodComponent extends React.Component<Props> {
+    public shouldComponentUpdate() {
+        return true;
+    }
+    public render() {
+        return null;
+    }
+}
+
+class GoodComponent2 extends React.Component<Props> {
+    public render() {
+        return null;
+    }
+    public shouldComponentUpdate() {
+        return true;
+    }
+}
+
+
+class GoodComponent3 extends React.Component<Props> {
+    render() {
+        return null;
+    }
+    shouldComponentUpdate() {
+        return true;
+    }
+}
+
+class BadComponent extends React.Component<Props> {
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    render() {
+~~~~~~~~~~~~~~
+        return null;
+~~~~~~~~~~~~~~~~~~~~
+    }
+~~~~~
+}
+~ [0]
+
+class BadComponent2 extends React.Component<Props> {
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    private x;
+~~~~~~~~~~~~~~
+    public render() {
+~~~~~~~~~~~~~~~~~~~~~
+        return null;
+~~~~~~~~~~~~~~~~~~~~
+    }
+~~~~~
+}
+~ [0]
+
+[0]: React Component classes should either implement shouldComponentUpdate() or extend PureComponent.

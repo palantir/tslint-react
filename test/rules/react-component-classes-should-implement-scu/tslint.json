@@ -1,0 +1,5 @@
+{
+	"rules": {
+		"react-component-classes-should-implement-scu": true
+	}
+}

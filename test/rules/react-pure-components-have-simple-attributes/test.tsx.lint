@@ -1,0 +1,59 @@
+enum MyEnum { FIRST, SECOND };
+type Handler = (value: string) => void;
+interface GoodProps {
+    num_a: number;
+    num_b: number;
+}
+interface GoodComplexProps {
+    num_a: number;
+    enum_b: MyEnum;
+    handler_c: Handler;
+    func_lit_e: () => void
+}
+interface BadProps {
+    num_a: number;
+    literal_b: { name: string, value: number};
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ [0]
+}
+interface SomeData { 
+    str_meta: string 
+}
+interface BadPropsNested {
+    num_a: number;
+    interface_b: SomeData;
+                 ~~~~~~~~ [0]
+}
+
+const Good: React.SFC<GoodProps> = () => <div />;
+const BadHasNestedTypeLiteral: React.SFC<BadProps> = () => <div />
+const BadLiteral: React.SFC<{ a: number, b: {name: string } }> = () => <div />
+                                            ~~~~~~~~~~~~~~~ [0]
+
+export const BadLiteralExported: React.SFC<{ a: number, b: {name: string } }> = () => <div />
+                                                           ~~~~~~~~~~~~~~~ [0]
+const GoodComplex: React.SFC<GoodComplexProps> = () => <div />
+const BadHasNestedType: React.SFC<BadPropsNested> = () => <div />
+
+
+interface BadPurePropsNested {
+    num_a: number;
+    interface_b: SomeData;
+                 ~~~~~~~~ [0]
+}
+class BadPureComponent extends React.PureComponent<BadPurePropsNested> {
+    public render() {
+        return null;
+    }
+}
+
+interface BadPurePropsNested2 {
+    num_a: number;
+    interface_b: SomeData;
+}
+class NonPureComponent extends React.Component<NonPureComponent> {
+    public render() {
+        return null;
+    }
+}
+
+[0]: Pure React components with complex properties, such as objects, may fail shouldComponentUpdate() checks, leading to excessive renders.

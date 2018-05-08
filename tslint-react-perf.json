@@ -5,6 +5,8 @@
 		"jsx-no-lambda-props": true,
 		"jsx-no-array-literal-props": true,
 		"jsx-no-object-literal-props": true,
-		"jsx-no-jsx-literal-props": true
+		"jsx-no-jsx-literal-props": true,
+		"react-pure-components-have-simple-attributes": true,
+		"react-component-classes-should-implement-scu": true
 	}
 }
