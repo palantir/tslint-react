@@ -1,0 +1,17 @@
+<div>
+    Contents
+</div>
+
+<span/>
+~~~~~~~ [Self-closing JSX elements must have a space before the '/>' part]
+
+<button />
+
+<h2 class="colouring" contents="B"/>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ [Self-closing JSX elements must have a space before the '/>' part]
+
+<button onClick="run()" />
+
+<img
+    src="./foo/bar.png"
+/>
