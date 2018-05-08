@@ -1,0 +1,23 @@
+interface GoodProps {
+    a: number;
+    b: number;
+}
+const Good: React.SFC<GoodProps> = () => <div />;
+
+interface BadProps {
+    a: number;
+    b: { name: string, value: number};
+       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ [Pure React components with non-primitive properties may fail shouldComponentUpdate() checks, leading to excessive renders.]
+}
+const Bad: React.SFC<BadProps> = () => <div />
+
+const Bad: React.SFC<{ a: number, b: {name: string } }> = () => <div />
+                                     ~~~~~~~~~~~~~~~ [Pure React components with non-primitive properties may fail shouldComponentUpdate() checks, leading to excessive renders.]
+
+enum MyEnum { FIRST, SECOND }
+type Handler = (value: string) => void
+const NonPrimitiveButOkayProps: React.SFC<{ a: number, b: MyEnum, c: Handler }> = () => <div />
+
+interface Derps { name: string }
+const Bad: React.SFC<{ a: number, b: Derps }> = () => <div />
+                                     ~~~~~ [Pure React components with non-primitive properties may fail shouldComponentUpdate() checks, leading to excessive renders.]
