@@ -124,15 +124,10 @@ function walk(ctx: Lint.WalkContext<string | undefined>): void {
 }
 
 function getTokensCombinedText(firstToken: ts.Node, nextToken: ts.Node) {
-    const parentNodeText = nextToken.parent!.getText();
-    const firstTokenText = firstToken.getText();
-    const secondTokenText = nextToken.getText();
-    const secondTokenTextLocation = parentNodeText.indexOf(secondTokenText);
-    const firstTokenTextLocation = parentNodeText.indexOf(firstTokenText);
-    const combinedTokeText = parentNodeText.slice(
-        firstTokenTextLocation,
-        secondTokenTextLocation + secondTokenText.length,
-    );
+    const parent = nextToken.parent!;
+    const combinedTokeText = parent.getText().slice(
+        firstToken.getStart() - parent.getStart(),
+        nextToken.getStart() + nextToken.getWidth() - parent.getStart());
 
     return combinedTokeText;
 }
