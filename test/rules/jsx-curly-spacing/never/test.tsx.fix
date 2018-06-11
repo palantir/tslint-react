@@ -57,3 +57,10 @@ const failH = <App foo={{ bar:baz }} {...baz}>
 
 const passI = <App foo={/* comment */
                    /* comment 2 */ should_not_matter_because_multiline}/>
+
+const passJ = <App foo={({ bar }) =>
+                  bar ? (
+                    <div></div>
+                  ) : null
+                }
+              />
