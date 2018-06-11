@@ -73,7 +73,7 @@ The built-in configuration preset you get with `"extends": "tslint-react"` is se
     - N.B. This rule only does a simple check for `.map(...)` syntax and does not inspect computed types of expressions. As such, it may produce false positives if you use APIs that look similar to `.map()`.
   - Rule options: _none_
 - `jsx-no-bind` (since v2.6.0)
-  - Forbids function binding in JSX attributes. This has the same intent as `jsx-no-lambda` in helping you avoid excessive re-rendres.
+  - Forbids function binding in JSX attributes. This has the same intent as `jsx-no-lambda` in helping you avoid excessive re-renders.
   - Note that this currently only does a simple _syntactic_ check, not a _semantic_ one (it doesn't use the type checker). So it may have some
     rare false positives if you define your own `.bind` function and supply `this` as a parameter.
   - Rule options: _none_
