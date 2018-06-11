@@ -127,7 +127,8 @@ function getTokensCombinedText(firstToken: ts.Node, nextToken: ts.Node) {
     const parent = nextToken.parent!;
     const combinedTokeText = parent.getText().slice(
         firstToken.getStart() - parent.getStart(),
-        nextToken.getStart() + nextToken.getWidth() - parent.getStart());
+        nextToken.getStart() + nextToken.getWidth() - parent.getStart(),
+    );
 
     return combinedTokeText;
 }
