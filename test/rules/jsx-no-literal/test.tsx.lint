@@ -1,0 +1,27 @@
+export const myButton = (
+    <button style={{background: "red"}}>
+                   ~~~~~~~~~~~~~~~~~~~    [0]
+        Log something
+    </button>
+);
+
+const myButton2 = (
+    <Toolbar icons={[<Icon type="save" />, <Icon type="load" />]} disabled>This is bad</Button>
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~    [0]
+)
+
+const anchorStyle = {color: "blue"}; // this one is kosher
+export const myAnchorButton = (
+    <a href="#" style={anchorStyle}>
+        Click me
+    </a>
+);
+
+export const Languages = () => {
+    return <ul>{
+        /* literal outisde of props is ok */
+        ["En", "Ru", "Fr", "Jp"].map(lang => <li key={lang}>{lang}</li>)
+    }</ul>;
+}
+
+[0]: Object and array literals are forbidden in JSX attributes due to their rendering performance impact
