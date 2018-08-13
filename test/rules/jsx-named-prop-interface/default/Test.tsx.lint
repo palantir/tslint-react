@@ -1,0 +1,7 @@
+interface Test {
+~~~~~~~~~~~~~~~~
+}
+~ [interface name must be ${componentName}Props]
+
+interface TestProps {
+}
