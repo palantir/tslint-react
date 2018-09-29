@@ -1,12 +1,12 @@
 export const myButton = (
-    <button onClick={() => console.log("clicked")}>
+    <Button onClick={() => console.log("clicked")}>
                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~   [0]
         Log something
-    </button>
+    </Button>
 );
 
 const myButton2 = (
-    <button onClick={function () {
+    <Button onClick={function () {
                      ~~~~~~~~~~~~~
         // another bad one
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -14,14 +14,26 @@ const myButton2 = (
 ~~~~~     [0]
 )
 
+export const myDOMButton = (
+    <button onClick={() => console.log("clicked")}>
+        Log something
+    </button>
+);
+
+const myDOMButton2 = (
+    <button onClick={function () {
+        // another bad one
+    }} disabled/>
+)
+
 const handleClick = () => {
     // this one is kosher
 };
 
 export const myAnchorButton = (
-    <a href="#" onClick={handleClick}>
+    <Link href="#" onClick={handleClick}>
         Go nowhere, just log something
-    </a>
+    </Link>
 );
 
 function randomOkFunction() {

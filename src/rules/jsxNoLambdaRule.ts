@@ -18,6 +18,11 @@
 import * as Lint from "tslint";
 import { isJsxAttribute, isJsxExpression } from "tsutils";
 import * as ts from "typescript";
+import { isDOMComponent } from "../utils";
+
+interface IOption {
+    allowDOMComponent: boolean;
+}
 
 export class Rule extends Lint.Rules.AbstractRule {
     /* tslint:disable:object-literal-sort-keys */
@@ -29,9 +34,16 @@ export class Rule extends Lint.Rules.AbstractRule {
             ES2015 arrow syntax) inside the render call stack works against pure component \
             rendering. When doing an equality check between two lambdas, React will always \
             consider them unequal values and force the component to re-render more often than necessary.`,
-        options: null,
-        optionsDescription: "",
-        optionExamples: ["true"],
+        options: {
+            type: "array",
+            items: {
+                type: "string",
+                enum: ["allow-dom-component"],
+            },
+        },
+        optionsDescription: Lint.Utils.dedent`
+            Whether to allow anonymous function with DOM Components`,
+        optionExamples: [`[true, ["allow-dom-component"]]`],
         type: "functionality",
         typescriptOnly: false,
     };
@@ -40,12 +52,18 @@ export class Rule extends Lint.Rules.AbstractRule {
     public static FAILURE_STRING = "Lambdas are forbidden in JSX attributes due to their rendering performance impact";
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
-        return this.applyWithFunction(sourceFile, walk);
+        return this.applyWithFunction(sourceFile, walk, {
+            allowDOMComponent: this.ruleArguments.indexOf("allow-dom-component") !== -1,
+        });
     }
 }
 
-function walk(ctx: Lint.WalkContext<void>) {
+function walk(ctx: Lint.WalkContext<IOption>) {
+    let currentTagElement: ts.JsxOpeningElement | ts.JsxSelfClosingElement;
     return ts.forEachChild(ctx.sourceFile, function cb(node: ts.Node): void {
+        if (ts.isJsxOpeningElement(node) || ts.isJsxSelfClosingElement(node)) {
+            currentTagElement = node;
+        }
         // continue iterations until JsxAttribute will be found
         if (isJsxAttribute(node)) {
             const { initializer } = node;
@@ -57,6 +75,10 @@ function walk(ctx: Lint.WalkContext<void>) {
             // Ignore "ref" attribute.
             // ref is not part of the props so using lambdas here will not trigger useless re-renders
             if (node.name.text === "ref") {
+                return;
+            }
+
+            if (ctx.options.allowDOMComponent && isDOMComponent(currentTagElement)) {
                 return;
             }
 
