@@ -46,6 +46,10 @@ export function getDeleteFixForSpaceBetweenTokens(
     }
 }
 
+export function isDOMComponent(node: ts.JsxOpeningElement | ts.JsxSelfClosingElement): boolean {
+    return /^[a-z]/.test(node.tagName.getText());
+}
+
 function getTotalCharCount(comments: ts.CommentRange[]) {
     return comments
         .map((comment) => comment.end - comment.pos)

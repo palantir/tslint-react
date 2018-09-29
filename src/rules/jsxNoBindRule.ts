@@ -16,8 +16,19 @@
  */
 
 import * as Lint from "tslint";
-import { isCallExpression, isJsxAttribute, isJsxExpression } from "tsutils";
+import {
+    isCallExpression,
+    isJsxAttribute,
+    isJsxExpression,
+    isJsxOpeningElement,
+    isJsxSelfClosingElement,
+} from "tsutils";
 import * as ts from "typescript";
+import { isDOMComponent } from "../utils";
+
+interface IOption {
+    allowDOMComponent: boolean;
+}
 
 export class Rule extends Lint.Rules.AbstractRule {
     /* tslint:disable:object-literal-sort-keys */
@@ -31,9 +42,16 @@ export class Rule extends Lint.Rules.AbstractRule {
             not a semantic one (it doesn't use the type checker). So it may \
             have some rare false positives if you define your own .bind function \
             and supply this as a parameter.`,
-        options: null,
-        optionsDescription: "",
-        optionExamples: ["true"],
+        options: {
+            type: "array",
+            items: {
+                type: "string",
+                enum: ["allow-dom-component"],
+            },
+        },
+        optionsDescription: Lint.Utils.dedent`
+            Whether to allow function binding with DOM Components`,
+        optionExamples: [`[true, ["allow-dom-component"]]`],
         type: "functionality",
         typescriptOnly: false,
     };
@@ -46,14 +64,24 @@ export class Rule extends Lint.Rules.AbstractRule {
         // An optional 3rd parameter allows you to pass in a parsed version
         // of this.ruleArguments. If used, it is preferred to parse it into
         // a more useful object than this.getOptions().
-        return this.applyWithFunction(sourceFile, walk);
+        return this.applyWithFunction(sourceFile, walk, {
+            allowDOMComponent: this.ruleArguments.indexOf("allow-dom-component") !== -1,
+        });
     }
 }
 
-function walk(ctx: Lint.WalkContext<void>): void {
+function walk(ctx: Lint.WalkContext<IOption>): void {
+    let currentTagElement: ts.JsxOpeningElement | ts.JsxSelfClosingElement;
     return ts.forEachChild(ctx.sourceFile, function cb(node: ts.Node): void {
+        if (isJsxOpeningElement(node) || isJsxSelfClosingElement(node)) {
+            currentTagElement = node;
+        }
         if (!isJsxAttribute(node)) {
             return ts.forEachChild(node, cb);
+        }
+
+        if (ctx.options.allowDOMComponent && isDOMComponent(currentTagElement)) {
+            return;
         }
 
         const initializer = node.initializer;

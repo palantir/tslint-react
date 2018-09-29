@@ -1,18 +1,28 @@
 function foo() {
 }
 
-export const myButton = (
+export const domButton = (
     <button onClick={foo.bind(this)}>
-                     ~~~~~~~~~~~~~~   [0]
         Log something
     </button>
 );
 
+export const domButton2 = (
+    <button onClick={foo.bind(this)} />
+);
+
+export const myButton = (
+    <Button onClick={foo.bind(this)}>
+                     ~~~~~~~~~~~~~~   [0]
+        Log something
+    </Button>
+);
+
 export const myButton2 = (
-    <button onClick={this.foo.bind(this)}>
+    <Button onClick={this.foo.bind(this)}>
                      ~~~~~~~~~~~~~~~~~~~   [0]
         Log something
-    </button>
+    </Button>
 );
 
 export const selector = (
