@@ -72,6 +72,8 @@ function walk(ctx: Lint.WalkContext<void>): void {
             if (mapFn !== undefined && (isArrowFunction(mapFn) || isFunctionExpression(mapFn))) {
                 if (isJsxElement(mapFn.body) || isJsxSelfClosingElement(mapFn.body)) {
                     checkIteratorElement(mapFn.body, ctx);
+                } else if (isParenthesizedExpression(mapFn.body) && isJsxSelfClosingElement(mapFn.body.expression)) {
+                    checkIteratorElement(mapFn.body.expression, ctx);
                 } else if (isBlock(mapFn.body)) {
                     const returnStatement = getReturnStatement(mapFn.body.statements);
 
