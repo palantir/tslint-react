@@ -1,0 +1,15 @@
+<div>
+    Contents
+</div>
+
+<span />
+
+<button />
+
+<h2 class="colouring" contents="B" />
+
+<button onClick="run()" />
+
+<img
+    src="./foo/bar.png"
+/>
