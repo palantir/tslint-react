@@ -93,6 +93,7 @@ The built-in configuration preset you get with `"extends": "tslint-react"` is se
    - Off by default
 - `jsx-self-close` (since v0.4.0)
   - Enforces that JSX elements with no children are self-closing.
+  - _Includes automatic code fix_
   ```ts
   // bad
   <div className="foo"></div>
