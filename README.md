@@ -52,6 +52,7 @@ The built-in configuration preset you get with `"extends": "tslint-react"` is se
       size={size}
   />
   ```
+  - Rule options: _none_
 - `jsx-ban-elements` (since v3.4.0)
   - Allows blacklisting of JSX elements with an optional explanatory message in the reported failure.
 - `jsx-ban-props` (since v2.3.0)
@@ -119,6 +120,22 @@ The built-in configuration preset you get with `"extends": "tslint-react"` is se
       </button>
   );
   ```
+  - Rule options: _none_
+- `no-access-state-in-setstate`
+  - Forbids accessing component state with `this.state` within `this.setState`
+  calls, since React might batch multiple `this.setState` calls, thus resulting
+  in accessing old state. Enforces use of callback argument instead.
+    ```ts
+  // bad
+  this.setState({
+      counter: this.state.counter + 1
+  });
+  // good
+  this.setState(
+      prevState => ({ counter: prevState.counter + 1 })
+  );
+  ```
+  - Rule options: _none_
 
 ### Development
 

@@ -1,0 +1,68 @@
+class SomeReactComponent extends React.Component {
+
+    someClassFunction() {
+
+        this.fooBar({
+            foo: this.state.foo
+        });
+
+        this.setState({
+            foo: "foo",
+            bar: this.barz
+        });
+
+        this.setState(
+            {
+                foo: "foo"
+            },
+            () => this.fooBar(this.state.foo);
+        );
+
+        this.setState(prevState => ({
+            foo: !prevState.foo
+        }));
+
+        this.setState((prevState, currentProps) => ({
+            foo: !prevState.foo,
+            bar: currentProps.bar
+        }));
+
+        this.setState({
+        ~~~~~~~~~~~~~~~
+            foo: !this.state.foo
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        });
+~~~~~~~~~~ [0]
+
+        this.setState({
+        ~~~~~~~~~~~~~~~
+            foo: this.fooBar(this.state.foo)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        });
+~~~~~~~~~~ [0]
+
+        this.setState((prevState, currentProps) => ({
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            foo: !this.state.foo,
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            bar: currentProps.bar
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        }));
+~~~~~~~~~~~ [0]
+
+        this.setState((prevState, currentProps) => {
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            this.fooBar(this.state.foo);
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            return {
+~~~~~~~~~~~~~~~~~~~~
+                bar: !prevState.bar
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            };
+~~~~~~~~~~~~~~
+        });
+~~~~~~~~~~ [0]
+    }
+}
+
+[0]: Use callback in setState when referencing the previous state.
