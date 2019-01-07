@@ -73,7 +73,8 @@ function walk(ctx: Lint.WalkContext<string | undefined>): void {
                 if (initializer !== undefined) {
                     const hasStringInitializer = initializer.kind === ts.SyntaxKind.StringLiteral;
                     if (hasStringInitializer) {
-                        ctx.addFailureAtNode(initializer, Rule.FAILURE_CURLY_MISSING);
+                        const fix = Lint.Replacement.replaceNode(initializer, `{${initializer.getText()}}`);
+                        ctx.addFailureAtNode(initializer, Rule.FAILURE_CURLY_MISSING, fix);
                     }
                 }
             } else if (ctx.options === OPTION_NEVER) {
