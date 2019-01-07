@@ -16,35 +16,79 @@
  */
 
 import * as Lint from "tslint";
-import { isJsxAttribute, isJsxExpression, isStringLiteral} from "tsutils";
+import { isJsxAttribute, isJsxExpression, isStringLiteral, isTextualLiteral } from "tsutils";
 import * as ts from "typescript";
 
+const OPTION_ALWAYS = "always";
+const OPTION_NEVER = "never";
+const CURLY_PRESENCE_VALUES = [OPTION_ALWAYS, OPTION_NEVER];
+const CURLY_PRESENCE_OBJECT = {
+    enum: CURLY_PRESENCE_VALUES,
+    type: "string",
+};
+
 export class Rule extends Lint.Rules.AbstractRule {
-    public static FAILURE_STRING = "some error";
+    /* tslint:disable:object-literal-sort-keys */
+    public static metadata: Lint.IRuleMetadata = {
+        ruleName: "jsx-curly-brace-presence",
+        description: "Enforce curly braces or disallow unnecessary curly braces in JSX props",
+        optionsDescription: Lint.Utils.dedent`
+One of the following two options must be provided:
+
+* \`"${OPTION_ALWAYS}"\` requires JSX attributes to have curly braces around string literal values
+* \`"${OPTION_NEVER}"\` requires JSX attributes to NOT have curly braces around string literal values`,
+        options: {
+            type: "array",
+            items: [CURLY_PRESENCE_OBJECT],
+            minLength: 1,
+            maxLength: 1,
+        },
+        optionExamples: [
+            `[true, "${OPTION_ALWAYS}"]`,
+            `[true, "${OPTION_NEVER}"]`,
+        ],
+        type: "style",
+        typescriptOnly: false,
+    };
+    /* tslint:enable:object-literal-sort-keys */
+
+    public static FAILURE_CURLY_PRESENT = "JSX attribute must NOT have curly braces around string literal";
+    public static FAILURE_CURLY_MISSING = "JSX attribute must have curly braces around string literal";
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
-        return this.applyWithFunction(sourceFile, walk);
+        const option = Array.isArray(this.ruleArguments) ? this.ruleArguments[0] : undefined;
+
+        return this.applyWithFunction(sourceFile, walk, option);
     }
 }
 
-function walk(ctx: Lint.WalkContext<void>): void {
-    return ts.forEachChild(ctx.sourceFile, cb);
+function walk(ctx: Lint.WalkContext<string | undefined>): void {
+    return ts.forEachChild(ctx.sourceFile, validateCurlyBraces);
 
-    function cb(node: ts.Node): void {
+    function validateCurlyBraces(node: ts.Node): void {
         if (isJsxAttribute(node)) {
-            const { initializer} = node;
+            if (ctx.options === OPTION_ALWAYS) {
+                const { initializer} = node;
 
-            if (initializer !== undefined) {
-                // const hasStringInitializer = initializer.kind === ts.SyntaxKind.StringLiteral;
-                const hasStringExpressionInitializer = isJsxExpression(initializer)
-                    && initializer.expression !== undefined
-                    && (isStringLiteral(initializer.expression));
+                if (initializer !== undefined) {
+                    const hasStringInitializer = initializer.kind === ts.SyntaxKind.StringLiteral;
+                    if (hasStringInitializer) {
+                        ctx.addFailureAtNode(initializer, Rule.FAILURE_CURLY_MISSING);
+                    }
+                }
+            } else if (ctx.options === OPTION_NEVER) {
+                const { initializer} = node;
+                if (initializer !== undefined) {
+                    const hasStringExpressionInitializer = isJsxExpression(initializer)
+                        && initializer.expression !== undefined
+                        && (isStringLiteral(initializer.expression) || isTextualLiteral(initializer.expression));
 
-                if (hasStringExpressionInitializer) {
-                    ctx.addFailureAtNode(initializer, Rule.FAILURE_STRING);
+                    if (hasStringExpressionInitializer) {
+                        ctx.addFailureAtNode(initializer, Rule.FAILURE_CURLY_PRESENT);
+                    }
                 }
             }
         }
-        return ts.forEachChild(node, cb);
+        return ts.forEachChild(node, validateCurlyBraces);
     }
 }
