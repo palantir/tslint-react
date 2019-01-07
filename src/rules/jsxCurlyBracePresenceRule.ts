@@ -68,32 +68,39 @@ function walk(ctx: Lint.WalkContext<string | undefined>): void {
     function validateCurlyBraces(node: ts.Node): void {
         if (isJsxAttribute(node)) {
             if (ctx.options === OPTION_ALWAYS) {
-                const { initializer} = node;
-
-                if (initializer !== undefined) {
-                    const hasStringInitializer = initializer.kind === ts.SyntaxKind.StringLiteral;
-                    if (hasStringInitializer) {
-                        const fix = Lint.Replacement.replaceNode(initializer, `{${initializer.getText()}}`);
-                        ctx.addFailureAtNode(initializer, Rule.FAILURE_CURLY_MISSING, fix);
-                    }
-                }
+                validateCurlyBracesArePresent(node);
             } else if (ctx.options === OPTION_NEVER) {
-                const { initializer} = node;
-                if (initializer !== undefined
-                    && isJsxExpression(initializer)
-                    && initializer.expression !== undefined) {
-                    if (isStringLiteral(initializer.expression)) {
-
-                        const fix = Lint.Replacement.replaceNode(initializer, initializer.expression.getText());
-
-                        ctx.addFailureAtNode(initializer, Rule.FAILURE_CURLY_PRESENT, fix);
-                    } else if (isTextualLiteral(initializer.expression)) {
-                        const fix = Lint.Replacement.replaceNode(initializer, `"${initializer.expression.text}"`);
-                        ctx.addFailureAtNode(initializer, Rule.FAILURE_CURLY_PRESENT, fix);
-                    }
-                }
+                validateCurlyBracesAreMissing(node);
             }
         }
         return ts.forEachChild(node, validateCurlyBraces);
+    }
+
+    function validateCurlyBracesArePresent(node: ts.JsxAttribute) {
+        const { initializer } = node;
+        if (initializer !== undefined) {
+            const hasStringInitializer = initializer.kind === ts.SyntaxKind.StringLiteral;
+            if (hasStringInitializer) {
+                const fix = Lint.Replacement.replaceNode(initializer, `{${initializer.getText()}}`);
+                ctx.addFailureAtNode(initializer, Rule.FAILURE_CURLY_MISSING, fix);
+            }
+        }
+    }
+
+    function validateCurlyBracesAreMissing(node: ts.JsxAttribute) {
+        const { initializer } = node;
+        if (initializer !== undefined
+            && isJsxExpression(initializer)
+            && initializer.expression !== undefined) {
+            if (isStringLiteral(initializer.expression)) {
+                const stringLiteralWithoutCurlies: string = initializer.expression.getText();
+                const fix = Lint.Replacement.replaceNode(initializer, stringLiteralWithoutCurlies);
+                ctx.addFailureAtNode(initializer, Rule.FAILURE_CURLY_PRESENT, fix);
+            } else if (isTextualLiteral(initializer.expression)) {
+                const textualLiteralContent = initializer.expression.text;
+                const fix = Lint.Replacement.replaceNode(initializer, `"${textualLiteralContent}"`);
+                ctx.addFailureAtNode(initializer, Rule.FAILURE_CURLY_PRESENT, fix);
+            }
+        }
     }
 }
