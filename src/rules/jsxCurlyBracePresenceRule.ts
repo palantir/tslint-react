@@ -78,13 +78,17 @@ function walk(ctx: Lint.WalkContext<string | undefined>): void {
                 }
             } else if (ctx.options === OPTION_NEVER) {
                 const { initializer} = node;
-                if (initializer !== undefined) {
-                    const hasStringExpressionInitializer = isJsxExpression(initializer)
-                        && initializer.expression !== undefined
-                        && (isStringLiteral(initializer.expression) || isTextualLiteral(initializer.expression));
+                if (initializer !== undefined
+                    && isJsxExpression(initializer)
+                    && initializer.expression !== undefined) {
+                    if (isStringLiteral(initializer.expression)) {
 
-                    if (hasStringExpressionInitializer) {
-                        ctx.addFailureAtNode(initializer, Rule.FAILURE_CURLY_PRESENT);
+                        const fix = Lint.Replacement.replaceNode(initializer, initializer.expression.getText());
+
+                        ctx.addFailureAtNode(initializer, Rule.FAILURE_CURLY_PRESENT, fix);
+                    } else if (isTextualLiteral(initializer.expression)) {
+                        const fix = Lint.Replacement.replaceNode(initializer, `"${initializer.expression.text}"`);
+                        ctx.addFailureAtNode(initializer, Rule.FAILURE_CURLY_PRESENT, fix);
                     }
                 }
             }
