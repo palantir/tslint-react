@@ -1,0 +1,6 @@
+const e1 = (<p className={"bad"}>some text</p>);
+                         ~~~~~~~ [0]
+
+const e2 = (<p className="good">some text</p>);
+
+[0]: some error
