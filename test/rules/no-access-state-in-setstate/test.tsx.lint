@@ -28,41 +28,29 @@ class SomeReactComponent extends React.Component {
         }));
 
         this.setState({
-        ~~~~~~~~~~~~~~~
             foo: !this.state.foo
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  ~~~~~~~~~~~~~~ [0]
         });
-~~~~~~~~~~ [0]
 
         this.setState({
-        ~~~~~~~~~~~~~~~
             foo: this.fooBar(this.state.foo)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                             ~~~~~~~~~~~~~~ [0]
         });
-~~~~~~~~~~ [0]
 
         this.setState((prevState, currentProps) => ({
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             foo: !this.state.foo,
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  ~~~~~~~~~~~~~~ [0]
             bar: currentProps.bar
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         }));
-~~~~~~~~~~~ [0]
 
         this.setState((prevState, currentProps) => {
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             this.fooBar(this.state.foo);
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                        ~~~~~~~~~~~~~~ [0]
             return {
-~~~~~~~~~~~~~~~~~~~~
                 bar: !prevState.bar
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             };
-~~~~~~~~~~~~~~
         });
-~~~~~~~~~~ [0]
     }
 }
 
-[0]: Use callback in setState when referencing the previous state.
+[0]: Avoid using this.state in first argument of setState.

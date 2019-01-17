@@ -16,7 +16,7 @@
  */
 
 import * as Lint from "tslint";
-import { isCallExpression } from "tsutils";
+import { isCallExpression, isPropertyAccessExpression } from "tsutils";
 import * as ts from "typescript";
 
 export class Rule extends Lint.Rules.AbstractRule {
@@ -34,7 +34,7 @@ export class Rule extends Lint.Rules.AbstractRule {
     };
     /* tslint:enable:object-literal-sort-keys */
 
-    public static FAILURE_STRING = "Use callback in setState when referencing the previous state.";
+    public static FAILURE_STRING = "Avoid using this.state in first argument of setState.";
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
         return this.applyWithFunction(sourceFile, walk);
@@ -42,28 +42,32 @@ export class Rule extends Lint.Rules.AbstractRule {
 }
 
 function walk(ctx: Lint.WalkContext<void>): void {
-    return ts.forEachChild(ctx.sourceFile, cb);
+    return ts.forEachChild(ctx.sourceFile, callbackForEachChild);
 
-    function cb(node: ts.Node): void {
+    function callbackForEachChild(node: ts.Node): void {
         if (!isCallExpression(node)) {
-            return ts.forEachChild(node, cb);
+            return ts.forEachChild(node, callbackForEachChild);
         }
-        if (isStateUsedInSetStateWith(node)) {
-            ctx.addFailureAtNode(node, Rule.FAILURE_STRING);
+
+        const isSetStateCall = node.expression.getText().startsWith("this.setState");
+        if (!isSetStateCall || node.arguments.length === 0) {
+            return ts.forEachChild(node, callbackForEachChild);
         }
+
+        ts.forEachChild(node.arguments[0], callbackForEachChildInSetStateArgument);
         return;
     }
-}
 
-function isStateUsedInSetStateWith(callExpression: ts.CallExpression): boolean {
-    if (callExpression.expression.getText() !== "this.setState") {
-        return false;
-    }
-    if (callExpression.arguments.length === 0) {
-        return false;
-    }
+    function callbackForEachChildInSetStateArgument(node: ts.Node): void {
+        if (!isPropertyAccessExpression(node)) {
+            return ts.forEachChild(node, callbackForEachChildInSetStateArgument);
+        }
 
-    const firstCallExpressionArgument = callExpression.arguments[0];
-    const argumentAsText = firstCallExpressionArgument.getText();
-    return argumentAsText.indexOf("this.state.") !== -1;
+        if (!node.getText().startsWith("this.state.")) {
+            return ts.forEachChild(node, callbackForEachChildInSetStateArgument);
+        }
+
+        ctx.addFailureAtNode(node, Rule.FAILURE_STRING);
+        return;
+    }
 }
