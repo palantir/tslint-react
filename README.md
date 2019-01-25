@@ -83,6 +83,9 @@ The built-in configuration preset you get with `"extends": "tslint-react"` is se
 - `jsx-no-multiline-js`
   - Disallows multiline JS expressions inside JSX blocks to promote readability
   - Rule options: _none_
+- `jsx-no-space-before-end-of-tag`
+  - Checks that JSX elements do not have a space before the '>' part.
+  - Rule options: _none_
 - `jsx-no-string-ref`
   - Passing strings to the `ref` prop of React elements is considered a legacy feature and will soon be deprecated.
     Instead, [use a callback](https://facebook.github.io/react/docs/more-about-refs.html#the-ref-callback-attribute).
