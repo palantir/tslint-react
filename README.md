@@ -119,6 +119,13 @@ The built-in configuration preset you get with `"extends": "tslint-react"` is se
       </button>
   );
   ```
+- `react-hooks-nesting` (since v3.7)
+  - Enforces correct use of React Hooks.
+  - Prevents using hooks conditionally
+  - Prevents using hooks in functions that are not components or custom hooks
+  - More information: [tslint-react-hooks](https://github.com/Gelio/tslint-react-hooks)
+  - Similar to [eslint-plugin-react-hooks](https://github.com/facebook/react/tree/master/packages/eslint-plugin-react-hooks)
+  
 
 ### Development
 
