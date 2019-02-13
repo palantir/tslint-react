@@ -1,4 +1,5 @@
 {
+    "extends": ["tslint-react-hooks"],
     "rulesDirectory": "./rules",
     "rules": {
         "jsx-alignment": true,
@@ -11,6 +12,7 @@
         "jsx-no-multiline-js": true,
         "jsx-no-string-ref": true,
         "jsx-self-close": true,
-        "jsx-wrap-multiline": true
+        "jsx-wrap-multiline": true,
+        "react-hooks-nesting": true
     }
 }

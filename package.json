@@ -12,6 +12,7 @@
     "verify": "run-s build lint test"
   },
   "dependencies": {
+    "tslint-react-hooks": "^1.1.0",
     "tsutils": "^2.13.1"
   },
   "peerDependencies": {

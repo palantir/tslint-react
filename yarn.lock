@@ -464,6 +464,11 @@ tslint-language-service@^0.9.6:
   version "0.9.6"
   resolved "https://registry.yarnpkg.com/tslint-language-service/-/tslint-language-service-0.9.6.tgz#882bb0704cf8397b332ddc0af7168c7f22f279ea"
 
+tslint-react-hooks@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/tslint-react-hooks/-/tslint-react-hooks-1.1.0.tgz#f1b96ec5177790ce9298e8d2d767b68de1f42c73"
+  integrity sha512-x6I2KShGpW9spMIGLrXeLiGXXr4g5mrXMRgjpDgO//73ZosyYKQ0aLqnJDDM+KAHM8fDPd3WtnWOF3U2Yk8wIA==
+
 tslint@^5.5.0:
   version "5.6.0"
   resolved "https://registry.yarnpkg.com/tslint/-/tslint-5.6.0.tgz#088aa6c6026623338650b2900828ab3edf59f6cf"
