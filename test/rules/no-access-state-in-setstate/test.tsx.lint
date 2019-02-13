@@ -28,6 +28,14 @@ class SomeReactComponent extends React.Component {
         }));
 
         this.setState({
+            foo: window.history.length
+        });
+
+        this.setState({
+            foo: !this.props.bar
+        });
+
+        this.setState({
             foo: !this.state.foo
                   ~~~~~~~~~~~~~~ [0]
         });

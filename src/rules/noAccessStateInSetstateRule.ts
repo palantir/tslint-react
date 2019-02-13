@@ -16,7 +16,7 @@
  */
 
 import * as Lint from "tslint";
-import { isCallExpression, isPropertyAccessExpression } from "tsutils";
+import { isCallExpression, isClassDeclaration, isPropertyAccessExpression } from "tsutils";
 import * as ts from "typescript";
 
 export class Rule extends Lint.Rules.AbstractRule {
@@ -45,29 +45,48 @@ function walk(ctx: Lint.WalkContext<void>): void {
     return ts.forEachChild(ctx.sourceFile, callbackForEachChild);
 
     function callbackForEachChild(node: ts.Node): void {
-        if (!isCallExpression(node)) {
-            return ts.forEachChild(node, callbackForEachChild);
+        if (!isClassDeclaration(node)) {
+            return;
         }
 
-        const isSetStateCall = node.expression.getText().startsWith("this.setState");
-        if (!isSetStateCall || node.arguments.length === 0) {
-            return ts.forEachChild(node, callbackForEachChild);
+        ts.forEachChild(node, callbackForEachChildInClass);
+    }
+
+    function callbackForEachChildInClass(node: ts.Node): void {
+        if (!isCallExpression(node)) {
+            return ts.forEachChild(node, callbackForEachChildInClass);
+        }
+
+        const callExpressionArguments = node.arguments;
+
+        if (!isPropertyAccessExpression(node.expression) || callExpressionArguments.length === 0) {
+            return;
+        }
+
+        const propertyAccessExpression = node.expression;
+
+        const isThisPropertyAccess = propertyAccessExpression.expression.kind === ts.SyntaxKind.ThisKeyword;
+        const isSetStateCall = propertyAccessExpression.name.text === "setState";
+
+        if (!isThisPropertyAccess || !isSetStateCall) {
+            return;
         }
 
         ts.forEachChild(node.arguments[0], callbackForEachChildInSetStateArgument);
-        return;
     }
 
     function callbackForEachChildInSetStateArgument(node: ts.Node): void {
-        if (!isPropertyAccessExpression(node)) {
+        if (!isPropertyAccessExpression(node) || !isPropertyAccessExpression(node.expression)) {
             return ts.forEachChild(node, callbackForEachChildInSetStateArgument);
         }
 
-        if (!node.getText().startsWith("this.state.")) {
+        if (
+            node.expression.expression.kind !== ts.SyntaxKind.ThisKeyword ||
+            node.expression.name.text !== "state"
+        ) {
             return ts.forEachChild(node, callbackForEachChildInSetStateArgument);
         }
 
         ctx.addFailureAtNode(node, Rule.FAILURE_STRING);
-        return;
     }
 }
