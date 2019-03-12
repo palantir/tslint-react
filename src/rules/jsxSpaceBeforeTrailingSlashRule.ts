@@ -48,7 +48,8 @@ function walk(ctx: Lint.WalkContext<void>): void {
     return ts.forEachChild(ctx.sourceFile, function cb(node: ts.Node): void {
         if (isJsxSelfClosingElement(node)) {
             if (!hasWhitespaceBeforeClosing(node.getText(ctx.sourceFile))) {
-                ctx.addFailureAtNode(node, Rule.FAILURE_STRING);
+                const fix = Lint.Replacement.appendText(node.getEnd() - closingLength, " ");
+                ctx.addFailureAtNode(node, Rule.FAILURE_STRING, fix);
             }
         }
         return ts.forEachChild(node, cb);
