@@ -47,6 +47,22 @@ const badWrappedWithoutNewLines = (<div
 </div>);
       ~   [New line required before close parenthesis when wrapping multiline JSX elements]
 
+const badWrappedWithoutNewLineAtOpen = (<div
+                                       ~      [New line required after open parenthesis when wrapping multiline JSX elements]
+    className="my-class"
+>
+    {children}
+</div>
+);
+
+const badWrappedWithoutNewLineAtClose = (
+    <div
+        className="my-class"
+    >
+        {children}
+    </div>);
+          ~   [New line required before close parenthesis when wrapping multiline JSX elements]
+
 const goodSingleLineWrappedWithoutNewLines = (<div className="my-class">{children}</div>);
 
 const goodNestedElements = (
