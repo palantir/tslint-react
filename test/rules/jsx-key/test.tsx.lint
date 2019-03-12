@@ -4,7 +4,10 @@ fn()
 [<App key={0} />, <App key={1} />];
 [1, 2, 3].map(function(x) { return <App key={x} /> });
 [1, 2, 3].map(x => <App key={x} />);
+[1, 2, 3].map(x => (<App key={x} />));
+[1, 2, 3].map(x => (<App key={x}>app</App>));
 [1, 2, 3].map(x => { return <App key={x} /> });
+[1, 2, 3].map(x => { return (<App key={x} />) });
 [1, 2, 3].foo(x => <App />);
 var App = () => <div />;
 [1, 2, 3].map(function(x) { return; });
@@ -22,8 +25,17 @@ foo(() => <div />)
 [1, 2, 3].map(function(x) { return <App /> });
                                    ~~~~~~~      [0]
 
+[1, 2, 3].map(function(x) { return (<App />) });
+                                    ~~~~~~~       [0]
+
 [3, 4, 5].map(x => <App />);
                    ~~~~~~~    [0]
+
+[3, 4, 5].map(x => (<App />));
+                    ~~~~~~~     [0]
+
+[3, 4, 5].map(x => (<App>app</App>));
+                    ~~~~~~~~~~~~~~     [0]
                    
 [6, 7, 8].map(x => { return <App /> });
                             ~~~~~~~      [0]
