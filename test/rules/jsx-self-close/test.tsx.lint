@@ -10,6 +10,9 @@
 <h2 class="colouring" contents="B"></h2>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ [JSX elements with no children must be self-closing]
 
+<h2 class="html-content" content="<h1></h1>"></h2>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ [JSX elements with no children must be self-closing]
+
 <button onClick="run()" />
 
 <button>
