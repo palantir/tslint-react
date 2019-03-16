@@ -55,8 +55,8 @@ If no option is provided, "${OPTION_NEVER}" is chosen as default.`,
     };
     /* tslint:enable:object-literal-sort-keys */
 
-    public static FAILURE_CURLY_PRESENT = "JSX attribute must NOT have curly braces around string literal";
-    public static FAILURE_CURLY_MISSING = "JSX attribute must have curly braces around string literal";
+    public static FAILURE_CURLY_BRACE_SUPERFLUOUS = "JSX attribute must NOT have curly braces around string literal";
+    public static FAILURE_CURLY_BRACE_MISSING = "JSX attribute must have curly braces around string literal";
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
         const option = Array.isArray(this.ruleArguments) ? this.ruleArguments[0] : undefined;
@@ -72,8 +72,8 @@ function walk(ctx: Lint.WalkContext<string | undefined>): void {
         if (isJsxAttribute(node)) {
             if (ctx.options === OPTION_ALWAYS) {
                 validateCurlyBracesArePresent(node);
-            } else if (ctx.options === OPTION_NEVER) {
-                validateCurlyBracesAreMissing(node);
+            } else {
+                validateCurlyBracesAreNotPresent(node);
             }
         }
         return ts.forEachChild(node, validateCurlyBraces);
@@ -85,12 +85,12 @@ function walk(ctx: Lint.WalkContext<string | undefined>): void {
             const hasStringInitializer = initializer.kind === ts.SyntaxKind.StringLiteral;
             if (hasStringInitializer) {
                 const fix = Lint.Replacement.replaceNode(initializer, `{${initializer.getText()}}`);
-                ctx.addFailureAtNode(initializer, Rule.FAILURE_CURLY_MISSING, fix);
+                ctx.addFailureAtNode(initializer, Rule.FAILURE_CURLY_BRACE_MISSING, fix);
             }
         }
     }
 
-    function validateCurlyBracesAreMissing(node: ts.JsxAttribute) {
+    function validateCurlyBracesAreNotPresent(node: ts.JsxAttribute) {
         const { initializer } = node;
         if (initializer !== undefined
             && isJsxExpression(initializer)
@@ -98,11 +98,11 @@ function walk(ctx: Lint.WalkContext<string | undefined>): void {
             if (isStringLiteral(initializer.expression)) {
                 const stringLiteralWithoutCurlies: string = initializer.expression.getText();
                 const fix = Lint.Replacement.replaceNode(initializer, stringLiteralWithoutCurlies);
-                ctx.addFailureAtNode(initializer, Rule.FAILURE_CURLY_PRESENT, fix);
+                ctx.addFailureAtNode(initializer, Rule.FAILURE_CURLY_BRACE_SUPERFLUOUS, fix);
             } else if (isTextualLiteral(initializer.expression)) {
                 const textualLiteralContent = initializer.expression.text;
                 const fix = Lint.Replacement.replaceNode(initializer, `"${textualLiteralContent}"`);
-                ctx.addFailureAtNode(initializer, Rule.FAILURE_CURLY_PRESENT, fix);
+                ctx.addFailureAtNode(initializer, Rule.FAILURE_CURLY_BRACE_SUPERFLUOUS, fix);
             }
         }
     }
