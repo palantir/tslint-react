@@ -47,8 +47,8 @@ If no option is provided, "${OPTION_NEVER}" is chosen as default.`,
             },
         },
         optionExamples: [
-            `[true, "${OPTION_ALWAYS}"]`,
-            `[true, "${OPTION_NEVER}"]`,
+            `[true, { props: "${OPTION_ALWAYS}" }]`,
+            `[true, { props: "${OPTION_NEVER}" }]`,
         ],
         type: "style",
         typescriptOnly: false,
@@ -65,12 +65,12 @@ If no option is provided, "${OPTION_NEVER}" is chosen as default.`,
     }
 }
 
-function walk(ctx: Lint.WalkContext<string | undefined>): void {
+function walk(ctx: Lint.WalkContext<{ props: string } | undefined>): void {
     return ts.forEachChild(ctx.sourceFile, validateCurlyBraces);
 
     function validateCurlyBraces(node: ts.Node): void {
         if (isJsxAttribute(node)) {
-            if (ctx.options === OPTION_ALWAYS) {
+            if (typeof ctx.options === "object" && ctx.options.props === OPTION_ALWAYS) {
                 validateCurlyBracesArePresent(node);
             } else {
                 validateCurlyBracesAreNotPresent(node);
