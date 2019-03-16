@@ -32,16 +32,19 @@ export class Rule extends Lint.Rules.AbstractRule {
     public static metadata: Lint.IRuleMetadata = {
         ruleName: "jsx-curly-brace-presence",
         description: "Enforce curly braces or disallow unnecessary curly braces in JSX props",
+        hasFix: true,
         optionsDescription: Lint.Utils.dedent`
-One of the following two options must be provided:
+One of the following two options may be provided:
 
 * \`"${OPTION_ALWAYS}"\` requires JSX attributes to have curly braces around string literal values
-* \`"${OPTION_NEVER}"\` requires JSX attributes to NOT have curly braces around string literal values`,
+* \`"${OPTION_NEVER}"\` requires JSX attributes to NOT have curly braces around string literal values
+
+If no option is provided, "${OPTION_NEVER}" is chosen as default.`,
         options: {
-            type: "array",
-            items: [CURLY_PRESENCE_OBJECT],
-            minLength: 1,
-            maxLength: 1,
+            type: "object",
+            properties: {
+                props: CURLY_PRESENCE_OBJECT,
+            },
         },
         optionExamples: [
             `[true, "${OPTION_ALWAYS}"]`,
