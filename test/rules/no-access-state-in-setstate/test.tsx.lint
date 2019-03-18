@@ -47,13 +47,13 @@ class SomeReactComponent extends React.Component {
 
         this.setState((prevState, currentProps) => ({
             foo: !this.state.foo,
-                  ~~~~~~~~~~~~~~ [0]
+                  ~~~~~~~~~~~~~~ [1]
             bar: currentProps.bar
         }));
 
         this.setState((prevState, currentProps) => {
             this.fooBar(this.state.foo);
-                        ~~~~~~~~~~~~~~ [0]
+                        ~~~~~~~~~~~~~~ [1]
             return {
                 bar: !prevState.bar
             };
@@ -61,4 +61,5 @@ class SomeReactComponent extends React.Component {
     }
 }
 
-[0]: Avoid using this.state in first argument of setState.
+[0]: References to this.state are not allowed in the setState state change object.
+[1]: References to this.state are not allowed in the setState updater, use the callback arguments instead.

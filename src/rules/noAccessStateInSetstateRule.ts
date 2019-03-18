@@ -36,7 +36,11 @@ export class Rule extends Lint.Rules.AbstractRule {
     };
     /* tslint:enable:object-literal-sort-keys */
 
-    public static FAILURE_STRING = "Avoid using this.state in first argument of setState.";
+    public static OBJECT_ARG_FAILURE =
+        "References to this.state are not allowed in the setState state change object.";
+
+    public static CALLBACK_ARG_FAILURE =
+        "References to this.state are not allowed in the setState updater, use the callback arguments instead.";
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
         return this.applyWithFunction(sourceFile, walk);
@@ -74,21 +78,42 @@ function walk(ctx: Lint.WalkContext<void>): void {
             return;
         }
 
-        ts.forEachChild(node.arguments[0], callbackForEachChildInSetStateArgument);
+        const firstArgument = node.arguments[0];
+
+        if (ts.isObjectLiteralExpression(firstArgument)) {
+            ts.forEachChild(firstArgument, callbackForEachChildInSetStateObjectArgument);
+        } else if (ts.isArrowFunction(firstArgument) || ts.isFunctionExpression(firstArgument)) {
+            ts.forEachChild(firstArgument, callbackForEachChildInSetStateCallbackArgument);
+        }
     }
 
-    function callbackForEachChildInSetStateArgument(node: ts.Node): void {
+    function callbackForEachChildInSetStateObjectArgument(node: ts.Node): void {
         if (!isPropertyAccessExpression(node) || !isPropertyAccessExpression(node.expression)) {
-            return ts.forEachChild(node, callbackForEachChildInSetStateArgument);
+            return ts.forEachChild(node, callbackForEachChildInSetStateObjectArgument);
         }
 
         if (
             node.expression.expression.kind !== ts.SyntaxKind.ThisKeyword ||
             node.expression.name.text !== "state"
         ) {
-            return ts.forEachChild(node, callbackForEachChildInSetStateArgument);
+            return ts.forEachChild(node, callbackForEachChildInSetStateObjectArgument);
         }
 
-        ctx.addFailureAtNode(node, Rule.FAILURE_STRING);
+        ctx.addFailureAtNode(node, Rule.OBJECT_ARG_FAILURE);
+    }
+
+    function callbackForEachChildInSetStateCallbackArgument(node: ts.Node): void {
+        if (!isPropertyAccessExpression(node) || !isPropertyAccessExpression(node.expression)) {
+            return ts.forEachChild(node, callbackForEachChildInSetStateCallbackArgument);
+        }
+
+        if (
+            node.expression.expression.kind !== ts.SyntaxKind.ThisKeyword ||
+            node.expression.name.text !== "state"
+        ) {
+            return ts.forEachChild(node, callbackForEachChildInSetStateCallbackArgument);
+        }
+
+        ctx.addFailureAtNode(node, Rule.CALLBACK_ARG_FAILURE);
     }
 }
