@@ -24,9 +24,11 @@ export class Rule extends Lint.Rules.AbstractRule {
     public static metadata: Lint.IRuleMetadata = {
         ruleName: "no-access-state-in-setstate",
         description: "Reports usage of this.state within setState",
-        rationale: Lint.Utils.dedent
-            `Usage of this.state might result in errors when two state calls are \
-            called in batch and thus referencing old state and not the current state.`,
+        rationale: Lint.Utils.dedent`
+            Usage of this.state might result in errors when two state calls are
+            called in batch and thus referencing old state and not the current state.
+            See [setState()](https://reactjs.org/docs/react-component.html#setstate) in the React API reference.
+        `,
         options: null,
         optionsDescription: "",
         type: "functionality",
