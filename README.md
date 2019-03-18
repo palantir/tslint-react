@@ -125,7 +125,7 @@ The built-in configuration preset you get with `"extends": "tslint-react"` is se
   - Forbids accessing component state with `this.state` within `this.setState`
   calls, since React might batch multiple `this.setState` calls, thus resulting
   in accessing old state. Enforces use of callback argument instead.
-    ```ts
+  ```ts
   // bad
   this.setState({
       counter: this.state.counter + 1
