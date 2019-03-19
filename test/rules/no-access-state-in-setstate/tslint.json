@@ -1,5 +1,0 @@
-{
-    "rules": {
-        "no-access-state-in-setstate": true
-    }
-}
