@@ -1,9 +1,16 @@
 {
     "extends": "tslint:latest",
     "rules": {
-        "file-header": [true, "Copyright \\d{4} Palantir Technologies, Inc."],
-        "max-classes-per-file": [true, 2],
+        "file-header": {
+            "options": ["Copyright \\d{4} Palantir Technologies, Inc."]
+        },
+        "max-classes-per-file": {
+            "options": [2]
+        },
         "no-default-export": true,
+        "no-submodule-imports": {
+            "options": ["tsutils"]
+        },
         "restrict-plus-operands": true,
         "strict-boolean-expressions": true
     }

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 import * as Lint from "tslint";
-import { isJsxOpeningElement, isJsxSelfClosingElement } from "tsutils";
+import { isJsxOpeningElement, isJsxSelfClosingElement } from "tsutils/typeguard/3.0";
 import * as ts from "typescript";
 
 interface IOption {

@@ -16,7 +16,7 @@
  */
 
 import * as Lint from "tslint";
-import { isJsxExpression, isJsxSpreadAttribute } from "tsutils";
+import { isJsxExpression, isJsxSpreadAttribute } from "tsutils/typeguard/3.0";
 import * as ts from "typescript";
 import { getDeleteFixForSpaceBetweenTokens, isMultilineText } from "../utils";
 
@@ -73,9 +73,9 @@ function walk(ctx: Lint.WalkContext<string | undefined>): void {
     });
 
     function validateBraceSpacing(node: ts.Node) {
-        const firstToken = node.getFirstToken();
+        const firstToken = node.getFirstToken()!;
         const secondToken = node.getChildAt(1);
-        const lastToken = node.getLastToken();
+        const lastToken = node.getLastToken()!;
         const secondToLastToken = node.getChildAt(node.getChildCount() - 2);
         const nodeStart = node.getStart();
         const nodeWidth = node.getWidth();

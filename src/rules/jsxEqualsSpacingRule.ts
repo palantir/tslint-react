@@ -17,11 +17,11 @@
 
 import * as Lint from "tslint";
 import {
-    getNextToken,
     isJsxAttribute,
     isJsxOpeningElement,
     isJsxSelfClosingElement,
-} from "tsutils";
+} from "tsutils/typeguard/3.0";
+import { getNextToken } from "tsutils/util";
 import * as ts from "typescript";
 import { getDeleteFixForSpaceBetweenTokens } from "../utils";
 

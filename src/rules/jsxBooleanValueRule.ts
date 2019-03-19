@@ -16,7 +16,7 @@
  */
 
 import * as Lint from "tslint";
-import { isJsxAttribute } from "tsutils";
+import { isJsxAttribute } from "tsutils/typeguard/3.0";
 import * as ts from "typescript";
 
 const OPTION_ALWAYS = "always";
@@ -80,7 +80,7 @@ function walk(ctx: Lint.WalkContext<string | undefined>): void {
                     const width = node.getWidth(ctx.sourceFile);
                     const start = node.end - width;
                     const fix = Lint.Replacement.replaceFromTo(
-                        start, node.end, node.getFirstToken(ctx.sourceFile).getText(ctx.sourceFile));
+                        start, node.end, node.getFirstToken(ctx.sourceFile)!.getText(ctx.sourceFile));
                     ctx.addFailureAt(start, width, Rule.NEVER_MESSAGE, fix);
                 }
             }
