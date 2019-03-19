@@ -16,7 +16,7 @@
  */
 
 import * as Lint from "tslint";
-import { isIdentifier, isJsxAttribute } from "tsutils";
+import { isIdentifier, isJsxAttribute } from "tsutils/typeguard/3.0";
 import * as ts from "typescript";
 
 interface IRuleOptions {

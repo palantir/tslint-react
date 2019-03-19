@@ -16,7 +16,7 @@
  */
 
 import * as Lint from "tslint";
-import { isJsxElement, isJsxSelfClosingElement } from "tsutils";
+import { isJsxElement, isJsxSelfClosingElement } from "tsutils/typeguard/3.0";
 import * as ts from "typescript";
 
 export class Rule extends Lint.Rules.AbstractRule {

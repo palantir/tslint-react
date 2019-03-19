@@ -16,7 +16,7 @@
  */
 
 import * as Lint from "tslint";
-import { isJsxAttribute, isJsxExpression } from "tsutils";
+import { isJsxAttribute, isJsxExpression } from "tsutils/typeguard/3.0";
 import * as ts from "typescript";
 
 export class Rule extends Lint.Rules.AbstractRule {

@@ -1,5 +1,5 @@
 {
-    "version": "2.4.2",
+    "version": "3.1.6",
     "compilerOptions": {
         "declaration": true,
         "lib": ["es6"],
@@ -16,9 +16,10 @@
         "target": "es5",
         "plugins": [
             {
-                "name": "tslint-language-service",
+                "name": "typescript-tslint-plugin",
                 "alwaysShowRuleFailuresAsWarnings": true,
-                "ignoreDefinitionFiles": true
+                "ignoreDefinitionFiles": true,
+                "configFile": "./tslint.json"
             }
         ]
     },
