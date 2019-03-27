@@ -47,7 +47,7 @@ If no option is provided, "${OPTION_NEVER}" is chosen as default.`,
             },
         },
         optionExamples: [
-            `[true, { props: "${OPTION_ALWAYS}" }]`,
+            `{ props: "${OPTION_ALWAYS}" }`,
             `[true, { props: "${OPTION_NEVER}" }]`,
         ],
         type: "style",
