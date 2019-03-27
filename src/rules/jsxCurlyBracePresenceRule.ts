@@ -34,7 +34,7 @@ export class Rule extends Lint.Rules.AbstractRule {
         description: "Enforce curly braces or disallow unnecessary curly braces in JSX props",
         hasFix: true,
         optionsDescription: Lint.Utils.dedent`
-One of the following two options may be provided:
+One of the following options may be provided under the "props" key:
 
 * \`"${OPTION_ALWAYS}"\` requires JSX attributes to have curly braces around string literal values
 * \`"${OPTION_NEVER}"\` requires JSX attributes to NOT have curly braces around string literal values
