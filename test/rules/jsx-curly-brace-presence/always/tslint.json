@@ -1,0 +1,5 @@
+{
+    "rules": {
+        "jsx-curly-brace-presence": { "options": { "props": "always" } }
+    }
+}

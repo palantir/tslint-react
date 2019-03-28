@@ -1,0 +1,11 @@
+const e1 = (<p className={"bad"}>some text</p>);
+                         ~~~~~~~ [0]
+
+const e2 = (<p className="good">some text</p>);
+
+const e3 = (<p className={`good ${"a"}`}>some text</p>);
+
+const e4 = (<p className={`bad`}>some text</p>);
+                         ~~~~~~~ [0]
+
+[0]: JSX attribute must NOT have curly braces around string literal

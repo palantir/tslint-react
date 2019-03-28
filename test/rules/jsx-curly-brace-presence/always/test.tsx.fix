@@ -1,0 +1,3 @@
+const e1 = (<p className={"good"}>some text</p>);
+
+const e2 = (<p className={"bad"}>some text</p>);
