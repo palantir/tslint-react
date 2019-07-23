@@ -19,9 +19,18 @@ import * as Lint from "tslint";
 import { isJsxAttribute, isJsxElement, isJsxExpression, isJsxText, isTextualLiteral } from "tsutils/typeguard/3.0";
 import * as ts from "typescript";
 
+const ALLOW_HTMLENTITIES = "allow-htmlentities";
+const ALLOW_PUNCTUTATION = "allow-punctuation";
+const ALLOW_CUSTOMATTRIBUTES = "allow-customattributes";
+
+interface ICustomAttributesObject {
+    "allow-customattributes": string[];
+}
+
 interface IOptions {
     allowPunctuation: boolean;
     allowHtmlEntities: boolean;
+    allowedAttributes: Set<string>;
 }
 
 const htmlEntityRegex = /(&(?:#[0-9]+|[a-zA-Z]+);)/;
@@ -35,12 +44,27 @@ export class Rule extends Lint.Rules.AbstractRule {
         options: {
             type: "array",
             items: {
-                type: "string",
-                enum: ["allow-punctuation", "allow-htmlentities"],
+                anyOf: [
+                    {
+                        type: "string",
+                        enum: [ALLOW_PUNCTUTATION, ALLOW_HTMLENTITIES],
+                    },
+                    {
+                        type: "object",
+                        properties: {
+                            [ALLOW_CUSTOMATTRIBUTES]: {
+                                type: "array",
+                                items: {
+                                    type: "string",
+                                },
+                            },
+                        },
+                    },
+                ],
             },
         },
         optionsDescription: Lint.Utils.dedent`
-            Whether to allow punctuation and or HTML entities`,
+            Whether to allow punctuation and or HTML entities or custom attributes`,
         type: "functionality",
         typescriptOnly: false,
     };
@@ -52,11 +76,30 @@ export class Rule extends Lint.Rules.AbstractRule {
         `String literal is not allowed for value of ${text}. Use a translation function`
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
-        return this.applyWithFunction(sourceFile, walk, {
-            allowHtmlEntities: this.ruleArguments.indexOf("allow-htmlentities") !== -1,
-            allowPunctuation: this.ruleArguments.indexOf("allow-punctuation") !== -1,
-        });
+        return this.applyWithFunction(sourceFile, walk, parseOptions(this.ruleArguments));
     }
+}
+
+function parseOptions(options: Array<string | ICustomAttributesObject>): IOptions {
+    const allowHtmlEntities = options.indexOf(ALLOW_HTMLENTITIES) !== -1;
+    const allowPunctuation = options.indexOf(ALLOW_PUNCTUTATION) !== -1;
+    const allowedAttributes = new Set(Rule.TRANSLATABLE_ATTRIBUTES);
+    for (const option of options) {
+        if (typeof option === "object") {
+            const customAttributes = option[ALLOW_CUSTOMATTRIBUTES];
+            if (customAttributes != null && Array.isArray(customAttributes)) {
+                customAttributes.forEach((attr) => {
+                    allowedAttributes.add(attr);
+                });
+            }
+            break;
+        }
+    }
+    return {
+        allowHtmlEntities,
+        allowPunctuation,
+        allowedAttributes,
+    };
 }
 
 function walk(ctx: Lint.WalkContext<IOptions>) {
@@ -78,7 +121,7 @@ function walk(ctx: Lint.WalkContext<IOptions>) {
             }
 
         } else if (isJsxAttribute(node)) {
-            if (Rule.TRANSLATABLE_ATTRIBUTES.has(node.name.text) && node.initializer !== undefined) {
+            if (ctx.options.allowedAttributes.has(node.name.text) && node.initializer !== undefined) {
                 if (isTextualLiteral(node.initializer) && isInvalidText(node.initializer.text, ctx.options)) {
                     ctx.addFailureAtNode(node.initializer, Rule.FAILURE_STRING_FACTORY(node.name.text));
                 }

@@ -1,0 +1,17 @@
+<CustomComponent
+    customProp1={translate("Name")}
+    customProp2={translate("Name2")}
+    customProp3={translate("Name3")}
+/>
+
+<CustomComponent
+    customProp1="Name1"
+                ~~~~~~~ [0 % ('customProp1')]
+    customProp2="Name2"
+                ~~~~~~~ [0 % ('customProp2')]
+    customProp3="Name3"
+                ~~~~~~~ [0 % ('customProp3')]
+    customProp4="Name4"
+/>
+
+[0]: String literal is not allowed for value of %s. Use a translation function

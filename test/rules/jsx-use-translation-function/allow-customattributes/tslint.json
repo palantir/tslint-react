@@ -1,0 +1,9 @@
+{
+    "rules": {
+        "jsx-use-translation-function": {
+            "options": [{
+                "allow-customattributes": ["customProp1", "customProp2", "customProp3"]
+            }]
+        }
+    }
+}
