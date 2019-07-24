@@ -51,9 +51,8 @@ class JsxWrapMultilineWalker extends Lint.AbstractWalker<void> {
         const cb = (node: ts.Node): void => {
             if (isJsxElement(node) || isJsxSelfClosingElement(node) || isJsxFragment(node)) {
                 this.checkNode(node, sourceFile);
-            } else {
-                return ts.forEachChild(node, cb);
             }
+            return ts.forEachChild(node, cb);
         };
 
         return ts.forEachChild(sourceFile, cb);
