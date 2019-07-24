@@ -16,7 +16,7 @@
  */
 
 import * as Lint from "tslint";
-import { isJsxAttribute, isJsxExpression, isStringLiteral, isTextualLiteral } from "tsutils";
+import { isJsxAttribute, isJsxExpression, isStringLiteral, isTextualLiteral } from "tsutils/typeguard/3.0";
 import * as ts from "typescript";
 
 const OPTION_ALWAYS = "always";
