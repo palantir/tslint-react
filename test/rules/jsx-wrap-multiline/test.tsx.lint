@@ -21,7 +21,7 @@ const badMultiline = <div
     {children}
 ~~~~~~~~~~~~~~~
 </div>;
-~~~~~~   [Multiline JSX elements must be wrapped in parentheses]
+~~~~~~   [FAILURE_NOT_WRAPPED]
 
 const goodSelfClosingMultiline = (
     <div
@@ -37,18 +37,18 @@ const badSelfClosingMultiline = <div
     tabIndex={-1}
 ~~~~~~~~~~~~~~~~~~
 />;
-~~   [Multiline JSX elements must be wrapped in parentheses]
+~~   [FAILURE_NOT_WRAPPED]
 
 const badWrappedWithoutNewLines = (<div
-                                  ~      [New line required after open parenthesis when wrapping multiline JSX elements]
+                                  ~      [FAILURE_MISSING_NEW_LINE_AFTER_OPEN]
     className="my-class"
 >
     {children}
 </div>);
-      ~   [New line required before close parenthesis when wrapping multiline JSX elements]
+      ~   [FAILURE_MISSING_NEW_LINE_BEFORE_CLOSE]
 
 const badWrappedWithoutNewLineAtOpen = (<div
-                                       ~      [New line required after open parenthesis when wrapping multiline JSX elements]
+                                       ~      [FAILURE_MISSING_NEW_LINE_AFTER_OPEN]
     className="my-class"
 >
     {children}
@@ -61,7 +61,7 @@ const badWrappedWithoutNewLineAtClose = (
     >
         {children}
     </div>);
-          ~   [New line required before close parenthesis when wrapping multiline JSX elements]
+          ~   [FAILURE_MISSING_NEW_LINE_BEFORE_CLOSE]
 
 const goodSingleLineWrappedWithoutNewLines = (<div className="my-class">{children}</div>);
 
@@ -82,7 +82,7 @@ const badNestedElements = <div>
     />
 ~~~~~~~
 </div>;
-~~~~~~  [Multiline JSX elements must be wrapped in parentheses]
+~~~~~~  [FAILURE_NOT_WRAPPED]
 
 const goodFunctionWrap = mount<ITestComponentProps, {}>(
     <TestComponent
@@ -116,7 +116,7 @@ const badMultilineWithFragments = <>
     </div>
 ~~~~~~~~~~~
 </>;
-~~~   [Multiline JSX elements must be wrapped in parentheses]
+~~~   [FAILURE_NOT_WRAPPED]
 
 shallowRender(
     <TestComponent2 />
@@ -127,3 +127,60 @@ shallowRender(
         <span />
     </TestComponent3>
 );
+
+const myCondition = true;
+const component = () => (
+    <div>
+        Some Text
+
+        {myCondition && <div>
+                        ~~~~~
+            Some Text.
+~~~~~~~~~~~~~~~~~~~~~~
+        </div>}
+~~~~~~~~~~~~~~ [FAILURE_NOT_WRAPPED]
+
+        {myCondition && (<div>
+                        ~ [FAILURE_MISSING_NEW_LINE_AFTER_OPEN]
+            Some Text.
+        </div>)}
+              ~ [FAILURE_MISSING_NEW_LINE_BEFORE_CLOSE]
+
+        {myCondition && (
+            <div>
+                Some Text.
+            </div>
+        )}
+
+        {myCondition
+            ? <div>
+              ~~~~~
+                Some Text.
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+            </div>
+~~~~~~~~~~~~~~~~~~ [FAILURE_NOT_WRAPPED]
+            : <div>
+              ~~~~~
+                Some Text.
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+            </div>
+~~~~~~~~~~~~~~~~~~ [FAILURE_NOT_WRAPPED]
+        }
+
+        {myCondition
+            ? (
+                <div>
+                    Some Text.
+                </div>
+            ) : (
+                <div>
+                    Some Text.
+                </div>
+            )
+        }
+    </div>
+);
+
+[FAILURE_NOT_WRAPPED]: Multiline JSX elements must be wrapped in parentheses
+[FAILURE_MISSING_NEW_LINE_AFTER_OPEN]: New line required after open parenthesis when wrapping multiline JSX elements
+[FAILURE_MISSING_NEW_LINE_BEFORE_CLOSE]: New line required before close parenthesis when wrapping multiline JSX elements
