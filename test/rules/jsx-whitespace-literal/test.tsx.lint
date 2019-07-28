@@ -1,0 +1,29 @@
+<div>
+    <p>Some Text</p>
+    <hr></hr>
+    Some Text&nbsp;&nbsp;
+    ~~~~~~~~~~~~~~~~~~~~
+    <select>
+~~~~ [0]
+    <option></option>
+    </select>
+    <button type="button">Some Text</button>
+    <br/>
+    Some Text&nbsp;
+    ~~~~~~~~~~~~~~~
+    <select>
+~~~~ [0]
+    <option></option>
+    </select>
+    <button type="button">Some Text</button>
+    <br/>
+</div>
+
+<p>
+    <img src="images/img1.gif" width="50" height="50"/>&nbsp;
+                                                       ~~~~~~
+    <img src="images/img2.gif" width="50" height="50"/>
+~~~~ [0]
+</p>
+
+[0]: Prefered '{" "}' over '&nbsp;' in JSX markup.
