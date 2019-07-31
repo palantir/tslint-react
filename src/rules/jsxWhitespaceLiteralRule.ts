@@ -24,7 +24,7 @@ const RESERVED_ENTITY = "&nbsp;";
 export class Rule extends Lint.Rules.AbstractRule {
     public static metadata: Lint.IRuleMetadata = {
         description: Lint.Utils.dedent
-        `Warn if '&nbsp;' is used in JXS markup. Prefered {" "} over '&nbsp;'`,
+        `Warn if '&nbsp;' is used in JXS markup. Prefer {" "} over '&nbsp;'`,
         optionExamples: ["true"],
         options: null,
         optionsDescription: "",
@@ -33,18 +33,57 @@ export class Rule extends Lint.Rules.AbstractRule {
         typescriptOnly: false,
     };
 
-    public static FAILURE_STRING = `Prefered '{" "}' over '&nbsp;' in JSX markup.`;
+    public static FAILURE_STRING = `Expected '{" "}' instead of '&nbsp;' in JSX markup`;
 
     public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
         return this.applyWithFunction(sourceFile, walk);
     }
 }
 
+function getSpaces(numOfSpaces: number): string {
+    return " ".repeat(numOfSpaces);
+}
+
 function walk(ctx: Lint.WalkContext<void>): void {
     return ts.forEachChild(ctx.sourceFile, function cb(node: ts.Node): void {
         if (isJsxText(node)) {
             if (node.getText().indexOf(RESERVED_ENTITY) > -1) {
-                ctx.addFailureAtNode(node, Rule.FAILURE_STRING);
+                const text: string = node.getText();
+                const regex: RegExp = new RegExp(RESERVED_ENTITY, "g");
+                const startIndices: number[] = [];
+                const endIndices: number[] = [];
+                let countEnitiy: number = -1;
+                let result: RegExpExecArray | null;
+
+                do {
+                    result = regex.exec(text);
+                    if (result !== null) {
+                        if (
+                            startIndices[countEnitiy] !== undefined &&
+                            endIndices[countEnitiy] !== undefined &&
+                            startIndices[countEnitiy] + endIndices[countEnitiy] === result.index
+                        ) {
+                            endIndices[countEnitiy] = endIndices[countEnitiy] + RESERVED_ENTITY.length;
+                        } else {
+                            startIndices.push(result.index);
+                            endIndices.push(RESERVED_ENTITY.length);
+                            countEnitiy += 1;
+                        }
+                    }
+                } while (result !== null);
+
+                startIndices.forEach((startIndex, index) => {
+                    const start = node.getStart() + startIndex;
+                    const end = endIndices[index];
+                    const fix = Lint.Replacement.replaceFromTo(
+                        start,
+                        start + end,
+                        `{"${getSpaces(end / RESERVED_ENTITY.length)}"}`,
+                    );
+
+                    ctx.addFailureAt(start, end, Rule.FAILURE_STRING, fix);
+
+                });
             }
         }
 
