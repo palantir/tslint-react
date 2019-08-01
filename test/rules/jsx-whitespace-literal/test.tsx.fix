@@ -1,0 +1,35 @@
+<div>
+    <p>Some Text</p>
+    <hr></hr>
+    Some Text{"  "}
+    <select>
+    <option></option>
+    </select>
+    <button type="button">Some Text</button>
+    <button type="button">Some Text{" "}</button>
+    <button type="button">Some Text {" "} </button>
+    <button type="button">Some Text &NBSP; </button>
+    <button type="button">Some Text &nBSP; </button>
+    <br/>
+    Some Text{" "}
+    <select>
+    <option></option>
+    </select>
+    <button type="button">Some Text{"    "}</button>
+    <button type="button">Some Text {"    "} </button>
+    <hr></hr>
+    Some Text{"   "}
+    <br/>
+    <button type="button">
+        Some Text{" "}
+    </button>
+    <button type="button">
+        Some Text{"    "}
+    </button>
+</div>
+
+<p>
+    <img src="images/img1.gif" width="50" height="50"/>{" "}
+    <img src="images/img2.gif" width="50" height="50"/>
+</p>
+

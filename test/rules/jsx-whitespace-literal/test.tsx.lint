@@ -1,0 +1,46 @@
+<div>
+    <p>Some Text</p>
+    <hr></hr>
+    Some Text&nbsp;&nbsp;
+             ~~~~~~~~~~~~ [0]
+    <select>
+    <option></option>
+    </select>
+    <button type="button">Some Text</button>
+    <button type="button">Some Text&nbsp;</button>
+                                   ~~~~~~ [0]
+    <button type="button">Some Text &nbsp; </button>
+                                    ~~~~~~ [0]
+    <button type="button">Some Text &NBSP; </button>
+    <button type="button">Some Text &nBSP; </button>
+    <br/>
+    Some Text&nbsp;
+             ~~~~~~ [0]
+    <select>
+    <option></option>
+    </select>
+    <button type="button">Some Text&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                                   ~~~~~~~~~~~~~~~~~~~~~~~~ [0]
+    <button type="button">Some Text &nbsp;&nbsp;&nbsp;&nbsp; </button>
+                                    ~~~~~~~~~~~~~~~~~~~~~~~~ [0]
+    <hr></hr>
+    Some Text&nbsp;&nbsp;&nbsp;
+             ~~~~~~~~~~~~~~~~~~ [0]
+    <br/>
+    <button type="button">
+        Some Text&nbsp;
+                 ~~~~~~ [0]
+    </button>
+    <button type="button">
+        Some Text&nbsp;&nbsp;&nbsp;&nbsp;
+                 ~~~~~~~~~~~~~~~~~~~~~~~~ [0]
+    </button>
+</div>
+
+<p>
+    <img src="images/img1.gif" width="50" height="50"/>&nbsp;
+                                                       ~~~~~~ [0]
+    <img src="images/img2.gif" width="50" height="50"/>
+</p>
+
+[0]: Expected '{" "}' instead of '&nbsp;' in JSX markup
