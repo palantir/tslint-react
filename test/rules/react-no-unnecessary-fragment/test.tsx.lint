@@ -1,0 +1,182 @@
+<React.Fragment>
+~~~~~~~~~~~~~~~~
+    <div>
+~~~~~~~~~
+        <Component1 />
+~~~~~~~~~~~~~~~~~~~~~~
+        <Component2 />
+~~~~~~~~~~~~~~~~~~~~~~
+        <Component3 />
+~~~~~~~~~~~~~~~~~~~~~~
+    </div>
+~~~~~~~~~~
+</React.Fragment>
+~~~~~~~~~~~~~~~~~ [FAILURE_STRING]
+
+<React.Fragment>test
+    <div>
+        <Component1 />
+        <Component2 />
+        <Component3 />
+    </div></React.Fragment>
+
+<React.Fragment>
+~~~~~~~~~~~~~~~~
+    <React.Fragment>
+~~~~~~~~~~~~~~~~~~~~
+        <Component1 />
+~~~~~~~~~~~~~~~~~~~~~~
+        <Component2 />
+~~~~~~~~~~~~~~~~~~~~~~
+        <Component3 />
+~~~~~~~~~~~~~~~~~~~~~~
+    </React.Fragment>
+~~~~~~~~~~~~~~~~~~~~~
+</React.Fragment>
+~~~~~~~~~~~~~~~~~ [FAILURE_STRING]
+
+<React.Fragment>
+~~~~~~~~~~~~~~~~
+    <React.Fragment>
+~~~~~~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~
+        <>
+~~~~~~~~~~
+~~~~~~~~~~
+            <Component1 />
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+            <Component2 />
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+            <Component3 />
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+        </>
+~~~~~~~~~~~
+~~~~~~~~~~~
+    </React.Fragment>
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~ [FAILURE_STRING]
+</React.Fragment>
+~~~~~~~~~~~~~~~~~ [FAILURE_STRING]
+
+<>
+~~
+    <>
+~~~~~~
+    ~~
+        <>
+~~~~~~~~~~
+~~~~~~~~~~
+            <Component1 />
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+            <Component2 />
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+            <Component3 />
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+        </>
+~~~~~~~~~~~
+~~~~~~~~~~~
+    </>
+~~~~~~~
+~~~~~~~ [FAILURE_STRING]
+</>
+~~~ [FAILURE_STRING]
+
+<>
+~~
+    <Fragment>
+~~~~~~~~~~~~~~
+    ~~~~~~~~~~
+        <>
+~~~~~~~~~~
+~~~~~~~~~~
+            <Component1 />
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+            <Component2 />
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+            <Component3 />
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+        </>
+~~~~~~~~~~~
+~~~~~~~~~~~
+    </Fragment>
+~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~ [FAILURE_STRING]
+</>
+~~~ [FAILURE_STRING]
+
+<Fragment>
+~~~~~~~~~~
+    <Fragment>
+~~~~~~~~~~~~~~
+        <Component1 />
+~~~~~~~~~~~~~~~~~~~~~~
+        <Component2 />
+~~~~~~~~~~~~~~~~~~~~~~
+        <Component3 />
+~~~~~~~~~~~~~~~~~~~~~~
+    </Fragment>
+~~~~~~~~~~~~~~~
+</Fragment>
+~~~~~~~~~~~ [FAILURE_STRING]
+
+<Fragment>
+  	test
+    <div>
+        <Component1 />
+        <Component2 />
+        <Component3 />
+    </div></Fragment>
+      
+<Fragment>
+      <Component1 />
+      <Component2 />
+</Fragment>
+
+<Fragment>
+~~~~~~~~~~
+</Fragment>
+~~~~~~~~~~~ [FAILURE_STRING]
+
+<React.Fragment>
+~~~~~~~~~~~~~~~~
+</React.Fragment>
+~~~~~~~~~~~~~~~~~ [FAILURE_STRING]
+
+<Fragment><Component1 /><Component2 /></Fragment>
+
+<Fragment></Fragment>
+~~~~~~~~~~~~~~~~~~~~~ [FAILURE_STRING]
+
+<React.Fragment></React.Fragment>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ [FAILURE_STRING]
+
+<Fragment />
+~~~~~~~~~~~~ [FAILURE_STRING]
+
+<React.Fragment />
+~~~~~~~~~~~~~~~~~~ [FAILURE_STRING]
+          
+<>
+~~
+    <div>
+~~~~~~~~~
+        <Component1 />
+~~~~~~~~~~~~~~~~~~~~~~
+        <Component2 />
+~~~~~~~~~~~~~~~~~~~~~~
+        <Component3 />
+~~~~~~~~~~~~~~~~~~~~~~
+    </div>
+~~~~~~~~~~
+</>
+~~~ [FAILURE_STRING]
+[FAILURE_STRING]: Unnecessary Fragment are forbidden
