@@ -42,11 +42,17 @@ export class Rule extends Lint.Rules.AbstractRule {
 
 function walk(ctx: Lint.WalkContext<void>): void {
     return ts.forEachChild(ctx.sourceFile, function cb(node: ts.Node): void {
-        if (isJsxExpression(node)) {
+        if (isJsxExpression(node) && !isCommentBlock(node)) {
             if (node.getText().indexOf("\n") > -1) {
                 ctx.addFailureAt(node.getStart(), node.getWidth(), Rule.FAILURE_STRING);
             }
         }
         return ts.forEachChild(node, cb);
     });
+}
+
+function isCommentBlock(node: ts.JsxExpression) {
+    const text = node.getText().trim();
+
+    return text.startsWith("{/*") && text.endsWith("*/}");
 }

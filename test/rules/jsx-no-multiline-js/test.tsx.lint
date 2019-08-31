@@ -62,3 +62,35 @@ const ele = <button className={{
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 }} />;
 ~~ [Multiline JS expressions inside JSX are forbidden]
+
+
+const ele = <div>
+    <div>Some Text</div>
+    {/* <div>
+        Some commented code...
+    </div> */}
+</div>;
+
+
+const ele = <div>
+    {/*
+        
+    
+    <div>
+        Some commented code...
+    </div>
+    
+    */}
+    <div>Some Text</div>
+    {/* <div>
+        Some commented code...
+    </div> */}
+    {/* <div>
+        Some commented code...
+    </div> */}
+</div>; 
+
+const ele = <div>
+    <div>Some Text</div>
+    {/*  */}
+</div>;
