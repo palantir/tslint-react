@@ -1,6 +1,6 @@
 {
   "name": "tslint-react",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "Lint rules related to React & JSX for TSLint",
   "main": "tslint-react.json",
   "scripts": {
