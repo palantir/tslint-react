@@ -5,7 +5,7 @@
   "main": "tslint-react.json",
   "scripts": {
     "build": "tsc -p ./",
-    "copy": "cp -f package.json README.md tslint-react.json build/",
+    "copy": "cp -f package.json README.md LICENSE tslint-react.json build/",
     "clean": "rm -rf build/",
     "lint": "tslint --project tsconfig.json --format codeFrame",
     "test": "./scripts/test-rules",
