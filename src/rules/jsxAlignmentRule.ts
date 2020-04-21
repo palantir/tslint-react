@@ -67,8 +67,8 @@ function walk(ctx: Lint.WalkContext<void>) {
 
     function checkElement(
         elementOpen: ts.LineAndCharacter,
-        attributes: Array<ts.JsxAttribute | ts.JsxSpreadAttribute> // TS <=2.2
-            | { properties: Array<ts.JsxAttribute | ts.JsxSpreadAttribute> } // TS 2.3
+        attributes: (ts.JsxAttribute | ts.JsxSpreadAttribute)[] // TS <=2.2
+            | { properties: (ts.JsxAttribute | ts.JsxSpreadAttribute)[] } // TS 2.3
             | ts.JsxAttributes, // TS 2.6
         elementClose: ts.LineAndCharacter,
         closingTag?: ts.JsxClosingElement,
