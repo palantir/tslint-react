@@ -64,7 +64,7 @@ function walk(ctx: Lint.WalkContext<void>): void {
         const { expression } = initializer;
         if (expression === undefined
             || !isCallExpression(expression)
-            || !expression.getText(ctx.sourceFile).includes(".bind(this)")) {
+            || !expression.getText(ctx.sourceFile).includes(".bind(")) {
             return;
         }
 
